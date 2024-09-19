@@ -61,7 +61,7 @@ with gr.Blocks() as demo:
     do_ocr.click(
         fn=ocr,
         inputs=[upload_img, model, tokenizer, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
-                fine_grained_box_y2, fine_grained_color, OCR_type],
+                fine_grained_box_y2, OCR_type, fine_grained_color],
         outputs=result
     )
 
