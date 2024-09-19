@@ -32,7 +32,7 @@ def ocr(image, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
     elif OCR_type == "multi-crop-format":
         res = model.chat_crop(tokenizer, image, ocr_type='format')
     elif OCR_type == "render":
-        model.chat(tokenizer, image, ocr_type='format', render=True, save_render_file=f'tests/ocr.html')
+        model.chat(tokenizer, image, ocr_type='format', render=True, save_render_file=f'./ocr.html')
         res = f"rendered as ./ocr.html"
     return res
 
