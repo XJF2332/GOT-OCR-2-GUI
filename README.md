@@ -4,7 +4,7 @@
 
 模型权重：https://hf-mirror.com/stepfun-ai/GOT-OCR2_0 
 
-原Github：https://hf-mirror.com/stepfun-ai/GOT-OCR2_0
+原Github：https://github.com/Ucas-HaoranWei/GOT-OCR2.0/
 
 点个star吧
 
