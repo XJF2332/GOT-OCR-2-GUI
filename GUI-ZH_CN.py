@@ -68,9 +68,12 @@ def const_text_to_pdf(input_html_path, output_pdf_path):
         </html>
         """
 
+        if not os.path.exists("./result"):
+            os.makedirs("./result")
+
         # 将const text内容转换为PDF
         pdfkit.from_string(styled_text, output_pdf_path, configuration=config)
-        return "转换完成，PDF文件已保存为：{output_pdf_path}"
+        return f"转换完成，PDF文件已保存为：{output_pdf_path}"
     except Exception as e:
         return f"转换失败：{e}"
 
@@ -91,6 +94,13 @@ def ocr(image, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
 
     res = "未选择OCR模式"
 
+    html_gb2312_path = "./result/ocr_gb2312.html"
+    html_utf8_path = "./result/ocr_utf8.html"
+
+    if not os.path.exists("./result"):
+        os.makedirs("./result")
+
+
     if OCR_type == "ocr":
         res = model.chat(tokenizer, image, ocr_type='ocr')
     elif OCR_type == "format":
@@ -108,9 +118,9 @@ def ocr(image, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
     elif OCR_type == "multi-crop-format":
         res = model.chat_crop(tokenizer, image, ocr_type='format')
     elif OCR_type == "render":
-        model.chat(tokenizer, image, ocr_type='format', render=True, save_render_file=f'./ocr.html')
-        convert_html_encoding("./ocr.html", "./ocr_utf8.html")
-        res = f"渲染结果已保存为 ./ocr.html 和 ./ocr_utf8.html"
+        model.chat(tokenizer, image, ocr_type='format', render=True, save_render_file=html_gb2312_path)
+        convert_html_encoding(html_gb2312_path, html_utf8_path)
+        res = f"渲染结果已保存为 {html_gb2312_path} 和 {html_utf8_path}"
     return res
 
 
@@ -140,8 +150,8 @@ with gr.Blocks() as demo:
             do_ocr = gr.Button("执行OCR")
             result = gr.Textbox(label="结果")
             with gr.Row():
-                html_path = gr.Textbox(label="HTML文件路径", value="./ocr_utf8.html")
-                pdf_path = gr.Textbox(label="PDF文件路径", value="./ocr.pdf")
+                html_path = gr.Textbox(label="HTML文件路径", value="./result/ocr_utf8.html")
+                pdf_path = gr.Textbox(label="PDF文件路径", value="./result/ocr_utf8.pdf")
             with gr.Row():
                 save_as_pdf = gr.Button("保存为PDF")
                 save_as_pdf_info = gr.Textbox(show_label=False, interactive=False)
@@ -159,7 +169,10 @@ with gr.Blocks() as demo:
     #### multi-crop模式
     - 适用于更复杂的图片
     #### render模式
+    - 已经存在的文件会被覆盖！！！渲染前查看是否有以及存在的文件！！！
     - 渲染图片中的文字，并保存为html文件
+    - 同时具有GB2312和UTF8编码
+    - 可以转换html为pdf，pdf为UTF8编码
     """)
 
     do_ocr.click(

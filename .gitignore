@@ -6,3 +6,4 @@
 /tests/*.pdf
 /wkhtmltopdf/
 /tests/wkhtmltopdf/
+/result/

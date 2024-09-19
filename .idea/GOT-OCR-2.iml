@@ -4,6 +4,7 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/imgs" />
       <excludeFolder url="file://$MODULE_DIR$/models" />
+      <excludeFolder url="file://$MODULE_DIR$/result" />
       <excludeFolder url="file://$MODULE_DIR$/tests/wkhtmltopdf" />
       <excludeFolder url="file://$MODULE_DIR$/wkhtmltopdf" />
     </content>
