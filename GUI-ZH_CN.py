@@ -62,6 +62,9 @@ with gr.Blocks() as demo:
         with gr.Column():
             do_ocr = gr.Button("执行OCR")
             result = gr.Textbox(label="结果")
+            with gr.Row():
+                save_as_markdown = gr.Button("保存为Markdown")
+                save_as_markdown_info = gr.Textbox(show_label=False,interactive=False)
 
     gr.Markdown("""
     ### 使用教程
