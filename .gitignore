@@ -2,3 +2,5 @@
 /imgs/
 *.pdf
 *.html
+/tests/*.html
+/tests/*.pdf
