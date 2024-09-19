@@ -1,15 +1,9 @@
 import os
 from transformers import AutoModel, AutoTokenizer
 
-
-# def load_model_and_tokenizer():
-#     tokenizer = AutoTokenizer.from_pretrained('models', trust_remote_code=True)
-#     model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_usage=True, device_map='cuda',
-#                                       use_safetensors=True, pad_token_id=tokenizer.eos_token_id)
-#     return model.eval().cuda(), tokenizer
-
 tokenizer = AutoTokenizer.from_pretrained('models', trust_remote_code=True)
-model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_usage=True, device_map='cuda', use_safetensors=True, pad_token_id=tokenizer.eos_token_id)
+model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_usage=True, device_map='cuda',
+                                  use_safetensors=True, pad_token_id=tokenizer.eos_token_id)
 model = model.eval().cuda()
 
 
@@ -66,7 +60,6 @@ def perform_ocr(model, tokenizer, image_file, ocr_type, ocr_box=None, ocr_color=
 
 
 def main():
-    # model, tokenizer = load_model_and_tokenizer()
     while True:
         print("\nEnter ---QUIT at any time to exit the program.")
         image_file = select_image()
