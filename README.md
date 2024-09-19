@@ -1,5 +1,5 @@
 # GOT-OCR-2-GUI
-![img_1.png](img_1.png)
+![img.png](img.png)
 ## 关于此项目
 
 模型权重：https://hf-mirror.com/stepfun-ai/GOT-OCR2_0 
