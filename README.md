@@ -12,6 +12,8 @@
 ### 依赖
 - gradio
 - transformers
+- pdfkit
+- beautifulsoup4
 ### 模型文件
 > 如果这里面提到的文件夹你没有，那就新建一个
 1. 下载到`models`文件夹中
