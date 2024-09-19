@@ -1,1 +1,18 @@
-# 别急，GUI还在做，先用着CLI吧！
+# GOT-OCR-2-GUI
+![img_1.png](img_1.png)
+## 关于此项目
+
+模型权重：https://hf-mirror.com/stepfun-ai/GOT-OCR2_0 
+
+原Github：https://hf-mirror.com/stepfun-ai/GOT-OCR2_0
+
+点个star吧
+
+## 使用方法
+### 依赖
+- gradio
+- transformers
+### 模型文件
+1. 下载到`models`文件夹中
+2. 别少下载文件了
+3. 选一个你喜欢的脚本打开
