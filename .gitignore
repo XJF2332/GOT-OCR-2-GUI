@@ -5,3 +5,4 @@
 /tests/*.html
 /tests/*.pdf
 /wkhtmltopdf/
+/tests/wkhtmltopdf/

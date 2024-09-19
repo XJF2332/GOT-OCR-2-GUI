@@ -1,8 +1,14 @@
 import pdfkit
 import re
 from bs4 import BeautifulSoup
+import os
 
-config = pdfkit.configuration(wkhtmltopdf='wkhtmltopdf/bin/wkhtmltopdf.exe')
+# 获取当前脚本所在目录
+script_path = os.path.abspath(__file__)
+script_dir = os.path.dirname(script_path)
+wkhtmltopdf_path = os.path.join(script_dir, 'wkhtmltopdf\\bin\wkhtmltopdf.exe')
+
+config = pdfkit.configuration(wkhtmltopdf=wkhtmltopdf_path)
 
 def extract_style_from_html(html_content):
     soup = BeautifulSoup(html_content, 'html.parser')
