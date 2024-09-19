@@ -34,8 +34,8 @@ def ocr(image, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
     elif OCR_type == "multi-crop-format":
         res = model.chat_crop(tokenizer, image, ocr_type='format')
     elif OCR_type == "render":
-        model.chat(tokenizer, image, ocr_type='format', render=True, save_render_file=f'./{image}.html')
-        res = f"rendered as ./{image}.html"
+        model.chat(tokenizer, image, ocr_type='format', render=True, save_render_file=f'./ocr.html')
+        res = f"rendered as ./ocr.html"
     return res
 
 
@@ -51,6 +51,8 @@ with gr.Blocks() as demo:
             fine_grained_box_y2 = gr.Number(label="细粒度框y2", value=0)
         with gr.Column():
             fine_grained_color = gr.Dropdown(choices=["红色", "绿色", "蓝色"], label="细粒度颜色")
+
+    gr.Markdown("OCR设置")
 
     with gr.Row():
         with gr.Column():
