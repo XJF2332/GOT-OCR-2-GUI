@@ -2,14 +2,14 @@ import os
 from transformers import AutoModel, AutoTokenizer
 import gradio as gr
 
-tokenizer = AutoTokenizer.from_pretrained('models', trust_remote_code=True)
-model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_usage=True, device_map='cuda',
-                                  use_safetensors=True, pad_token_id=tokenizer.eos_token_id)
-model = model.eval().cuda()
 
-
-def ocr(image_file, model, tokenizer, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
+def ocr(image_file, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
         fine_grained_box_y2, OCR_type, fine_grained_color):
+    tokenizer = AutoTokenizer.from_pretrained('models', trust_remote_code=True)
+    model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_usage=True, device_map='cuda',
+                                      use_safetensors=True, pad_token_id=tokenizer.eos_token_id)
+
+    model = model.eval().cuda()
     box = [fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2, fine_grained_box_y2]
     if OCR_type == "ocr":
         res = model.chat(tokenizer, image_file, ocr_type='ocr')
@@ -30,8 +30,6 @@ def ocr(image_file, model, tokenizer, fine_grained_box_x1, fine_grained_box_y1, 
     elif OCR_type == "render":
         model.chat(tokenizer, image_file, ocr_type='format', render=True, save_render_file=f'./{image_file}.html')
         res = f"rendered as ./{image_file}.html"
-    else:
-        res = "Invalid OCR Type"
     return res
 
 
@@ -61,7 +59,7 @@ with gr.Blocks() as demo:
 
     do_ocr.click(
         fn=ocr,
-        inputs=[upload_img, model, tokenizer, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
+        inputs=[upload_img, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
                 fine_grained_box_y2, OCR_type, fine_grained_color],
         outputs=result
     )
