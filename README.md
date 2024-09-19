@@ -6,6 +6,8 @@
 
 原Github：https://github.com/Ucas-HaoranWei/GOT-OCR2.0/
 
+感谢GLM4提供的一部分代码（因为本人实在是菜，所以不得不用一下AI）
+
 点个star吧
 
 ## 转换为pdf已在`GUI-ZH_CN`和`GUI-EN`中可用，CLI中暂不可用
