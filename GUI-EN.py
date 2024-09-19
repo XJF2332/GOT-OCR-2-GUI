@@ -13,7 +13,7 @@ def ocr(image, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
         fine_grained_box_y2, OCR_type, fine_grained_color):
     box = [fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2, fine_grained_box_y2]
 
-    res = "未选择OCR模式"
+    res = "No OCR mode selected"
 
     if OCR_type == "ocr":
         res = model.chat(tokenizer, image, ocr_type='ocr')
@@ -39,42 +39,42 @@ def ocr(image, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
 
 # gradio gui
 with gr.Blocks() as demo:
-    gr.Markdown("fine-grained-ocr设置")
+    gr.Markdown("fine-grained-ocr settings")
     with gr.Row():
         with gr.Column():
-            fine_grained_box_x1 = gr.Number(label="框x1", value=0)
-            fine_grained_box_y1 = gr.Number(label="框y1", value=0)
+            fine_grained_box_x1 = gr.Number(label="Box x1", value=0)
+            fine_grained_box_y1 = gr.Number(label="Box y1", value=0)
         with gr.Column():
-            fine_grained_box_x2 = gr.Number(label="框x2", value=0)
-            fine_grained_box_y2 = gr.Number(label="框y2", value=0)
+            fine_grained_box_x2 = gr.Number(label="Box x2", value=0)
+            fine_grained_box_y2 = gr.Number(label="Box y2", value=0)
         with gr.Column():
-            fine_grained_color = gr.Dropdown(choices=["red", "green", "blue"], label="颜色")
+            fine_grained_color = gr.Dropdown(choices=["red", "green", "blue"], label="color")
 
-    gr.Markdown("OCR设置")
+    gr.Markdown("OCR settings")
 
     with gr.Row():
         with gr.Column():
             OCR_type = gr.Dropdown(
                 choices=["ocr", "format", "fine-grained-ocr", "fine-grained-format", "fine-grained-color-ocr",
                          "fine-grained-color-format", "multi-crop-ocr", "multi-crop-format", "render"],
-                label="OCR类型")
-            upload_img = gr.Image(type="filepath", label="上传图片")
+                label="OCR Mode")
+            upload_img = gr.Image(type="filepath", label="Upload Image")
         with gr.Column():
-            do_ocr = gr.Button("执行OCR")
-            result = gr.Textbox(label="结果")
+            do_ocr = gr.Button("DO OCR")
+            result = gr.Textbox(label="result")
 
     gr.Markdown("""
-    ### 使用教程
-    #### ocr模式
-    - ocr：普通的ocr
-    - format：ocr并格式化
-    #### fine-grained模式
-    - fine-grained-ocr：ocr特定的框中的内容
-    - fine-grained-format：ocr并格式化特定的框中的内容
-    - fine-grained-color-ocr：ocr特定颜色的框中的内容（我还没用过，大概是要先用红/绿/蓝色画框再在GUI里选择颜色）
-    - fine-grained-color-format：ocr并格式化特定颜色的框中的内容
-    #### multi-crop模式
-    - 适用于更复杂的图片
+    ### Instructions
+    #### OCR Modes
+    - ocr: Standard OCR
+    - format: OCR with formatting
+    #### Fine-Grained Modes
+    - fine-grained-ocr: OCR content within a specific box
+    - fine-grained-format: OCR and format content within a specific box
+    - fine-grained-color-ocr: OCR content within a box of a specific color (I haven't tried this, but it seems like you would need to draw a red/green/blue box first and then select the color in the GUI)
+    - fine-grained-color-format: OCR and format content within a box of a specific color
+    #### Multi-Crop Modes
+    - Suitable for more complex images
     """)
 
     do_ocr.click(
