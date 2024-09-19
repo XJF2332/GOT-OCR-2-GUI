@@ -19,6 +19,19 @@
 - beautifulsoup4
 #### 其他
 - [wkhtmltopdf](https://wkhtmltopdf.org/downloads.html)，下载压缩包，解压放进`wkhtmltopdf`文件夹中
+- 文件结构应该是：
+```
+GOT-OCR-2-GUI
+├─wkhtmltopdf
+│  ├─bin
+│  │  ├─wkhtmltopdf.exe
+│  │  ├─wkhtmltox.dll
+│  │  ├─libwkhtmltox.a
+│  │  └─wkhtmltoimage.exe
+│  └─include
+│     └─wkhtmltox
+│        └─...
+```
 
 ### 模型文件
 > 如果这里面提到的文件夹你没有，那就新建一个
