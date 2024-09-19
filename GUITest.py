@@ -9,7 +9,7 @@ model = model.eval().cuda()
 
 
 def ocr(image_file, model, tokenizer, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
-        fine_grained_box_y2, OCR_type):
+        fine_grained_box_y2, OCR_type, fine_grained_color):
     box = [fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2, fine_grained_box_y2]
     if OCR_type == "ocr":
         res = model.chat(tokenizer, image_file, ocr_type='ocr')
@@ -28,7 +28,8 @@ def ocr(image_file, model, tokenizer, fine_grained_box_x1, fine_grained_box_y1, 
     elif OCR_type == "multi-crop-format":
         res = model.chat_crop(tokenizer, image_file, ocr_type='format')
     elif OCR_type == "render":
-        res = model.chat(tokenizer, image_file, ocr_type='format', render=True, save_render_file=f'./{image_file}.html')
+        model.chat(tokenizer, image_file, ocr_type='format', render=True, save_render_file=f'./{image_file}.html')
+        res = f"rendered as ./{image_file}.html"
     else:
         res = "Invalid OCR Type"
     return res
