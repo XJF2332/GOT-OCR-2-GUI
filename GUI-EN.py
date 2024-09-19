@@ -120,7 +120,7 @@ def ocr(image, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
     elif OCR_type == "render":
         model.chat(tokenizer, image, ocr_type='format', render=True, save_render_file=html_gb2312_path)
         convert_html_encoding(html_gb2312_path, html_utf8_path)
-        res = f"ender result saved as {html_gb2312_path} and {html_utf8_path}"
+        res = f"render result saved as {html_gb2312_path} and {html_utf8_path}"
     return res
 
 
