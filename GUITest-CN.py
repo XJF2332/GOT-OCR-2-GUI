@@ -63,6 +63,20 @@ with gr.Blocks() as demo:
             do_ocr = gr.Button("执行OCR")
             result = gr.Textbox(label="结果")
 
+    gr.Markdown("""
+    ### 使用教程
+    #### ocr模式
+    - ocr：普通的ocr
+    - format：ocr并格式化
+    #### fine-grained模式
+    - fine-grained-ocr：ocr特定的框中的内容
+    - fine-grained-format：ocr并格式化特定的框中的内容
+    - fine-grained-color-ocr：ocr特定颜色的框中的内容（我还没用过，大概是要先用红/绿/蓝色画框再在GUI里选择颜色）
+    - fine-grained-color-format：ocr并格式化特定颜色的框中的内容
+    #### multi-crop模式
+    - 适用于更复杂的图片
+    """)
+
     do_ocr.click(
         fn=ocr,
         inputs=[upload_img, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
