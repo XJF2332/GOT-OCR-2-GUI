@@ -1,12 +1,21 @@
 from transformers import AutoModel, AutoTokenizer
 import gradio as gr
 
-
 tokenizer = AutoTokenizer.from_pretrained('models', trust_remote_code=True)
 model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_usage=True, device_map='cuda',
                                   use_safetensors=True, pad_token_id=tokenizer.eos_token_id)
 
 model = model.eval().cuda()
+
+
+def convert_html_encoding(input_file_path, output_file_path):
+    # 以GB2312编码读取文件
+    with open(input_file_path, 'r', encoding='gb2312') as file:
+        content = file.read()
+
+    # 以UTF-8编码写入内容到新文件
+    with open(output_file_path, 'w', encoding='utf-8') as file:
+        file.write(content)
 
 
 def ocr(image, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
@@ -33,7 +42,8 @@ def ocr(image, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
         res = model.chat_crop(tokenizer, image, ocr_type='format')
     elif OCR_type == "render":
         model.chat(tokenizer, image, ocr_type='format', render=True, save_render_file=f'./ocr.html')
-        res = f"rendered as ./ocr.html"
+        convert_html_encoding("./ocr.html", "./ocr_utf8.html")
+        res = f"渲染结果已保存为 ./ocr.html 和 ./ocr_utf8.html"
     return res
 
 
@@ -64,7 +74,7 @@ with gr.Blocks() as demo:
             result = gr.Textbox(label="结果")
             with gr.Row():
                 save_as_pdf = gr.Button("保存为PDF")
-                save_as_pdf_info = gr.Textbox(show_label=False,interactive=False)
+                save_as_pdf_info = gr.Textbox(show_label=False, interactive=False)
 
     gr.Markdown("""
     ### 使用教程
