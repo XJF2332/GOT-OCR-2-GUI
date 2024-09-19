@@ -10,10 +10,14 @@
 
 ## 使用方法
 ### 依赖
+#### 使用`pip`安装
 - gradio
 - transformers
 - pdfkit
 - beautifulsoup4
+#### 其他
+- [wkhtmltopdf](https://wkhtmltopdf.org/downloads.html)，下载压缩包，解压放进`wkhtmltopdf`文件夹中
+
 ### 模型文件
 > 如果这里面提到的文件夹你没有，那就新建一个
 1. 下载到`models`文件夹中

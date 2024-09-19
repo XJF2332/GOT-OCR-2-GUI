@@ -1,11 +1,14 @@
 from transformers import AutoModel, AutoTokenizer
 import gradio as gr
+import pdfkit
 
 tokenizer = AutoTokenizer.from_pretrained('models', trust_remote_code=True)
 model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_usage=True, device_map='cuda',
                                   use_safetensors=True, pad_token_id=tokenizer.eos_token_id)
 
 model = model.eval().cuda()
+
+config = pdfkit.configuration(wkhtmltopdf='C:\Program Files\wkhtmltopdf\\bin\wkhtmltopdf.exe')
 
 
 def convert_html_encoding(input_file_path, output_file_path):
