@@ -43,6 +43,18 @@ GOT-OCR-2-GUI
 ### 下载模型文件
 1. 下载到`models`文件夹中
 2. 别少下载文件了
+- 文件结构应该是：
+```
+GOT-OCR-2-GUI
+├─models
+│  ├─model.safetensors
+│  ├─config.json
+│  └─你在huggingface下载的其他文件
+├─CLI-EN.py
+├─GUI-ZH_CN.py
+├─GUI-EN.py
+└─...
+```
 ### 开始使用
 1. 选一个你喜欢的脚本打开
 2. 用GUI的可以不管，不过用CLI的各位记得把要OCR的图放进`imgs`文件夹里（CLI目前只检测`.jpg`和`.png`图片）
