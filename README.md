@@ -24,21 +24,27 @@
 - transformers
 - pdfkit
 - beautifulsoup4
+- matplotlib
+> 基于`matplotlib`的功能仍在开发中，暂时可以不装（如果你不用`tests`文件夹里的玩意的话）
 #### 其他
 - [wkhtmltopdf](https://wkhtmltopdf.org/downloads.html)，下载压缩包，解压放进`wkhtmltopdf`文件夹中
-- 文件结构应该是：
-```
-GOT-OCR-2-GUI
-├─wkhtmltopdf
-│  ├─bin
-│  │  ├─wkhtmltopdf.exe
-│  │  ├─wkhtmltox.dll
-│  │  ├─libwkhtmltox.a
-│  │  └─wkhtmltoimage.exe
-│  └─include
-│     └─wkhtmltox
-│        └─...
-```
+> 文件结构应该是：
+> ```
+> GOT-OCR-2-GUI
+> ├─wkhtmltopdf
+> │  ├─bin
+> │  │  ├─wkhtmltopdf.exe
+> │  │  ├─wkhtmltox.dll
+> │  │  ├─libwkhtmltox.a
+> │  │  └─wkhtmltoimage.exe
+> │  └─include
+> │     └─wkhtmltox
+> │        └─...
+> ```
+- [LaTeX](https://www.latex-project.org/get/#tex-distributions)
+> 记得把`LaTeX`放进环境变量
+> 
+> 基于`LaTeX`的功能仍在开发中，暂时可以不装（如果你不用`tests`文件夹里的玩意的话）
 
 ### 下载模型文件
 1. 下载到`models`文件夹中
