@@ -1,5 +1,8 @@
 import os
 from transformers import AutoModel, AutoTokenizer
+import pdfkit
+from bs4 import BeautifulSoup
+import re
 
 tokenizer = AutoTokenizer.from_pretrained('models', trust_remote_code=True)
 model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_usage=True, device_map='cuda',

@@ -5,18 +5,15 @@ import os
 from bs4 import BeautifulSoup
 import re
 
+print("Loading model...")
 tokenizer = AutoTokenizer.from_pretrained('models', trust_remote_code=True)
 model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_usage=True, device_map='cuda',
                                   use_safetensors=True, pad_token_id=tokenizer.eos_token_id)
 
 model = model.eval().cuda()
+print("Model loaded, launching Webui...")
 
-# 获取当前脚本所在目录
-script_path = os.path.abspath(__file__)
-script_dir = os.path.dirname(script_path)
-wkhtmltopdf_path = os.path.join(script_dir, 'wkhtmltopdf\\bin\wkhtmltopdf.exe')
-
-config = pdfkit.configuration(wkhtmltopdf=wkhtmltopdf_path)
+config = pdfkit.configuration(wkhtmltopdf='wkhtmltopdf\\bin\wkhtmltopdf.exe')
 
 
 def extract_style_from_html(html_content):
@@ -100,7 +97,6 @@ def ocr(image, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
     if not os.path.exists("./result"):
         os.makedirs("./result")
 
-
     if OCR_type == "ocr":
         res = model.chat(tokenizer, image, ocr_type='ocr')
     elif OCR_type == "format":
@@ -183,7 +179,7 @@ with gr.Blocks() as demo:
     )
     save_as_pdf.click(
         fn=const_text_to_pdf,
-        inputs=[html_path,pdf_path],
+        inputs=[html_path, pdf_path],
         outputs=save_as_pdf_info
     )
 
