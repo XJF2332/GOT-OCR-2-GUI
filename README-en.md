@@ -53,17 +53,29 @@ Usage method
     │        └─...
 ```
 
-###  Download model file
+### Download model file
 
 1.  Download to `models` folder
-2.   Stop downloading fewer files
+2.  Stop downloading fewer files
+- The file structure should be:
+```
+GOT-OCR-2-GUI
+├─models
+│  ├─model.safetensors
+│  ├─config.json
+│  └─other files you downloaded from huggingface
+├─CLI-EN.py
+├─GUI-ZH_CN.py
+├─GUI-EN.py
+└─...
+```
 
-###  Start Using
+### Start Using
 
-1.   Choose a script you like to open
+1.  Choose a script you like to open
 2.  You can ignore those using GUI, but for the CLI users, please put the images you want to OCR into the `imgs` folder (the CLI currently only detects `.jpg` and `.png` images).
 
- Other
+Other
 ------
 
 *   Not necessary to use the contents of the `tests` folder
