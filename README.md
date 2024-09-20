@@ -1,4 +1,6 @@
 # GOT-OCR-2-GUI
+## [See English version here](README-en.md)
+
 ![img.png](img.png)
 ## 关于此项目
 

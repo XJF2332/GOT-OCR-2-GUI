@@ -1,5 +1,6 @@
 GOT-OCR-2 - GUI
 ================
+## [中文版看这里](README.md)
 
 ![img.png](img.png)
 
