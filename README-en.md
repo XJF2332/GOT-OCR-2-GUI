@@ -35,23 +35,27 @@ Usage method
 *   transformers
 *   pdfkit
 *   beautifulsoup4
+*   matplotlib
+> functions based on `matplotlib` is still under development, you can ignore this for a while (if you don't use things inside `tests` folder)
 
 #### Other
 
 *   wkhtmltopdf, download `.7z` file, unzip it and put it into `wkhtmltopdf` folder
-*   The file structure should be:
-```
-    GOT-OCR-2-GUI
-    ├─wkhtmltopdf
-    │  ├─bin
-    │  │  ├─wkhtmltopdf.exe
-    │  │  ├─wkhtmltox.dll
-    │  │  ├─libwkhtmltox.a
-    │  │  └─wkhtmltoimage.exe
-    │  └─include
-    │     └─wkhtmltox
-    │        └─...
-```
+> The file structure should be:
+> ```
+>     GOT-OCR-2-GUI
+>     ├─wkhtmltopdf
+>     │  ├─bin
+>     │  │  ├─wkhtmltopdf.exe
+>     │  │  ├─wkhtmltox.dll
+>     │  │  ├─libwkhtmltox.a
+>     │  │  └─wkhtmltoimage.exe
+>     │  └─include
+>     │     └─wkhtmltox
+>     │        └─...
+> ```
+- [LaTeX](https://www.latex-project.org/get/#tex-distributions)
+> functions based on `LaTeX` is still under development, you can ignore this for a while (if you don't use things inside `tests` folder)
 
 ### Download model file
 
