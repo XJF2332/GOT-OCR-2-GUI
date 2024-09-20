@@ -42,7 +42,7 @@
 > │        └─...
 > ```
 - [LaTeX](https://www.latex-project.org/get/#tex-distributions)
-> 记得把`LaTeX`放进环境变量
+> 记得把`LaTeX`放进`Path`环境变量
 > 
 > 基于`LaTeX`的功能仍在开发中，暂时可以不装（如果你不用`tests`文件夹里的玩意的话）
 

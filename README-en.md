@@ -55,6 +55,7 @@ Usage method
 >     │        └─...
 > ```
 - [LaTeX](https://www.latex-project.org/get/#tex-distributions)
+> don't forget to add `latex` to the `Path` environment variable
 > functions based on `LaTeX` is still under development, you can ignore this for a while (if you don't use things inside `tests` folder)
 
 ### Download model file
