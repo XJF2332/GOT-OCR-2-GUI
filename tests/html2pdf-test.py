@@ -4,6 +4,9 @@ import os
 import re
 from bs4 import BeautifulSoup
 import pdfkit
+from pylatex import Document, Command
+from pylatex.utils import NoEscape
+import pdflatex
 
 config = pdfkit.configuration(wkhtmltopdf=r'./wkhtmltopdf/bin/wkhtmltopdf.exe')
 
@@ -14,6 +17,8 @@ def extract_style_from_html(html_content):
     return style_tag.string if style_tag else ''
 
 
+
+
 def extract_const_text_from_script(script_content):
     # 使用正则表达式来匹配所有被双引号包围的字符串，并保留换行符
     string_pattern = r'(?<!\\)"(.*?)(?<!\\)"'
@@ -21,7 +26,7 @@ def extract_const_text_from_script(script_content):
     # 将所有匹配的字符串连接起来，并替换掉转义引号
     const_text = ''.join(matches).replace('\\"', '"')
     # 替换JavaScript的换行符为HTML的换行符
-    const_text = const_text.replace('\\n', '<br>')
+    const_text = const_text.replace('\\n', r'\\')
     return const_text
 
 
@@ -57,25 +62,36 @@ with open(input_html_path, 'r', encoding='utf-8') as file:
         </html>
         """
 
-# 确保matplotlib使用LaTeX渲染
-matplotlib.rcParams['text.usetex'] = True
+    print(const_text)
 
-# 如果需要更详细的LaTeX设置，可以使用以下代码
-# matplotlib.rcParams['text.latex.preamble'] = r'\usepackage{amsmath}'
+    # 创建一个LaTeX文档
+    doc = Document()
 
-# 创建一个图形和一个子图
-fig, ax = plt.subplots()
+    # 将输入的LaTeX内容添加到文档中
+    doc.append(NoEscape(const_text))
 
-# 添加LaTeX文本
-ax.text(0.5, 0.5, styled_text,
-        fontsize=15, ha='center', va='center')
+    # 编译文档
+    doc.generate_pdf(r"latex.pdf", clean_tex=False)
 
-# 设置子图的边界
-ax.set_xlim(0, 1)
-ax.set_ylim(0, 1)
-
-# 移除坐标轴
-ax.axis('off')
-
-# 保存为PDF文件
-plt.savefig('latex_matplotlib.pdf')
+# # 确保matplotlib使用LaTeX渲染
+# matplotlib.rcParams['text.usetex'] = True
+#
+# # 如果需要更详细的LaTeX设置，可以使用以下代码
+# # matplotlib.rcParams['text.latex.preamble'] = r'\usepackage{amsmath}'
+#
+# # 创建一个图形和一个子图
+# fig, ax = plt.subplots()
+#
+# # 添加LaTeX文本
+# ax.text(0.5, 0.5, const_text,
+#         fontsize=15, ha='center', va='center')
+#
+# # 设置子图的边界
+# ax.set_xlim(0, 1)
+# ax.set_ylim(0, 1)
+#
+# # 移除坐标轴
+# ax.axis('off')
+#
+# # 保存为PDF文件
+# plt.savefig('latex_matplotlib.pdf')
