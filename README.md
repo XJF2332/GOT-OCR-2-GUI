@@ -15,7 +15,8 @@
 - [x] 初步实现功能（位于GUI版本中）
 - [x] 初步实现功能（位于CLI-EN版本中）
 - [x] 初步实现功能（位于CLI-ZH_CN版本中）
-- [ ] 修复`LaTeX`的渲染问题（位于GUI版本中）
+- [x] 修复`LaTeX`的渲染问题（位于GUI-EN版本中）
+- [ ] 修复`LaTeX`的渲染问题（位于GUI-ZH_CN版本中）
 - [x] 修复`LaTeX`的渲染问题（位于CLI-EN版本中）
 - [x] 修复`LaTeX`的渲染问题（位于CLI-ZH_CN版本中）
 

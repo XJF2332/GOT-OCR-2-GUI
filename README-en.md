@@ -18,7 +18,8 @@ Click a star, please
 - [x] It works! (on GUI)
 - [x] It works! (on CLI-EN)
 - [x] It works! (on CLI-ZH_CN)
-- [ ] Fixed `LaTeX` rendering (on GUI)
+- [x] Fixed `LaTeX` rendering (on GUI-EN)
+- [ ] Fixed `LaTeX` rendering (on GUI-ZH_CN)
 - [x] Fixed `LaTeX` rendering (on CLI-EN)
 - [x] Fixed `LaTeX` rendering (on CLI-ZH_CN)
 
