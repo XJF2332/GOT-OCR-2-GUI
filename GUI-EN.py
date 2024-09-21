@@ -108,7 +108,7 @@ with gr.Blocks() as demo:
             with gr.Row():
                 html_utf8_path = gr.Textbox(label="HTML File Path", value="./result/ocr-utf8.html", interactive=False)
                 html_utf8_local_path = gr.Textbox(label="HTML Local File Path", value="./result/ocr-utf8-local.html", interactive=False)
-                pdf_path = gr.Textbox(label="PDF File Path", value="./result/ocr_utf8.pdf", interactive=False)
+                pdf_path = gr.Textbox(label="PDF File Path", value="./result/ocr-utf8.pdf", interactive=False)
 
 
     gr.Markdown("OCR Settings")
