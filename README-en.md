@@ -74,6 +74,6 @@ GOT-OCR-2-GUI
 Other
 ------
 
-*   Pdf converter can't handle LaTeX correctly, use at your own risk
+*   Pdf converter can't handle LaTeX correctly, use at your own risk. I am trying to fix it.
 *   If the script crashes, you can try running `cmd` with `python + file name`, I encountered crashes during testing but I don't know why
 
