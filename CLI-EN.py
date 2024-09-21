@@ -221,19 +221,10 @@ def do_ocr(image):
 
 
 def main():
+    print("\nEnter ---QUIT at any time to exit the program.")
     while True:
-        print("\nEnter ---QUIT at any time to exit the program.")
-        while True:
-            image_file = select_image()
-            do_ocr(image_file)
-            Continue = input("Continue? (y/n): ")
-            if Continue.lower() == 'n':
-                break
-            elif Continue.lower() == 'y':
-                continue
-            else:
-                print("Invalid choice, stopping.")
-                break
+        image_file = select_image()
+        do_ocr(image_file)
 
 
 if __name__ == "__main__":
