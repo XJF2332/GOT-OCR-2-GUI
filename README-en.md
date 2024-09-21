@@ -17,10 +17,10 @@ Click a star, please
 ## Development process of pdf conversion
 - [x] It works! (on GUI)
 - [x] It works! (on CLI-EN)
-- [ ] It works! (on CLI-ZH_CN)
+- [x] It works! (on CLI-ZH_CN)
 - [ ] Fixed `LaTeX` rendering (on GUI)
 - [x] Fixed `LaTeX` rendering (on CLI-EN)
-- [ ] Fixed `LaTeX` rendering (on CLI-ZH_CN)
+- [x] Fixed `LaTeX` rendering (on CLI-ZH_CN)
 
 ## How to use
 
