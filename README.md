@@ -29,6 +29,7 @@ pip install -r requirements.txt
 ```
 #### 其他
 - [wkhtmltopdf](https://wkhtmltopdf.org/downloads.html)，下载压缩包，解压放进`wkhtmltopdf`文件夹中
+> 这个是转pdf用的，不过在将来应该会弃用；  
 > 文件结构应该是：
 > ```
 > GOT-OCR-2-GUI
@@ -43,6 +44,8 @@ pip install -r requirements.txt
 > │        └─...
 > ```
 - [Edge WebDriver](https://developer.microsoft.com/zh-cn/microsoft-edge/tools/webdriver/?form=MA13LH#downloads)，下载压缩包，放进`edge_driver`文件夹中
+> 这个是转pdf用的，但还在开发；  
+> 至于为什么要用这个玩意转pdf，大概就是因为这个模型出的HTML比较特别，一般的库它转不了，用`LaTeX`又太大了。我就选了一个最笨但也最管用的方法，就是直接用浏览器打开这个HTML，再把标签页做成pdf  
 > 文件结构应该是：
 > ```
 > GOT-OCR-2-GUI
