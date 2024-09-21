@@ -20,12 +20,10 @@
 > 如果这里面提到的文件夹你没有，那就新建一个
 ### 依赖
 #### 使用`pip`安装
-- gradio
-- transformers
-- pdfkit
-- beautifulsoup4
-- matplotlib
-> 基于`matplotlib`的功能仍在开发中，暂时可以不装（如果你不用`tests`文件夹里的玩意的话）
+- 参考`requirements.txt`
+```commandline
+pip install -r requirements.txt
+```
 #### 其他
 - [wkhtmltopdf](https://wkhtmltopdf.org/downloads.html)，下载压缩包，解压放进`wkhtmltopdf`文件夹中
 > 文件结构应该是：

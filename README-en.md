@@ -30,13 +30,10 @@ Usage method
 ### Dependence
 
 #### Use `pip` to install
-
-*   gradio
-*   transformers
-*   pdfkit
-*   beautifulsoup4
-*   matplotlib
-> functions based on `matplotlib` is still under development, you can ignore this for a while (if you don't use things inside `tests` folder)
+- see `requirements.txt`
+```commandline
+pip install -r requirements.txt
+```
 
 #### Other
 

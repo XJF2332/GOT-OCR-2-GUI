@@ -2,8 +2,6 @@
 /imgs/
 *.pdf
 *.html
-/tests/*.html
-/tests/*.pdf
 /wkhtmltopdf/
 /tests/wkhtmltopdf/
 /result/
@@ -11,3 +9,6 @@
 *.tex
 *.aux
 *.log
+/venv/
+/edge_driver/
+/tests/
