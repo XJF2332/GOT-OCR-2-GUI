@@ -207,6 +207,7 @@ def do_ocr(image):
         img_name_no_ext = os.path.splitext(img_name)[0]
         html_gb2312_path = f"./result/{img_name_no_ext}-gb2312.html"
         html_utf8_path = f"./result/{img_name_no_ext}-utf8.html"
+        html_utf8_local_path = f"./result/{img_name_no_ext}-utf8-local.html"
         # render ocr results
         print("Rendering OCR results...")
         model.chat(tokenizer, image, ocr_type='format', render=True, save_render_file=html_gb2312_path)
@@ -215,8 +216,8 @@ def do_ocr(image):
         print("-"*10)
         conv = input("Convert HTML to PDF?(y/n): ")
         if conv.lower() == 'y':
-            repalce_html_content(html_utf8_path, html_utf8_path)
-            html2pdf.output_pdf(html_utf8_path, f"./result/{img_name_no_ext}.pdf")
+            repalce_html_content(html_utf8_path, html_utf8_local_path)
+            html2pdf.output_pdf(html_utf8_local_path, f"./result/{img_name_no_ext}.pdf")
             print(f"Converted PDF saved to {img_name_no_ext}.pdf")
         elif conv.lower() == 'n':
             print("Exiting program...")
