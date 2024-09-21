@@ -5,7 +5,7 @@
 ## 关于此项目
 
 模型权重：https://hf-mirror.com/stepfun-ai/GOT-OCR2_0  
-原Github：https://github.com/Ucas-HaoranWei/GOT-OCR2.0/  
+原GitHub：https://github.com/Ucas-HaoranWei/GOT-OCR2.0/  
 感谢GLM4提供的一部分代码（因为本人实在是菜，所以不得不用一下AI）  
 其实CLI的开发比GUI还要慢，不过我现在打算先把GUI的改动同步到CLI，然后先更新CLI，等CLI稳定后再更新GUI
 
@@ -14,10 +14,10 @@
 ## 转换为pdf的开发进度
 - [x] 初步实现功能（位于GUI版本中）
 - [x] 初步实现功能（位于CLI-EN版本中）
-- [ ] 初步实现功能（位于CLI-CN版本中）
+- [ ] 初步实现功能（位于CLI-ZH_CN版本中）
 - [ ] 修复`LaTeX`的渲染问题（位于GUI版本中）
 - [x] 修复`LaTeX`的渲染问题（位于CLI-EN版本中）
-- [ ] 修复`LaTeX`的渲染问题（位于CLI-CN版本中）
+- [ ] 修复`LaTeX`的渲染问题（位于CLI-ZH_CN版本中）
 
 ## 使用方法
 > 如果这里面提到的文件夹你没有，那就新建一个
