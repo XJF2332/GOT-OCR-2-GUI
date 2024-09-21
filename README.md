@@ -4,12 +4,9 @@
 ![img.png](img.png)
 ## 关于此项目
 
-模型权重：https://hf-mirror.com/stepfun-ai/GOT-OCR2_0 
-
-原Github：https://github.com/Ucas-HaoranWei/GOT-OCR2.0/
-
-感谢GLM4提供的一部分代码（因为本人实在是菜，所以不得不用一下AI）
-
+模型权重：https://hf-mirror.com/stepfun-ai/GOT-OCR2_0  
+原Github：https://github.com/Ucas-HaoranWei/GOT-OCR2.0/  
+感谢GLM4提供的一部分代码（因为本人实在是菜，所以不得不用一下AI）  
 其实CLI的开发比GUI还要慢，不过我现在打算先把GUI的改动同步到CLI，然后先更新CLI，等CLI稳定后再更新GUI
 
 点个star吧
@@ -39,10 +36,15 @@ pip install -r requirements.txt
 > │     └─wkhtmltox
 > │        └─...
 > ```
-- [LaTeX](https://www.latex-project.org/get/#tex-distributions)
-> 记得把`LaTeX`放进`Path`环境变量
-> 
-> 基于`LaTeX`的功能仍在开发中，暂时可以不装（如果你不用`tests`文件夹里的玩意的话）
+- [Edge WebDriver](https://developer.microsoft.com/zh-cn/microsoft-edge/tools/webdriver/?form=MA13LH#downloads)，下载压缩包，放进`edge_driver`文件夹中
+> 用来转pdf的，但是暂时还没有正式上线  
+> 文件结构应该是：
+> ```
+> GOT-OCR-2-GUI
+> └─edge_driver
+>    ├─msedgedriver.exe
+>    └─...
+> ```
 
 ### 下载模型文件
 1. 下载到`models`文件夹中
@@ -54,9 +56,6 @@ GOT-OCR-2-GUI
 │  ├─model.safetensors
 │  ├─config.json
 │  └─你在huggingface下载的其他文件
-├─CLI-EN.py
-├─GUI-ZH_CN.py
-├─GUI-EN.py
 └─...
 ```
 ### 开始使用
@@ -64,5 +63,5 @@ GOT-OCR-2-GUI
 2. 用GUI的可以不管，不过用CLI的各位记得把要OCR的图放进`imgs`文件夹里（CLI目前只检测`.jpg`和`.png`图片）
 
 ## 其他
-- 非必要不需要用`tests`文件夹中的内容
+- 转pdf的功能暂时还不能正确渲染LaTeX，慎重使用
 - 脚本闪退的话可以试一下用`cmd`跑`python +文件名`，我自己测试时会出现闪退的情况，我也不知道为什么
