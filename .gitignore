@@ -4,7 +4,8 @@
 *.html
 /wkhtmltopdf/
 /tests/wkhtmltopdf/
-/result/
+/result/*.html
+/result/*.pdf
 /.idea/
 *.tex
 *.aux
