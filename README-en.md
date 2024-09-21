@@ -15,9 +15,7 @@ The development of a command-line interface (CLI) is actually slower than that o
 Click a star, please
 
 ## Development process of pdf conversion
-- [x] It works! (on GUI)
-- [x] It works! (on CLI-EN)
-- [x] It works! (on CLI-ZH_CN)
+- [x] It works!
 - [x] Fixed `LaTeX` rendering (on GUI-EN)
 - [ ] Fixed `LaTeX` rendering (on GUI-ZH_CN)
 - [x] Fixed `LaTeX` rendering (on CLI-EN)
