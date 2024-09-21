@@ -1,8 +1,7 @@
 import os
 from transformers import AutoModel, AutoTokenizer
-import pdfkit
-from bs4 import BeautifulSoup
 import re
+import html2pdf
 
 # Load the model and tokenizer
 print("正在加载模型...")
@@ -45,6 +44,16 @@ def convert_html_encoding(input_file_path, output_file_path):
     # utf8
     with open(output_file_path, 'w', encoding='utf-8') as file:
         file.write(content)
+
+
+def repalce_html_content(input_file_path, output_file_path):
+    pattern = r'https://cdn.jsdelivr.net/npm/mathpix-markdown-it@1.3.6/es5/bundle.js'
+    replacement = 'markdown-it.js'
+    with open(input_file_path, 'r', encoding='utf-8') as file:
+        content = file.read()
+    new_html_content = re.sub(pattern, replacement, content)
+    with open(output_file_path, 'w', encoding='utf-8') as file:
+        file.write(new_html_content)
 
 
 # do OCR
@@ -164,12 +173,23 @@ def do_ocr(image):
         img_name_no_ext = os.path.splitext(img_name)[0]
         html_gb2312_path = f"./result/{img_name_no_ext}-gb2312.html"
         html_utf8_path = f"./result/{img_name_no_ext}-utf8.html"
+        html_utf8_local_path = f"./result/{img_name_no_ext}-utf8-local.html"
         # render ocr results
         print("")
         print("正在渲染结果...")
         model.chat(tokenizer, image, ocr_type='format', render=True, save_render_file=html_gb2312_path)
         convert_html_encoding(html_gb2312_path, html_utf8_path)
         print(f"渲染结果已保存为 {html_gb2312_path} 和 {html_utf8_path}")
+        print("-" * 10)
+        conv = input("把HTML转换成PDF吗？(y/n)：")
+        if conv.lower() == 'y':
+            repalce_html_content(html_utf8_path, html_utf8_local_path)
+            html2pdf.output_pdf(html_utf8_local_path, f"./result/{img_name_no_ext}.pdf")
+            print(f"PDF已保存为 ./result/{img_name_no_ext}.pdf\n")
+        elif conv.lower() == 'n':
+            print("正在退出...")
+        else:
+            print("无效选择")
     elif ocr_choice == '---QUIT':
         print("")
         print("正在退出...")

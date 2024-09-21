@@ -1,10 +1,7 @@
 import os
 from transformers import AutoModel, AutoTokenizer
-import pdfkit
 import re
 import html2pdf
-
-config = pdfkit.configuration(wkhtmltopdf='./wkhtmltopdf/bin/wkhtmltopdf.exe')
 
 # Load the model and tokenizer
 print("Loading model...")
@@ -159,7 +156,7 @@ def do_ocr(image):
         if conv.lower() == 'y':
             repalce_html_content(html_utf8_path, html_utf8_local_path)
             html2pdf.output_pdf(html_utf8_local_path, f"./result/{img_name_no_ext}.pdf")
-            print(f"Converted PDF saved to {img_name_no_ext}.pdf")
+            print(f"Converted PDF saved to ./results/{img_name_no_ext}.pdf\n")
         elif conv.lower() == 'n':
             print("Exiting program...")
         else:
