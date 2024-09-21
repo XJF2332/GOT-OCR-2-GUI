@@ -6,7 +6,7 @@
 
 模型权重：https://hf-mirror.com/stepfun-ai/GOT-OCR2_0  
 原GitHub：https://github.com/Ucas-HaoranWei/GOT-OCR2.0/  
-感谢GLM4提供的一部分代码（因为本人实在是菜，所以不得不用一下AI）  
+感谢GLM4提供的一部分代码（技术太菜了，所以不得不用一下AI）  
 其实CLI的开发比GUI还要慢，不过我现在打算先把GUI的改动同步到CLI，然后先更新CLI，等CLI稳定后再更新GUI
 
 点个star吧
