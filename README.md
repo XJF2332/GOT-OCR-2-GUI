@@ -96,8 +96,7 @@ GOT-OCR-2-GUI
 - Will be saved as UTF8 encoding and GB2312 encoding files
 - You can convert HTML to PDF
 ### **How to render**
-1. Input image name in the text box, this will become the base name of the output files
-2. Click the "Submit Image Name" button to apply the name
-3. You will find that three textboxes below changed, which means the name has been applied
-4. Click the "Save as PDF" button to save the HTML file as a PDF file
+1. CLI will automaticlly get image name  
+2. HTML files will be saved in `result` folder
+3. If you want to convert HTML to PDF, just enter `y` when the CLI ask you
 

@@ -84,3 +84,26 @@ GOT-OCR-2-GUI
 - If the script crashes, you can try running `cmd` with `python + file name`, I encountered crashes during testing, but I don't know why
 - Make sure hat you installed the gpu version of `torch`
 
+## Simple Tutorial
+> For GUI users, the tutorial is in the GUI, you can just open the GUI and follow the instructions
+
+### **Modes**
+#### `OCR` Modes
+- ocr: Standard OCR
+- format: OCR with formatting
+#### `Fine-Grained` Modes
+- fine-grained-ocr: OCR content within a specific box
+- fine-grained-format: OCR and format content within a specific box
+- fine-grained-color-ocr: OCR content within a box of a specific color (I haven't tried this, but it seems like you would need to draw a red/green/blue box first and then select the color in the GUI)
+- fine-grained-color-format: OCR and format content within a box of a specific color
+#### `Multi-Crop` Modes
+- Suitable for more complex images
+#### `Render` Modes
+- Exist files will be overwritten!!!Check the file path before clicking the button!!!
+- Render OCR content and save it as an HTML file
+- Will be saved as UTF8 encoding and GB2312 encoding files
+- You can convert HTML to PDF
+### **How to render**
+1. CLI will automaticlly get image name  
+2. HTML files will be saved in `result` folder
+3. If you want to convert HTML to PDF, just enter `y` when the CLI ask you
