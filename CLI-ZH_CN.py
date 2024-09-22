@@ -1,3 +1,5 @@
+print("正在导入必要的库...")
+
 import os
 from transformers import AutoModel, AutoTokenizer
 import re
@@ -62,7 +64,7 @@ def do_ocr(image):
         os.makedirs("./result")
 
     # main menu
-    print("-" * 10)
+    print("")
     print("选择OCR模式：")
     print("1. 普通OCR")
     print("2. 格式化OCR")
@@ -94,6 +96,7 @@ def do_ocr(image):
             if fine_grained_mode.lower() == 'b':
                 print("")
                 box = input("输入框的坐标[x1,y1,x2,y2]：")
+                print("")
                 res = model.chat(tokenizer, image, ocr_type='ocr', ocr_box=box)
                 print("")
                 print(res)
@@ -101,6 +104,7 @@ def do_ocr(image):
             elif fine_grained_mode.lower() == 'c':
                 print("")
                 color = input("输入颜色（red/blue/green）：")
+                print("")
                 res = model.chat(tokenizer, image, ocr_type='ocr', ocr_color=color)
                 print("")
                 print(res)
@@ -108,6 +112,7 @@ def do_ocr(image):
             else:
                 print("")
                 print("无效选择，使用默认值（普通OCR）")
+                print("")
                 res = model.chat(tokenizer, image, ocr_type='ocr')
                 print("")
                 print(res)
@@ -176,20 +181,20 @@ def do_ocr(image):
         html_utf8_local_path = f"./result/{img_name_no_ext}-utf8-local.html"
         # render ocr results
         print("")
-        print("正在渲染结果...")
+        print("正在渲染结果...\n")
         model.chat(tokenizer, image, ocr_type='format', render=True, save_render_file=html_gb2312_path)
         convert_html_encoding(html_gb2312_path, html_utf8_path)
         print(f"渲染结果已保存为 {html_gb2312_path} 和 {html_utf8_path}")
-        print("-" * 10)
+        print("")
         conv = input("把HTML转换成PDF吗？(y/n)：")
         if conv.lower() == 'y':
             repalce_html_content(html_utf8_path, html_utf8_local_path)
             html2pdf.output_pdf(html_utf8_local_path, f"./result/{img_name_no_ext}.pdf")
-            print(f"PDF已保存为 ./result/{img_name_no_ext}.pdf\n")
+            print(f"\nPDF已保存为 ./result/{img_name_no_ext}.pdf\n")
         elif conv.lower() == 'n':
-            print("正在退出...")
+            print("\n正在退出...")
         else:
-            print("无效选择")
+            print("\n无效选择")
     elif ocr_choice == '---QUIT':
         print("")
         print("正在退出...")
