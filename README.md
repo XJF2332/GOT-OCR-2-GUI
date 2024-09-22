@@ -74,3 +74,30 @@ GOT-OCR-2-GUI
 - 脚本闪退的话可以试一下用`cmd`跑`python +文件名`，我自己测试时会出现闪退的情况，我也不知道为什么
 - `result`文件夹里的`markdown-it.js`不要删除，否则 pdf 导出会出错！
 - 确保你安装的`torch`是 gpu 版本
+
+## 简单的教程
+> GUI 的教程已经内置到了 UI 中，直接打开 GUI 就能看到了  
+> 由于中文版 GUI 的功能暂不完善，这里只提供英文版教程
+
+### **Modes**
+#### `OCR` Modes
+- ocr: Standard OCR
+- format: OCR with formatting
+#### `Fine-Grained` Modes
+- fine-grained-ocr: OCR content within a specific box
+- fine-grained-format: OCR and format content within a specific box
+- fine-grained-color-ocr: OCR content within a box of a specific color (I haven't tried this, but it seems like you would need to draw a red/green/blue box first and then select the color in the GUI)
+- fine-grained-color-format: OCR and format content within a box of a specific color
+#### `Multi-Crop` Modes
+- Suitable for more complex images
+#### `Render` Modes
+- Exist files will be overwritten!!!Check the file path before clicking the button!!!
+- Render OCR content and save it as an HTML file
+- Will be saved as UTF8 encoding and GB2312 encoding files
+- You can convert HTML to PDF
+### **How to render**
+1. Input image name in the text box, this will become the base name of the output files
+2. Click the "Submit Image Name" button to apply the name
+3. You will find that three textboxes below changed, which means the name has been applied
+4. Click the "Save as PDF" button to save the HTML file as a PDF file
+

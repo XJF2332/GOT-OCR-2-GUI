@@ -154,22 +154,24 @@ with gr.Blocks() as demo:
                 save_as_pdf_info = gr.Textbox(show_label=False, interactive=False)
 
     gr.Markdown("""
-    ### 使用教程
-    #### ocr模式
-    - ocr：普通的ocr
-    - format：ocr并格式化
-    #### fine-grained模式
-    - fine-grained-ocr：ocr特定的框中的内容
-    - fine-grained-format：ocr并格式化特定的框中的内容
-    - fine-grained-color-ocr：ocr特定颜色的框中的内容（我还没用过，大概是要先用红/绿/蓝色画框再在GUI里选择颜色）
-    - fine-grained-color-format：ocr并格式化特定颜色的框中的内容
-    #### multi-crop模式
+    ## 使用教程
+    ### **模式选择**
+    #### `ocr`模式
+    - ocr：普通的 ocr
+    - format：ocr 并格式化
+    #### `fine-grained`模式
+    - fine-grained-ocr：ocr 特定的框中的内容
+    - fine-grained-format：ocr 并格式化特定的框中的内容
+    - fine-grained-color-ocr：ocr 特定颜色的框中的内容（我还没用过，大概是要先用红/绿/蓝色画框再在 GUI 里选择颜色）
+    - fine-grained-color-format：ocr 并格式化特定颜色的框中的内容
+    #### `multi-crop`模式
     - 适用于更复杂的图片
-    #### render模式
+    #### `render`模式
     - 已经存在的文件会被覆盖！！！渲染前查看是否有以及存在的文件！！！
-    - 渲染图片中的文字，并保存为html文件
-    - 同时具有GB2312和UTF8编码
-    - 可以转换html为pdf，pdf为UTF8编码
+    - 渲染图片中的文字，并保存为 html 文件
+    - 同时具有 GB2312 和 UTF8 编码
+    - 可以转换 html 为 pdf ， pdf 为 UTF8 编码
+    ### **使用`render`模式**
     """)
 
     do_ocr.click(
