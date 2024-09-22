@@ -184,11 +184,13 @@ def do_ocr(image):
         html_utf8_path = f"./result/{img_name_no_ext}-utf8.html"
         html_utf8_local_path = f"./result/{img_name_no_ext}-utf8-local.html"
         # render ocr results
+        print("")
         print("Rendering OCR results...")
         print("")
         model.chat(tokenizer, image, ocr_type='format', render=True, save_render_file=html_gb2312_path)
         print("")
         convert_html_encoding(html_gb2312_path, html_utf8_path)
+        print("")
         print(f"Rendered OCR results saved to {html_gb2312_path} and {html_utf8_path}")
         print("")
         conv = input("Convert HTML to PDF?(y/n): ")
