@@ -4,19 +4,20 @@
 ![img.png](img.png)
 ## 关于此项目
 
-模型权重：https://hf-mirror.com/stepfun-ai/GOT-OCR2_0  
-原GitHub：https://github.com/Ucas-HaoranWei/GOT-OCR2.0/  
-感谢GLM4提供的一部分代码（技术太菜了，所以不得不用一下AI）  
-其实CLI的开发比GUI还要慢，不过我现在打算先把GUI的改动同步到CLI，然后先更新CLI，等CLI稳定后再更新GUI
+模型权重：[镜像站](https://hf-mirror.com/stepfun-ai/GOT-OCR2_0)；[原站点](https://huggingface.co/stepfun-ai/GOT-OCR2_0)  
+原GitHub：[GOT-OCR2.0](https://github.com/Ucas-HaoranWei/GOT-OCR2.0/)  
+感谢[ GLM4 ](https://chatglm.cn/main/alltoolsdetail?lang=zh)提供的一部分代码（技术太菜了，所以不得不用一下 AI ）  
+~~其实 CLI 的开发比 GUI 还要慢，不过我现在打算先把 GUI 的改动同步到 CLI ，然后先更新 CLI ，等 CLI 稳定后再更新 GUI~~
+CLI 和 GUI 的进度已经同步
 
 点个star吧
 
-## 转换为pdf的开发进度
+## 转换为 pdf 的开发进度
 - [x] 初步实现功能
-- [x] 修复`LaTeX`的渲染问题（位于GUI-EN版本中）
-- [ ] 修复`LaTeX`的渲染问题（位于GUI-ZH_CN版本中）
-- [x] 修复`LaTeX`的渲染问题（位于CLI-EN版本中）
-- [x] 修复`LaTeX`的渲染问题（位于CLI-ZH_CN版本中）
+- [x] 修复`LaTeX`的渲染问题（位于`GUI-EN`版本中）
+- [ ] 修复`LaTeX`的渲染问题（位于`GUI-ZH_CN`版本中）
+- [x] 修复`LaTeX`的渲染问题（位于`CLI-EN`版本中）
+- [x] 修复`LaTeX`的渲染问题（位于`CLI-ZH_CN`版本中）
 
 ## 使用方法
 > 如果这里面提到的文件夹你没有，那就新建一个
@@ -28,7 +29,7 @@ pip install -r requirements.txt
 ```
 #### 其他
 - [wkhtmltopdf](https://wkhtmltopdf.org/downloads.html)，下载压缩包，解压放进`wkhtmltopdf`文件夹中
-> 这个是转pdf用的，不过在将来应该会弃用；  
+> 这个是转 pdf 用的，不过在将来应该会弃用；  
 > 文件结构应该是：
 > ```
 > GOT-OCR-2-GUI
@@ -43,8 +44,8 @@ pip install -r requirements.txt
 > │        └─...
 > ```
 - [Edge WebDriver](https://developer.microsoft.com/zh-cn/microsoft-edge/tools/webdriver/?form=MA13LH#downloads)，下载压缩包，放进`edge_driver`文件夹中
-> 这个是转pdf用的，但还在开发；  
-> 至于为什么要用这个玩意转pdf，大概就是因为这个模型出的HTML比较特别，一般的库它转不了，用`LaTeX`又太大了。我就选了一个最笨但也最管用的方法，就是直接用浏览器打开这个HTML，再把标签页做成pdf  
+> 这个是转 pdf 用的，但还在开发；  
+> 大伙的电脑里应该都有 edge 吧？应该吧？这玩意可是预装的来着......  
 > 文件结构应该是：
 > ```
 > GOT-OCR-2-GUI
@@ -67,9 +68,9 @@ GOT-OCR-2-GUI
 ```
 ### 开始使用
 1. 选一个你喜欢的脚本打开
-2. 用GUI的可以不管，不过用CLI的各位记得把要OCR的图放进`imgs`文件夹里（CLI目前只检测`.jpg`和`.png`图片）
+2. 用 GUI 的可以不管，不过用 CLI 的各位记得把要OCR的图放进`imgs`文件夹里（ CLI 目前只检测`.jpg`和`.png`图片）
 
 ## 注意事项
 - 脚本闪退的话可以试一下用`cmd`跑`python +文件名`，我自己测试时会出现闪退的情况，我也不知道为什么
-- `result`文件夹里的`markdown-it.js`不要删除，否则pdf导出会出错！
-- 确保你安装的`torch`是gpu版本
+- `result`文件夹里的`markdown-it.js`不要删除，否则 pdf 导出会出错！
+- 确保你安装的`torch`是 gpu 版本
