@@ -35,22 +35,8 @@ pip install -r requirements.txt
 
 #### 其他
 
-- [wkhtmltopdf](https://wkhtmltopdf.org/downloads.html)，下载压缩包，解压放进`wkhtmltopdf`文件夹中
-
-> 这个是转 pdf 用的，不过在将来应该会弃用；  
-> 文件结构应该是：
-> ```
-> GOT-OCR-2-GUI
-> ├─wkhtmltopdf
-> │  ├─bin
-> │  │  ├─wkhtmltopdf.exe
-> │  │  ├─wkhtmltox.dll
-> │  │  ├─libwkhtmltox.a
-> │  │  └─wkhtmltoimage.exe
-> │  └─include
-> │     └─wkhtmltox
-> │        └─...
-> ```
+- ~~[wkhtmltopdf](https://wkhtmltopdf.org/downloads.html)，下载压缩包，解压放进`wkhtmltopdf`文件夹中~~
+> 已经迁移到了 Edge WebDriver，此依赖项不需要再安装了
 
 - [Edge WebDriver](https://developer.microsoft.com/zh-cn/microsoft-edge/tools/webdriver/?form=MA13LH#downloads)
   ，下载压缩包，放进`edge_driver`文件夹中

@@ -21,7 +21,7 @@
   "crop_mode": "纯文本（P）还是格式化（F）：",
   "crop_mode_error": "无效选择，退回到默认模式（纯文本OCR）......",
   "render_mode_rendering": "正在渲染......",
-  "render_mode_success": "Rendered OCR results saved to {html_gb2312_path} and {html_utf8_path}",
+  "render_mode_success": "渲染结果已保存到 {html_gb2312_path} 和 {html_utf8_path}",
   "pdf_convert_ask": "是否将PDF转换为图片？(Y/N)",
   "pdf_convert_success": "PDF已保存为 ./results/{img_name_no_ext}.pdf",
   "pdf_convert_refused": "正在退出......",
