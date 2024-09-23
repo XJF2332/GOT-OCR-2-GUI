@@ -66,6 +66,7 @@ GOT-OCR-2-GUI
 
 ## Tips
 - DO NOT DELETE `markdown-it.js` inside `result` folder, or pdf outputting may fail
+> If you deleted it, you can find a backup in `scripts` folder. Just copy it to `result` folder.
 - If the script crashes, you can try running `cmd` with `python + file name`, I encountered crashes during testing, but I don't know why
 - Make sure hat you installed the gpu version of `torch`
 
