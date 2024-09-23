@@ -44,7 +44,6 @@ pip install -r requirements.txt
 - [Edge WebDriver](https://developer.microsoft.com/zh-cn/microsoft-edge/tools/webdriver/?form=MA13LH#downloads)
   ，下载压缩包，放进`edge_driver`文件夹中
 
-> 这个是转 pdf 用的，但还在开发；  
 > 大伙的电脑里应该都有 edge 吧？应该吧？这玩意可是预装的来着......  
 > 文件结构应该是：
 > ```
