@@ -4,7 +4,7 @@ from transformers import AutoModel, AutoTokenizer
 import gradio as gr
 import os
 import re
-import html2pdf
+import scripts.html2pdf as html2pdf
 
 print("Loading model...")
 tokenizer = AutoTokenizer.from_pretrained('models', trust_remote_code=True)

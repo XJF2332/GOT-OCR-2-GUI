@@ -3,7 +3,7 @@ print("Importing libraries...")
 import os
 from transformers import AutoModel, AutoTokenizer
 import re
-import html2pdf
+import scripts.html2pdf as html2pdf
 
 # Load the model and tokenizer
 print("Loading model...")

@@ -3,7 +3,7 @@ print("正在导入必要的库...")
 import os
 from transformers import AutoModel, AutoTokenizer
 import re
-import html2pdf
+import scripts.html2pdf as html2pdf
 
 # Load the model and tokenizer
 print("正在加载模型...")
