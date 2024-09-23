@@ -17,10 +17,7 @@ Click a star, please
 
 ## Development process of pdf conversion
 - [x] It works!
-- [x] Fixed `LaTeX` rendering (on GUI-EN)
-- [ ] Fixed `LaTeX` rendering (on GUI-ZH_CN)
-- [x] Fixed `LaTeX` rendering (on CLI-EN)
-- [x] Fixed `LaTeX` rendering (on CLI-ZH_CN)
+- [x] Fixed `LaTeX` rendering
 
 ## How to use
 
