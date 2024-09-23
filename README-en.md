@@ -125,4 +125,3 @@ GOT-OCR-2-GUI
 1. CLI will automaticlly get image name
 2. HTML files will be saved in `result` folder
 3. If you want to convert HTML to PDF, just enter `y` when the CLI ask you
-4. DO NOT DELETE the `markdown-it.js` in your `result` folder, or you may encounter errors when rendering PDF
