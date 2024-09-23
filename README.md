@@ -6,18 +6,20 @@
 
 ## 关于此项目
 
-模型权重：[镜像站](https://hf-mirror.com/stepfun-ai/GOT-OCR2_0)；[原站点](https://huggingface.co/stepfun-ai/GOT-OCR2_0)  
+模型权重：[镜像站](https://hf-mirror.com/stepfun-ai/GOT-OCR2_0)，[原站点](https://huggingface.co/stepfun-ai/GOT-OCR2_0)  
 原GitHub：[GOT-OCR2.0](https://github.com/Ucas-HaoranWei/GOT-OCR2.0/)  
 感谢[ GLM4 ](https://chatglm.cn/main/alltoolsdetail?lang=zh)提供的一部分代码（技术太菜了，所以不得不用一下 AI ）  
-~~其实 CLI 的开发比 GUI 还要慢，不过我现在打算先把 GUI 的改动同步到 CLI ，然后先更新 CLI ，等 CLI 稳定后再更新 GUI~~  
-CLI 和 GUI 的进度已经同步
+这个项目是在 Windows 下开发的，我本人没用过也不会 Linux，不能确保它能够在 Linux 下正常运行，如果你要在 Linux 下部署，可以参考一下这个 [issue](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/3)
 
 点个star吧
 
-## 转换为 pdf 的开发进度
+## 最新开发进度
 
-- [x] 初步实现功能
-- [x] 修复`LaTeX`的渲染问题
+- [x] 初步实现 PDF 导出功能
+- [x] 修复 PDF 中`LaTeX`的渲染问题
+- [x] 现在已经可以用`Locales`中的`.json`文件来给 CLI 设置语言了
+- [ ] 在 GUI 中实现用`.json`设置语言的功能
+- [ ] 写一个脚本来管理 CLI 和 GUI 的语言配置文件（你现在可以在`Locales`里的`config.json`中手动修改语言设置，默认是中文）
 
 ## 使用方法
 
@@ -36,6 +38,7 @@ pip install -r requirements.txt
 #### 其他
 
 - ~~[wkhtmltopdf](https://wkhtmltopdf.org/downloads.html)，下载压缩包，解压放进`wkhtmltopdf`文件夹中~~
+
 > 已经迁移到了 Edge WebDriver，此依赖项不需要再安装了
 
 - [Edge WebDriver](https://developer.microsoft.com/zh-cn/microsoft-edge/tools/webdriver/?form=MA13LH#downloads)
@@ -76,7 +79,9 @@ GOT-OCR-2-GUI
 
 - 脚本闪退的话可以试一下用`cmd`跑`python +文件名`，我自己测试时会出现闪退的情况，我也不知道为什么
 - `result`文件夹里的`markdown-it.js`不要删除，否则 pdf 导出会出错！
+
 > 如果你不小心删除了，可以在`scripts`文件夹里找到备份，复制一份过去就行了
+
 - 确保你安装的`torch`是 gpu 版本
 
 ## 简单的教程
