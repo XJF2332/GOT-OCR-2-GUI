@@ -41,7 +41,6 @@ orjson==3.10.7
 outcome==1.3.0.post0
 packaging==24.1
 pandas==2.2.3
-pdfkit==1.0.0
 pillow==10.4.0
 psutil==6.0.0
 pycparser==2.22

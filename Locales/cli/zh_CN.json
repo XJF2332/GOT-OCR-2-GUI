@@ -23,10 +23,10 @@
   "render_mode_rendering": "正在渲染......",
   "render_mode_success": "渲染结果已保存到 {html_gb2312_path} 和 {html_utf8_path}",
   "pdf_convert_ask": "是否将PDF转换为图片？(Y/N)",
-  "pdf_convert_success": "PDF已保存为 ./results/{img_name_no_ext}.pdf",
+  "pdf_convert_success": "PDF已保存为 ./result/{img_name_no_ext}.pdf",
   "pdf_convert_refused": "正在退出......",
   "pdf_convert_error": "无效选择",
   "ocr_mode_error": "无效选择，退回到默认模式（纯文本OCR）......",
   "ocr_mode_quit": "正在退出......",
-  "quit": "输入---QUIT来退出程序"
+  "quit": "\n输入---QUIT来退出程序\n"
 }

@@ -7,7 +7,7 @@ import time
 
 def output_pdf(html_path, pdf_path):
     # 设置EdgeDriver的路径
-    edge_driver_path = os.path.abspath('../edge_driver/msedgedriver.exe')
+    edge_driver_path = os.path.abspath('./edge_driver/msedgedriver.exe')
 
     # 设置本地HTML文件的路径
     html_file_path = 'file://' + os.path.abspath(html_path)

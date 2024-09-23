@@ -1,4 +1,15 @@
-print("Importing libraries...")
+import json
+
+print("Loading config...")
+
+with open('Locales/cli/config.json', 'r', encoding='utf-8') as file:
+    config = json.load(file)
+    lang = config['language']
+
+with open(f'Locales/cli/{lang}.json', 'r', encoding='utf-8') as file:
+    local = json.load(file)
+
+print(local["import_libs"])
 
 import os
 from transformers import AutoModel, AutoTokenizer
@@ -6,12 +17,12 @@ import re
 import scripts.html2pdf as html2pdf
 
 # Load the model and tokenizer
-print("Loading model...")
+print(local["load_models"])
 tokenizer = AutoTokenizer.from_pretrained('models', trust_remote_code=True)
 model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_usage=True, device_map='cuda',
                                   use_safetensors=True, pad_token_id=tokenizer.eos_token_id)
 model = model.eval().cuda()
-print("Model loaded successfully.")
+print(local["load_models_success"])
 
 
 # img selection
@@ -19,17 +30,17 @@ def select_image():
     img_folder = 'imgs'
     img_files = [f for f in os.listdir(img_folder) if
                  os.path.isfile(os.path.join(img_folder, f)) and f.lower().endswith(('.jpg', '.png'))]
-    print("Available images:")
+    print(local["avaliable_imgs"])
     for i, file in enumerate(img_files):
         print(f"{i + 1}. {file}")
-    choice = input("Select an image by number: ")
+    choice = input(local["img_select"])
     if choice == "---QUIT":
-        print("Exiting...")
+        print(local["img_select_quit"])
         exit()
     else:
         choice = int(choice)
         if choice < 1 or choice > len(img_files):
-            print("Invalid choice.")
+            print(local["img_select_error"])
             exit()
         else:
             choice = choice - 1
@@ -65,13 +76,13 @@ def do_ocr(image):
 
     # main menu
     print("")
-    print("Choose OCR mode:")
-    print("1. Plain OCR")
-    print("2. Format OCR")
-    print("3. Fine-grained OCR")
-    print("4. Multi-crop OCR")
-    print("5. Render as HTML")
-    ocr_choice = input("Enter your choice (1-5) or ---QUIT to exit: ")
+    print(local["ocr_mode"])
+    print(local["plaintext_ocr"])
+    print(local["format_ocr"])
+    print(local["finegrained_ocr"])
+    print(local["multicrop_ocr"])
+    print(local["render"])
+    ocr_choice = input(local["ocr_mode_select"])
     # plain ocr
     if ocr_choice == '1':
         print("")
@@ -87,15 +98,15 @@ def do_ocr(image):
     # fine-grained ocr
     elif ocr_choice == '3':
         print("")
-        fine_grained_choice = input("Plain(P) or Format(F) OCR: ")
+        fine_grained_choice = input(local["fine_grained_choice"])
         # plain fine-grained ocr
         if fine_grained_choice.lower() == 'p':
             print("")
-            fine_grained_mode = input("Use Box(B) or Color(C): ")
+            fine_grained_mode = input(local["fine_grained_mode"])
             # use box
             if fine_grained_mode.lower() == 'b':
                 print("")
-                box = input("Enter OCR box coordinates [x1,y1,x2,y2]: ")
+                box = eval(input(local["fine_grained_box"]))
                 print("")
                 res = model.chat(tokenizer, image, ocr_type='ocr', ocr_box=box)
                 print("")
@@ -103,7 +114,7 @@ def do_ocr(image):
             # use color
             elif fine_grained_mode.lower() == 'c':
                 print("")
-                color = input("Enter color (red/blue/green): ")
+                color = input(local["fine_grained_color"])
                 print("")
                 res = model.chat(tokenizer, image, ocr_type='ocr', ocr_color=color)
                 print("")
@@ -111,18 +122,18 @@ def do_ocr(image):
             # default to plain ocr
             else:
                 print("")
-                print("Invalid choice. Defaulting to plain OCR.")
+                print(local["fine_grained_error"])
                 print("")
                 res = model.chat(tokenizer, image, ocr_type='ocr')
                 print(res)
         # format fine-grained ocr
         elif fine_grained_choice.lower() == 'f':
             print("")
-            fine_grained_mode = input("Use Box(B) or Color(C): ")
+            fine_grained_mode = input(local["fine_grained_mode"])
             # use box
             if fine_grained_mode.lower() == 'b':
                 print("")
-                box = input("Enter OCR box coordinates [x1,y1,x2,y2]: ")
+                box = eval(input(local["fine_grained_box"]))
                 print("")
                 res = model.chat(tokenizer, image, ocr_type='format', ocr_box=box)
                 print("")
@@ -130,7 +141,7 @@ def do_ocr(image):
             # use color
             elif fine_grained_mode.lower() == 'c':
                 print("")
-                color = input("Enter color (red/blue/green): ")
+                color = input(local["fine_grained_color"])
                 print("")
                 res = model.chat(tokenizer, image, ocr_type='format', ocr_color=color)
                 print("")
@@ -138,7 +149,7 @@ def do_ocr(image):
             # default to format ocr
             else:
                 print("")
-                print("Invalid choice. Defaulting to plain OCR.")
+                print(local["fine_grained_error"])
                 print("")
                 res = model.chat(tokenizer, image, ocr_type='ocr')
                 print("")
@@ -146,7 +157,7 @@ def do_ocr(image):
         # default to plain ocr
         else:
             print("")
-            print("Invalid choice. Defaulting to plain OCR.")
+            print(local["fine_grained_error"])
             print("")
             res = model.chat(tokenizer, image, ocr_type='ocr')
             print("")
@@ -154,7 +165,7 @@ def do_ocr(image):
     # multi-crop ocr
     elif ocr_choice == '4':
         print("")
-        crop_mode = input("Plain(P) or Format(F) OCR: ")
+        crop_mode = input(local["crop_mode"])
         # plain multi-crop ocr
         if crop_mode.lower() == 'p':
             print("")
@@ -170,7 +181,7 @@ def do_ocr(image):
         # default to plain ocr
         else:
             print("")
-            print("Invalid choice. Defaulting to plain OCR.")
+            print(local["crop_mode_error"])
             print("")
             res = model.chat_crop(tokenizer, image, ocr_type='ocr')
             print("")
@@ -185,40 +196,42 @@ def do_ocr(image):
         html_utf8_local_path = f"./result/{img_name_no_ext}-utf8-local.html"
         # render ocr results
         print("")
-        print("Rendering OCR results...")
+        print(local["render_mode_rendering"])
         print("")
         model.chat(tokenizer, image, ocr_type='format', render=True, save_render_file=html_gb2312_path)
         print("")
         convert_html_encoding(html_gb2312_path, html_utf8_path)
         print("")
-        print(f"Rendered OCR results saved to {html_gb2312_path} and {html_utf8_path}")
+        # print(f"Rendered OCR results saved to {html_gb2312_path} and {html_utf8_path}")
+        print(local["render_mode_success"].format(html_gb2312_path=html_gb2312_path, html_utf8_path=html_utf8_path))
         print("")
-        conv = input("Convert HTML to PDF?(y/n): ")
+        conv = input(local["pdf_convert_ask"])
         if conv.lower() == 'y':
             repalce_html_content(html_utf8_path, html_utf8_local_path)
             html2pdf.output_pdf(html_utf8_local_path, f"./result/{img_name_no_ext}.pdf")
             print("")
-            print(f"Converted PDF saved to ./results/{img_name_no_ext}.pdf\n")
+            # print(f"Converted PDF saved to ./results/{img_name_no_ext}.pdf\n")
+            print(local["pdf_convert_success"].format(img_name_no_ext=img_name_no_ext))
         elif conv.lower() == 'n':
             print("")
-            print("Exiting program...")
+            print(local["pdf_convert_refused"])
         else:
             print("")
-            print("Invalid choice.")
+            print(local["pdf_convert_error"])
     # quit
     elif ocr_choice == '---QUIT':
         print("")
-        print("Exiting program...")
+        print(local["ocr_mode_quit"])
     # invalid choice
     else:
         print("")
-        print("Invalid choice. Defaulting to plain OCR.")
+        print(local["ocr_mode_error"])
         res = model.chat(tokenizer, image, ocr_type='ocr')
         print(res)
 
 
 def main():
-    print("\nEnter ---QUIT at any time to exit the program.")
+    print(local["quit"])
     while True:
         image_file = select_image()
         do_ocr(image_file)
