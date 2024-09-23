@@ -2,14 +2,14 @@
 
 ## [See English version here](README-en.md)
 
-![img.png](img.png)
+![img_1.png](img_1.png)
 
 ## 关于此项目
 
 模型权重：[镜像站](https://hf-mirror.com/stepfun-ai/GOT-OCR2_0)；[原站点](https://huggingface.co/stepfun-ai/GOT-OCR2_0)  
 原GitHub：[GOT-OCR2.0](https://github.com/Ucas-HaoranWei/GOT-OCR2.0/)  
 感谢[ GLM4 ](https://chatglm.cn/main/alltoolsdetail?lang=zh)提供的一部分代码（技术太菜了，所以不得不用一下 AI ）  
-~~其实 CLI 的开发比 GUI 还要慢，不过我现在打算先把 GUI 的改动同步到 CLI ，然后先更新 CLI ，等 CLI 稳定后再更新 GUI~~
+~~其实 CLI 的开发比 GUI 还要慢，不过我现在打算先把 GUI 的改动同步到 CLI ，然后先更新 CLI ，等 CLI 稳定后再更新 GUI~~  
 CLI 和 GUI 的进度已经同步
 
 点个star吧

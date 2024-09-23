@@ -1,79 +1,18 @@
+print("正在导入库...")
+
 from transformers import AutoModel, AutoTokenizer
 import gradio as gr
-import pdfkit
 import os
-from bs4 import BeautifulSoup
 import re
+import html2pdf
 
-print("正在加载模型......")
+print("正在加载模型...")
 tokenizer = AutoTokenizer.from_pretrained('models', trust_remote_code=True)
 model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_usage=True, device_map='cuda',
                                   use_safetensors=True, pad_token_id=tokenizer.eos_token_id)
 
 model = model.eval().cuda()
-
-print("加载完成，正在启动Webui......")
-
-config = pdfkit.configuration(wkhtmltopdf='wkhtmltopdf\\bin\wkhtmltopdf.exe')
-
-
-def extract_style_from_html(html_content):
-    soup = BeautifulSoup(html_content, 'html.parser')
-    style_tag = soup.find('style')
-    return style_tag.string if style_tag else ''
-
-
-def extract_const_text_from_script(script_content):
-    # 使用正则表达式来匹配所有被双引号包围的字符串，并保留换行符
-    string_pattern = r'(?<!\\)"(.*?)(?<!\\)"'
-    matches = re.findall(string_pattern, script_content, re.DOTALL)
-    # 将所有匹配的字符串连接起来，并替换掉转义引号
-    const_text = ''.join(matches).replace('\\"', '"')
-    # 替换JavaScript的换行符为HTML的换行符
-    const_text = const_text.replace('\\n', '<br>')
-    return const_text
-
-
-def const_text_to_pdf(input_html_path, output_pdf_path):
-    try:
-        with open(input_html_path, 'r', encoding='utf-8') as file:
-            html_content = file.read()
-
-        # 提取<style>标签内容
-        style_content = extract_style_from_html(html_content)
-
-        # 提取<script>标签内容
-        soup = BeautifulSoup(html_content, 'html.parser')
-        script_tag = soup.find('script')
-        script_content = script_tag.string if script_tag else ''
-
-        # 提取const text内容
-        const_text = extract_const_text_from_script(script_content)
-
-        # 构建完整的HTML文档，包含提取的<style>标签和const text内容
-        styled_text = f"""
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="UTF-8">
-            <style>
-                {style_content}
-            </style>
-        </head>
-        <body>
-            <pre>{const_text}</pre>
-        </body>
-        </html>
-        """
-
-        if not os.path.exists("./result"):
-            os.makedirs("./result")
-
-        # 将const text内容转换为PDF
-        pdfkit.from_string(styled_text, output_pdf_path, configuration=config)
-        return f"转换完成，PDF文件已保存为：{output_pdf_path}"
-    except Exception as e:
-        return f"转换失败：{e}"
+print("模型加载成功，正在启动 Webui...")
 
 
 def convert_html_encoding(input_file_path, output_file_path):
@@ -81,19 +20,48 @@ def convert_html_encoding(input_file_path, output_file_path):
     with open(input_file_path, 'r', encoding='gb2312') as file:
         content = file.read()
 
-    # 以UTF-8编码写入内容到新文件
+    # 以UTF-8写入内容到新文件
     with open(output_file_path, 'w', encoding='utf-8') as file:
         file.write(content)
 
 
+def repalce_html_content(input_file_path, output_file_path):
+    pattern = r'https://cdn.jsdelivr.net/npm/mathpix-markdown-it@1.3.6/es5/bundle.js'
+    replacement = 'markdown-it.js'
+    with open(input_file_path, 'r', encoding='utf-8') as file:
+        content = file.read()
+    new_html_content = re.sub(pattern, replacement, content)
+    with open(output_file_path, 'w', encoding='utf-8') as file:
+        file.write(new_html_content)
+
+
+def func_save_as_pdf(html_utf8_path, html_utf8_local_path, pdf_path):
+    repalce_html_content(html_utf8_path, html_utf8_local_path)
+    html2pdf.output_pdf(html_utf8_local_path, pdf_path)
+    return f"PDF 已保存为{pdf_path}"
+
+
+def build_name(img_name):
+    html_gb2312_path = f"./result/{img_name}-gb2312.html"
+    html_utf8_path = f"./result/{img_name}-utf8.html"
+    return [html_gb2312_path, html_utf8_path]
+
+
+def func_submit_name(img_name):
+    html_utf8_path = f"./result/{img_name}-utf8.html"
+    html_utf8_local_path = f"./result/{img_name}-utf8-local.html"
+    pdf_path = f"./result/{img_name}-utf8.pdf"
+    return html_utf8_path, html_utf8_local_path, pdf_path
+
+
 def ocr(image, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
-        fine_grained_box_y2, OCR_type, fine_grained_color):
+        fine_grained_box_y2, OCR_type, fine_grained_color, img_name):
     box = [fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2, fine_grained_box_y2]
 
-    res = "未选择OCR模式"
+    res = "未选择 OCR 模式"
 
-    html_gb2312_path = "./result/ocr_gb2312.html"
-    html_utf8_path = "./result/ocr_utf8.html"
+    html_gb2312_path = build_name(img_name)[0]
+    html_utf8_path = build_name(img_name)[1]
 
     if not os.path.exists("./result"):
         os.makedirs("./result")
@@ -123,67 +91,83 @@ def ocr(image, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
 
 # gradio gui
 with gr.Blocks() as demo:
-    gr.Markdown("fine-grained-ocr设置")
     with gr.Row():
         with gr.Column():
-            fine_grained_box_x1 = gr.Number(label="框x1", value=0)
-            fine_grained_box_y1 = gr.Number(label="框y1", value=0)
-        with gr.Column():
-            fine_grained_box_x2 = gr.Number(label="框x2", value=0)
-            fine_grained_box_y2 = gr.Number(label="框y2", value=0)
-        with gr.Column():
+            gr.Markdown("fine-grained-ocr 设置")
+            with gr.Row():
+                with gr.Column():
+                    fine_grained_box_x1 = gr.Number(label="框坐标 x1", value=0)
+                    fine_grained_box_y1 = gr.Number(label="框坐标 y1", value=0)
+                with gr.Column():
+                    fine_grained_box_x2 = gr.Number(label="框坐标 x2", value=0)
+                    fine_grained_box_y2 = gr.Number(label="框坐标 y2", value=0)
             fine_grained_color = gr.Dropdown(choices=["red", "green", "blue"], label="颜色")
+        with gr.Column():
+            gr.Markdown("渲染模式设置")
+            with gr.Row():
+                img_name = gr.Textbox(label="图像名称", value="ocr")
+                submit_name = gr.Button("Submit Image Name")
+            with gr.Row():
+                html_utf8_path = gr.Textbox(label="HTML File Path", value="./result/ocr-utf8.html", interactive=False)
+                html_utf8_local_path = gr.Textbox(label="HTML Local File Path", value="./result/ocr-utf8-local.html",
+                                                  interactive=False)
+                pdf_path = gr.Textbox(label="PDF File Path", value="./result/ocr-utf8.pdf", interactive=False)
 
-    gr.Markdown("OCR设置")
+    gr.Markdown("OCR 设置")
 
     with gr.Row():
+        upload_img = gr.Image(type="filepath", label="上传图像")
         with gr.Column():
-            OCR_type = gr.Dropdown(
+            ocr_mode = gr.Dropdown(
                 choices=["ocr", "format", "fine-grained-ocr", "fine-grained-format", "fine-grained-color-ocr",
                          "fine-grained-color-format", "multi-crop-ocr", "multi-crop-format", "render"],
-                label="OCR类型")
-            upload_img = gr.Image(type="filepath", label="上传图片")
-        with gr.Column():
-            do_ocr = gr.Button("执行OCR")
+                label="OCR 模式")
+            do_ocr = gr.Button("执行 OCR")
             result = gr.Textbox(label="结果")
             with gr.Row():
-                html_path = gr.Textbox(label="HTML文件路径", value="./result/ocr_utf8.html")
-                pdf_path = gr.Textbox(label="PDF文件路径", value="./result/ocr_utf8.pdf")
-            with gr.Row():
-                save_as_pdf = gr.Button("保存为PDF")
+                save_as_pdf = gr.Button("保存为 PDF")
                 save_as_pdf_info = gr.Textbox(show_label=False, interactive=False)
 
     gr.Markdown("""
-    ## 使用教程
-    ### **模式选择**
-    #### `ocr`模式
-    - ocr：普通的 ocr
-    - format：ocr 并格式化
-    #### `fine-grained`模式
-    - fine-grained-ocr：ocr 特定的框中的内容
-    - fine-grained-format：ocr 并格式化特定的框中的内容
-    - fine-grained-color-ocr：ocr 特定颜色的框中的内容（我还没用过，大概是要先用红/绿/蓝色画框再在 GUI 里选择颜色）
-    - fine-grained-color-format：ocr 并格式化特定颜色的框中的内容
-    #### `multi-crop`模式
-    - 适用于更复杂的图片
-    #### `render`模式
-    - 已经存在的文件会被覆盖！！！渲染前查看是否有以及存在的文件！！！
-    - 渲染图片中的文字，并保存为 html 文件
-    - 同时具有 GB2312 和 UTF8 编码
-    - 可以转换 html 为 pdf ， pdf 为 UTF8 编码
-    ### **使用`render`模式**
+    ## 使用说明
+    ### **模式**
+    #### `OCR` 模式
+    - ocr: 标准OCR
+    - format: 带格式化的OCR
+    #### `fine-grained` 模式
+    - fine-grained-ocr: 在特定框内进行OCR内容识别
+    - fine-grained-format: 在特定框内进行OCR内容识别并格式化
+    - fine-grained-color-ocr: 在特定颜色的框内进行OCR内容识别（我还没尝试过这个，但看起来你需要先画一个红/绿/蓝色的框，然后在GUI中选择颜色）
+    - fine-grained-color-format: 在特定颜色的框内进行OCR内容识别并格式化
+    #### `multi-crop` 模式
+    - 适用于更复杂的图像
+    #### `render` 模式
+    - 已存在的文件将被覆盖！！！点击按钮前请检查文件路径！！！
+    - 渲染OCR内容并将其保存为HTML文件
+    - 将保存为UTF8编码和GB2312编码的文件
+    - 你可以将HTML转换为PDF
+    ### **如何渲染**
+    1. 在文本框中输入图像名称，这将变成输出文件的基本名称
+    2. 点击“提交图像名称”按钮以应用名称
+    3. 你会发现下面的三个文本框发生了变化，这意味着名称已被应用
+    4. 点击“保存为PDF”按钮以将HTML文件保存为PDF文件
     """)
 
     do_ocr.click(
         fn=ocr,
         inputs=[upload_img, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
-                fine_grained_box_y2, OCR_type, fine_grained_color],
+                fine_grained_box_y2, ocr_mode, fine_grained_color, img_name],
         outputs=result
     )
     save_as_pdf.click(
-        fn=const_text_to_pdf,
-        inputs=[html_path, pdf_path],
+        fn=func_save_as_pdf,
+        inputs=[html_utf8_path, html_utf8_local_path, pdf_path],
         outputs=save_as_pdf_info
+    )
+    submit_name.click(
+        fn=func_submit_name,
+        inputs=[img_name],
+        outputs=[html_utf8_path, html_utf8_local_path, pdf_path]
     )
 
 # 启动gradio界面
