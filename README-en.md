@@ -2,7 +2,7 @@
 
 ## [中文版看这里](README.md)
 
-![img_1.png](img_1.png)
+![img.png](img.png)
 
 ## About this project
 
@@ -12,7 +12,8 @@ Original GitHub: [GOT-OCR2.0](https://github.com/Ucas-HaoranWei/GOT-OCR2.0/)
 Thank [GLM4](https://chatglm.cn/main/alltoolsdetail?lang=zh) for providing some of the code (since I am really not good
 at it, so I have to use AI)  
 Thank [Yi-1.5](https://github.com/01-ai/Yi-1.5) for translating README.md to English  
-This project was developed under Windows, so I can't guarantee that it will work on Linux. If you want to use it on Linux, you can check this [issue](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/3)
+This project was developed under Windows, so I can't guarantee that it will work on Linux. If you want to use it on
+Linux, you can check this [issue](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/3)
 
 Click a star, please
 
@@ -79,6 +80,19 @@ GOT-OCR-2-GUI
 1. Choose a script you like to open
 2. You can ignore those using GUI, but for the CLI users, please put the images you want to OCR into the `imgs` folder (
    the CLI currently only detects `.jpg` and `.png` images).
+
+## Localization Support
+
+- You can find various language `.json` files in the `Locales` folder, with CLI and GUI language files stored
+  separately.
+- In the `gui` subfolder, in addition to the `language.json` file, there is also an `instructions` folder that contains
+  the built-in tutorials for the GUI, named as `language.md`.
+- To modify language support, simply change the value of `'language'` in the `config.json` file. The available options
+  correspond to the file names without extensions in the `language.json` files.
+- If you wish to add language support, for the CLI, just add a new `language.json` file (I strongly recommend using an
+  existing file as a starting point). For the GUI, you will also need the corresponding `language.md` file.
+- In the future, a script will be available to manage language configuration files, but for now, you need to manually
+  modify them, with the default set to Simplified Chinese.
 
 ## Tips
 

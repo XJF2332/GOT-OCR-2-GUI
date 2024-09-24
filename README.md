@@ -2,14 +2,15 @@
 
 ## [See English version here](README-en.md)
 
-![img_1.png](img_1.png)
+![img.png](img.png)
 
 ## 关于此项目
 
 模型权重：[镜像站](https://hf-mirror.com/stepfun-ai/GOT-OCR2_0)，[原站点](https://huggingface.co/stepfun-ai/GOT-OCR2_0)  
 原GitHub：[GOT-OCR2.0](https://github.com/Ucas-HaoranWei/GOT-OCR2.0/)  
 感谢[ GLM4 ](https://chatglm.cn/main/alltoolsdetail?lang=zh)提供的一部分代码（技术太菜了，所以不得不用一下 AI ）  
-这个项目是在 Windows 下开发的，我本人没用过也不会 Linux，不能确保它能够在 Linux 下正常运行，如果你要在 Linux 下部署，可以参考一下这个 [issue](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/3)
+这个项目是在 Windows 下开发的，我本人没用过也不会 Linux，不能确保它能够在 Linux 下正常运行，如果你要在 Linux
+下部署，可以参考一下这个 [issue](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/3)
 
 点个star吧
 
@@ -18,7 +19,7 @@
 - [x] 初步实现 PDF 导出功能
 - [x] 修复 PDF 中`LaTeX`的渲染问题
 - [x] 现在已经可以用`Locales`中的`.json`文件来给 CLI 设置语言了
-- [ ] 在 GUI 中实现用`.json`设置语言的功能
+- [x] 在 GUI 中实现用`.json`设置语言的功能
 - [ ] 写一个脚本来管理 CLI 和 GUI 的语言配置文件（你现在可以在`Locales`里的`config.json`中手动修改语言设置，默认是中文）
 
 ## 使用方法
@@ -73,6 +74,15 @@ GOT-OCR-2-GUI
 
 1. 选一个你喜欢的脚本打开
 2. 用 GUI 的可以不管，不过用 CLI 的各位记得把要OCR的图放进`imgs`文件夹里（ CLI 目前只检测`.jpg`和`.png`图片）
+
+## 本地化支持
+
+- 你可以在`Locales`文件夹中找到各种语言的`.json`文件，CLI 和 GUI 的语言文件是分开存储的
+- 在`gui`子文件夹中，除了`语言.json`文件，还有一个`instructions`文件夹，里面是 GUI 的内置教程，命名为`语言.md`
+- 要修改语言支持，只需要修改`config.json`中的`'language'`的值，可用的选择就是`语言.json`的不带扩展名的文件名
+- 如果要添加语言支持，在 CLI 中，只需要添加新的`语言.json`（我强烈建议你使用已经存在的文件作为起点），在 GUI
+  中，还需要配套的`语言.md`文件
+- 在未来将会有一个脚本可以管理语言配置文件，但是现在还需要你手动修改，默认值为简体中文
 
 ## 注意事项
 
