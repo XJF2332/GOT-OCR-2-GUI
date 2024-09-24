@@ -22,7 +22,7 @@ Click a star, please
 - [x] Preliminary implementation of PDF export feature
 - [x] Fixed rendering issues with `LaTeX` in PDFs
 - [x] It is now possible to set the language for the CLI using the `.json` files in `Locales`
-- [ ] Implement the feature to set language in the GUI using `.json` files
+- [x] Implement the feature to set language in the GUI using `.json` files
 - [ ] Write a script to manage language configuration files for CLI and GUI (You can manually modify the language
   settings in `config.json` under `Locales` for now, with Chinese being the default)
 
