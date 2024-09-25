@@ -23,8 +23,7 @@ Click a star, please
 - [x] Fixed rendering issues with `LaTeX` in PDFs
 - [x] It is now possible to set the language for the CLI using the `.json` files in `Locales`
 - [x] Implement the feature to set language in the GUI using `.json` files
-- [ ] Write a script to manage language configuration files for CLI and GUI (You can manually modify the language
-  settings in `config.json` under `Locales` for now, with Chinese being the default)
+- [x] Write a script to manage language configuration files for CLI and GUI
 
 ## How to use
 
@@ -91,8 +90,7 @@ GOT-OCR-2-GUI
   correspond to the file names without extensions in the `language.json` files.
 - If you wish to add language support, for the CLI, just add a new `language.json` file (I strongly recommend using an
   existing file as a starting point). For the GUI, you will also need the corresponding `language.md` file.
-- In the future, a script will be available to manage language configuration files, but for now, you need to manually
-  modify them, with the default set to Simplified Chinese.
+- You can run `language-config-manager.py` to manage the language configuration files.
 
 ## Tips
 
