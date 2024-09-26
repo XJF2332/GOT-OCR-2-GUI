@@ -33,11 +33,14 @@ Click a star, please
 ### Dependencies
 
 #### Use `pip` to install
-
-- see `requirements.txt`
-
 ```commandline
 pip install -r requirements.txt
+```
+And, someone said that he encountered conflicting dependencies after installing. But I didn't find any conflicting dependencies in the `requirements.txt` file, and `pipdeptree` shows that nothing is conflicting. I used `pip freeze` to create this `requirements.txt` file, so it should be fine.  
+However, this problem really happened, so I provided a `requirements-noversion.txt` that doesn't contain version numbers.
+For more information, see this [issue #4](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/4)
+```commandline
+pip install -r requirements-noversion.txt
 ```
 
 #### Other

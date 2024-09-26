@@ -30,11 +30,14 @@
 ### 依赖
 
 #### 使用`pip`安装
-
-- 参考`requirements.txt`
-
 ```commandline
 pip install -r requirements.txt
+```
+另，有人提到了自己使用`requirements.txt`安装依赖时出现了冲突问题，但我这里没有发现问题，`pipdeptree`也没有显示任何冲突项，`requirements.txt`是直接`pip freeze`的我自己的虚拟环境的，按理来说应该没问题。  
+但由于确实出现了这样的问题，这里再提供一个不带版本号的`requirements-noversion.txt`，你可以试试看：
+更多信息请查看这个 [issue #4](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/4)
+```commandline
+pip install -r requirements-noversion.txt
 ```
 
 #### 其他
