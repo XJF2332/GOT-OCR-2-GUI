@@ -76,18 +76,30 @@ pip install -r requirements-noversion.txt
 
 ```
 GOT-OCR-2-GUI
-├─models
-│  ├─model.safetensors
-│  ├─config.json
-│  └─other files you downloaded from huggingface
-└─...
+└─models
+   ├─config.json
+   ├─generation_config.json
+   ├─got_vision_b.py
+   ├─model.safetensors
+   ├─modeling_GOT.py
+   ├─qwen.tiktoken
+   ├─render_tools.py
+   ├─special_tokens_map.json
+   ├─tokenization_qwen.py
+   └─tokenizer_config.json
 ```
 
-### Start Using
+### Getting Started
 
-1. Choose a script you like to open
-2. You can ignore those using GUI, but for the CLI users, please put the images you want to OCR into the `imgs` folder (
-   the CLI currently only detects `.jpg` and `.png` images).
+1. If you want to use the command line, then use `CLI.py`.
+2. If you prefer a graphical interface, then use `GUI.py`.
+3. If you wish to modify language settings, then use `language-config-manager.py`.
+4. If you want to perform automated rendering operations, run `python Renderer.py <image-path>` in the `cmd`, for
+   example: `python Renderer.py imgs\test.jpg`. You might need to create your own script using `subprocess` to
+   automatically send commands to `cmd`.
+
+> Those using the GUI can ignore this, but for those using the CLI, remember to place the images you want to OCR into
+> the `imgs` folder (the CLI currently only detects `.jpg` and `.png` files).
 
 ## Localization Support
 
