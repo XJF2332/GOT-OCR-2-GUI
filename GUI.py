@@ -1,12 +1,13 @@
 import json
+import os
 
 print("Loading config...")
 
-with open('Locales/gui/config.json', 'r', encoding='utf-8') as file:
+with open(os.path.join("Locales", "gui", "config.json"), 'r', encoding='utf-8') as file:
     config = json.load(file)
     lang = config['language']
 
-with open(f'Locales/gui/{lang}.json', 'r', encoding='utf-8') as file:
+with open(os.path.join("Locales", "gui", f"{lang}.json"), 'r', encoding='utf-8') as file:
     local = json.load(file)
 
 print(local["import_libs"])
@@ -54,15 +55,15 @@ def func_save_as_pdf(html_utf8_path, html_utf8_local_path, pdf_path):
 
 
 def build_name(img_name):
-    html_gb2312_path = f"./result/{img_name}-gb2312.html"
-    html_utf8_path = f"./result/{img_name}-utf8.html"
+    html_gb2312_path = os.path.join("result", f"{img_name}-gb2312.html")
+    html_utf8_path = os.path.join("result", f"{img_name}-utf8.html")
     return [html_gb2312_path, html_utf8_path]
 
 
 def func_submit_name(img_name):
-    html_utf8_path = f"./result/{img_name}-utf8.html"
-    html_utf8_local_path = f"./result/{img_name}-utf8-local.html"
-    pdf_path = f"./result/{img_name}-utf8.pdf"
+    html_utf8_path = os.path.join("result", f"{img_name}-utf8.html")
+    html_utf8_local_path = os.path.join("result", f"{img_name}-utf8-local.html")
+    pdf_path = os.path.join("result", f"{img_name}-utf8.pdf")
     return html_utf8_path, html_utf8_local_path, pdf_path
 
 
@@ -75,8 +76,8 @@ def ocr(image, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
     html_gb2312_path = build_name(img_name)[0]
     html_utf8_path = build_name(img_name)[1]
 
-    if not os.path.exists("./result"):
-        os.makedirs("./result")
+    if not os.path.exists("result"):
+        os.makedirs("result")
 
     if OCR_type == "ocr":
         res = model.chat(tokenizer, image, ocr_type='ocr')
@@ -121,10 +122,10 @@ with gr.Blocks() as demo:
                     img_name = gr.Textbox(label=local["img_name"], value="ocr")
                     submit_name = gr.Button(local["submit_img_name"])
                 with gr.Row():
-                    html_utf8_path = gr.Textbox(label=local["html_file_path"], value="./result/ocr-utf8.html", interactive=False)
-                    html_utf8_local_path = gr.Textbox(label=local["html_local_file_path"], value="./result/ocr-utf8-local.html",
+                    html_utf8_path = gr.Textbox(label=local["html_file_path"], value=os.path.join("result", "ocr-utf8.html"), interactive=False)
+                    html_utf8_local_path = gr.Textbox(label=local["html_local_file_path"], value=os.path.join("result", "ocr-utf8-local.html"),
                                                       interactive=False)
-                    pdf_path = gr.Textbox(label=local["pdf_file_path"], value="./result/ocr-utf8.pdf", interactive=False)
+                    pdf_path = gr.Textbox(label=local["pdf_file_path"], value=os.path.join("result", "ocr-utf8.pdf"), interactive=False)
 
         gr.Markdown(local["ocr_settings"])
 
@@ -142,7 +143,7 @@ with gr.Blocks() as demo:
                     save_as_pdf_info = gr.Textbox(show_label=False, interactive=False)
 
     with gr.Tab(local["tab_instructions"]):
-        with open(f'Locales/gui/instructions/{lang}.md', 'r', encoding='utf-8') as file:
+        with open(os.path.join('Locales','gui','instructions',f'{lang}.md'), 'r', encoding='utf-8') as file:
             instructions = file.read()
 
         gr.Markdown(instructions)

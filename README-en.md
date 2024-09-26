@@ -23,8 +23,7 @@ Click a star, please
 - [x] Fixed rendering issues with `LaTeX` in PDFs
 - [x] Set the language using the `.json` files in `Locales`
 - [x] Write a script to manage language configuration files
-- [x] Turn file path constructing method of CLI into `os.path.join` instead of formatted string
-- [ ] Turn file path constructing method of GUI into `os.path.join` instead of formatted string
+- [x] Turn file path constructing method into `os.path.join` instead of formatted string
 
 ## How to use
 
@@ -33,12 +32,18 @@ Click a star, please
 ### Dependencies
 
 #### Use `pip` to install
+
 ```commandline
 pip install -r requirements.txt
 ```
-And, someone said that he encountered conflicting dependencies after installing. But I didn't find any conflicting dependencies in the `requirements.txt` file, and `pipdeptree` shows that nothing is conflicting. I used `pip freeze` to create this `requirements.txt` file, so it should be fine.  
-However, this problem really happened, so I provided a `requirements-noversion.txt` that doesn't contain version numbers.
+
+And, someone said that he encountered conflicting dependencies after installing. But I didn't find any conflicting
+dependencies in the `requirements.txt` file, and `pipdeptree` shows that nothing is conflicting. I used `pip freeze` to
+create this `requirements.txt` file, so it should be fine.  
+However, this problem really happened, so I provided a `requirements-noversion.txt` that doesn't contain version
+numbers.
 For more information, see this [issue #4](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/4)
+
 ```commandline
 pip install -r requirements-noversion.txt
 ```
@@ -107,13 +112,17 @@ GOT-OCR-2-GUI
 - Make sure hat you installed the gpu version of `torch`
 
 ## Common Questions
+
 - Q: What is an "HTML local file"? Are there HTML files that are not saved locally?
-- A: Although the HTML files output by the model are saved locally, they use external scripts. Therefore, even if the file is on your local machine, you still need an internet connection to open it. I have downloaded the external script, which is the previously mentioned `markdown-it.js`. The main reason for doing this is to prevent PDF export failures due to network issues.
+- A: Although the HTML files output by the model are saved locally, they use external scripts. Therefore, even if the
+  file is on your local machine, you still need an internet connection to open it. I have downloaded the external
+  script, which is the previously mentioned `markdown-it.js`. The main reason for doing this is to prevent PDF export
+  failures due to network issues.
 
 
 - Q: Why did my model fail to load?
-- A: Check if you are missing any files. It seems that the model files downloaded from Baidu Cloud are missing some files. I recommend you download from the previously mentioned Huggingface instead.
-
+- A: Check if you are missing any files. It seems that the model files downloaded from Baidu Cloud are missing some
+  files. I recommend you download from the previously mentioned Huggingface instead.
 
 ## Simple Tutorial
 
