@@ -1,17 +1,21 @@
 import json
+import os
 
 print("Loading config...")
 
-with open('Locales/cli/config.json', 'r', encoding='utf-8') as file:
+config_path = os.path.join("Locales", "cli", "config.json")
+
+with open(config_path, 'r', encoding='utf-8') as file:
     config = json.load(file)
     lang = config['language']
 
-with open(f'Locales/cli/{lang}.json', 'r', encoding='utf-8') as file:
+lang_file = os.path.join('Locales', 'cli', f'{lang}.json')
+
+with open(lang_file, 'r', encoding='utf-8') as file:
     local = json.load(file)
 
 print(local["import_libs"])
 
-import os
 from transformers import AutoModel, AutoTokenizer
 import re
 import scripts.html2pdf as html2pdf
@@ -71,8 +75,8 @@ def repalce_html_content(input_file_path, output_file_path):
 
 # do OCR
 def do_ocr(image):
-    if not os.path.exists("./result"):
-        os.makedirs("./result")
+    if not os.path.exists("result"):
+        os.makedirs("result")
 
     # main menu
     print("")
@@ -191,9 +195,9 @@ def do_ocr(image):
         # define output html path
         img_name = os.path.basename(image)
         img_name_no_ext = os.path.splitext(img_name)[0]
-        html_gb2312_path = f"./result/{img_name_no_ext}-gb2312.html"
-        html_utf8_path = f"./result/{img_name_no_ext}-utf8.html"
-        html_utf8_local_path = f"./result/{img_name_no_ext}-utf8-local.html"
+        html_gb2312_path = os.path.join("result", f"{img_name_no_ext}-gb2312.html")
+        html_utf8_path = os.path.join("result", f"{img_name_no_ext}-utf8.html")
+        html_utf8_local_path = os.path.join("result", f"{img_name_no_ext}-utf8-local.html")
         # render ocr results
         print("")
         print(local["render_mode_rendering"])
@@ -208,9 +212,9 @@ def do_ocr(image):
         conv = input(local["pdf_convert_ask"])
         if conv.lower() == 'y':
             repalce_html_content(html_utf8_path, html_utf8_local_path)
-            html2pdf.output_pdf(html_utf8_local_path, f"./result/{img_name_no_ext}.pdf")
+            pdf_path = os.path.join("result", f"{img_name_no_ext}.pdf")
+            html2pdf.output_pdf(html_utf8_local_path, pdf_path)
             print("")
-            # print(f"Converted PDF saved to ./results/{img_name_no_ext}.pdf\n")
             print(local["pdf_convert_success"].format(img_name_no_ext=img_name_no_ext))
         elif conv.lower() == 'n':
             print("")

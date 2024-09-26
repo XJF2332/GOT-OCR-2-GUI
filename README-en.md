@@ -21,9 +21,10 @@ Click a star, please
 
 - [x] Preliminary implementation of PDF export feature
 - [x] Fixed rendering issues with `LaTeX` in PDFs
-- [x] It is now possible to set the language for the CLI using the `.json` files in `Locales`
-- [x] Implement the feature to set language in the GUI using `.json` files
-- [x] Write a script to manage language configuration files for CLI and GUI
+- [x] Set the language using the `.json` files in `Locales`
+- [x] Write a script to manage language configuration files
+- [x] Turn file path constructing method of CLI into `os.path.join` instead of formatted string
+- [ ] Turn file path constructing method of GUI into `os.path.join` instead of formatted string
 
 ## How to use
 

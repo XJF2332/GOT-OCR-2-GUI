@@ -12,7 +12,7 @@
   "finegrained_ocr": "3. Fine-Grained OCR",
   "multicrop_ocr": "4. Multi-Crop OCR",
   "render": "5. 渲染为HTML文件",
-  "ocr_mode_select": "输入你的选择，或输入'---QUIT'来退出",
+  "ocr_mode_select": "输入你的选择，或输入'---QUIT'来退出：",
   "fine_grained_choice": "纯文本（P）还是格式化（F）：",
   "fine_grained_mode": "使用框（B）还是颜色（C）标记区域：",
   "fine_grained_box": "输入框的坐标 [x1,y1,x2,y2]：",
