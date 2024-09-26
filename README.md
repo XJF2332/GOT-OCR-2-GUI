@@ -30,12 +30,16 @@
 ### 依赖
 
 #### 使用`pip`安装
+
 ```commandline
 pip install -r requirements.txt
 ```
-另，有人提到了自己使用`requirements.txt`安装依赖时出现了冲突问题，但我这里没有发现问题，`pipdeptree`也没有显示任何冲突项，`requirements.txt`是直接`pip freeze`的我自己的虚拟环境的，按理来说应该没问题。  
+
+另，有人提到了自己使用`requirements.txt`安装依赖时出现了冲突问题，但我这里没有发现问题，`pipdeptree`
+也没有显示任何冲突项，`requirements.txt`是直接`pip freeze`的我自己的虚拟环境的，按理来说应该没问题。  
 但由于确实出现了这样的问题，这里再提供一个不带版本号的`requirements-noversion.txt`，你可以试试看：
 更多信息请查看这个 [issue #4](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/4)
+
 ```commandline
 pip install -r requirements-noversion.txt
 ```
@@ -95,7 +99,15 @@ GOT-OCR-2-GUI
 
 > 如果你不小心删除了，可以在`scripts`文件夹里找到备份，复制一份过去就行了
 
-- 确保你安装的`torch`是 gpu 版本
+- 确保你安装的`torch`是 gpu 版本，因为脚本里用了`device_map='cuda'`
+
+## 常见问题
+- Q：什么是“HTML本地文件”？难道还有没保存在本地的HTML文件吗？
+- A：因为模型输出的HTML文件虽然保存在本地，但使用了外部脚本，因此即使文件在本地，还是需要网络来打开它。于是我把外部脚本下载了进来，就是前面提到的`mardown-it.js`。这么做主要是防止网络问题造成的PDF导出失败。  
+
+
+- Q：为什么我的模型加载失败了？
+- A：检查一下你是不是少了文件。从百度云下载的模型文件似乎缺少了文件，我建议你去前面提到的 Huggingface 下载。
 
 ## 简单的教程
 

@@ -106,6 +106,15 @@ GOT-OCR-2-GUI
   I don't know why
 - Make sure hat you installed the gpu version of `torch`
 
+## Common Questions
+- Q: What is an "HTML local file"? Are there HTML files that are not saved locally?
+- A: Although the HTML files output by the model are saved locally, they use external scripts. Therefore, even if the file is on your local machine, you still need an internet connection to open it. I have downloaded the external script, which is the previously mentioned `markdown-it.js`. The main reason for doing this is to prevent PDF export failures due to network issues.
+
+
+- Q: Why did my model fail to load?
+- A: Check if you are missing any files. It seems that the model files downloaded from Baidu Cloud are missing some files. I recommend you download from the previously mentioned Huggingface instead.
+
+
 ## Simple Tutorial
 
 > For GUI users, the tutorial is in the GUI, you can just open the GUI and follow the instructions
