@@ -1,41 +1,30 @@
 import json
 import os
 
-# 加载配置文件
-print("Loading config...")
-
-# 获取配置文件路径
-config_path = os.path.join("Locales", "cli", "config.json")
-
 # 打开配置文件
+print("Loading config...")
+config_path = os.path.join("Locales", "cli", "config.json")
 with open(config_path, 'r', encoding='utf-8') as file:
     config = json.load(file)
     lang = config['language']
 
-# 获取语言文件路径
-lang_file = os.path.join('Locales', 'cli', f'{lang}.json')
-
 # 打开语言文件
+lang_file = os.path.join('Locales', 'cli', f'{lang}.json')
 with open(lang_file, 'r', encoding='utf-8') as file:
     local = json.load(file)
 
-# 打印语言文件中的import_libs
-print(local["import_libs"])
-
 # 导入transformers库
+print(local["import_libs"])
 from transformers import AutoModel, AutoTokenizer
 import re
 import scripts.html2pdf as html2pdf
 
-# 打印语言文件中的load_models
-print(local["load_models"])
 # 加载模型
+print(local["load_models"])
 tokenizer = AutoTokenizer.from_pretrained('models', trust_remote_code=True)
 model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_usage=True, device_map='cuda',
                                   use_safetensors=True, pad_token_id=tokenizer.eos_token_id)
-# 将模型设置为评估模式并移动到GPU
 model = model.eval().cuda()
-# 打印语言文件中的load_models_success
 print(local["load_models_success"])
 
 
@@ -44,19 +33,16 @@ def select_image():
     img_folder = 'imgs'
     img_files = [f for f in os.listdir(img_folder) if
                  os.path.isfile(os.path.join(img_folder, f)) and f.lower().endswith(('.jpg', '.png'))]
-    # 打印语言文件中的avaliable_imgs
     print(local["avaliable_imgs"])
     for i, file in enumerate(img_files):
         print(f"{i + 1}. {file}")
     choice = input(local["img_select"])
     if choice == "---QUIT":
-        # 打印语言文件中的img_select_quit
         print(local["img_select_quit"])
         exit()
     else:
         choice = int(choice)
         if choice < 1 or choice > len(img_files):
-            # 打印语言文件中的img_select_error
             print(local["img_select_error"])
             exit()
         else:
@@ -113,11 +99,11 @@ def do_ocr(image):
         res = model.chat(tokenizer, image, ocr_type='format')
         print("")
         print(res)
-    # 精细OCR
+    # Fine-grained OCR
     elif ocr_choice == '3':
         print("")
         fine_grained_choice = input(local["fine_grained_choice"])
-        # 普通精细OCR
+        # 普通
         if fine_grained_choice.lower() == 'p':
             print("")
             fine_grained_mode = input(local["fine_grained_mode"])
@@ -144,7 +130,7 @@ def do_ocr(image):
                 print("")
                 res = model.chat(tokenizer, image, ocr_type='ocr')
                 print(res)
-        # 格式化精细OCR
+        # 格式化
         elif fine_grained_choice.lower() == 'f':
             print("")
             fine_grained_mode = input(local["fine_grained_mode"])
@@ -164,7 +150,7 @@ def do_ocr(image):
                 res = model.chat(tokenizer, image, ocr_type='format', ocr_color=color)
                 print("")
                 print(res)
-            # 默认为格式化OCR
+            # 默认为普通
             else:
                 print("")
                 print(local["fine_grained_error"])
@@ -180,17 +166,17 @@ def do_ocr(image):
             res = model.chat(tokenizer, image, ocr_type='ocr')
             print("")
             print(res)
-    # 多裁剪OCR
+    # Multi-crop OCR
     elif ocr_choice == '4':
         print("")
         crop_mode = input(local["crop_mode"])
-        # 普通多裁剪OCR
+        # 普通
         if crop_mode.lower() == 'p':
             print("")
             res = model.chat_crop(tokenizer, image, ocr_type='ocr')
             print("")
             print(res)
-        # 格式化多裁剪OCR
+        # 格式化
         elif crop_mode.lower() == 'f':
             print("")
             res = model.chat_crop(tokenizer, image, ocr_type='format')
