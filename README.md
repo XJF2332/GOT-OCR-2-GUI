@@ -101,7 +101,7 @@ GOT-OCR-2-GUI
 - 要修改语言支持，只需要修改`config.json`中的`'language'`的值，可用的选择就是`语言.json`的不带扩展名的文件名
 - 如果要添加语言支持，在 CLI 中，只需要添加新的`语言.json`（我强烈建议你使用已经存在的文件作为起点），在 GUI
   中，还需要配套的`语言.md`文件
-- 你可以使用`language-config-manager.py`来管理语言配置文件
+- 你可以使用`Language Config Manager.py`来管理语言配置文件
 
 ## 注意事项
 
