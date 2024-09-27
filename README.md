@@ -25,7 +25,7 @@
 
 ## 使用方法
 
-> 如果这里面提到的文件夹你没有，那就新建一个
+如果这里面提到的文件夹你没有，那就**新建一个**
 
 ### 依赖
 
@@ -49,10 +49,6 @@ pip install -r requirements-noversion.txt
 ```
 
 #### 其他
-
-- ~~[wkhtmltopdf](https://wkhtmltopdf.org/downloads.html)，下载压缩包，解压放进`wkhtmltopdf`文件夹中~~
-
-> 已经迁移到了 Edge WebDriver，此依赖项不需要再安装了
 
 - [Edge WebDriver](https://developer.microsoft.com/zh-cn/microsoft-edge/tools/webdriver/?form=MA13LH#downloads)
   ，下载压缩包，放进`edge_driver`文件夹中
@@ -130,7 +126,7 @@ GOT-OCR-2-GUI
 
 ## 简单的教程
 
-> GUI 的教程已经内置到了 UI 中，直接打开 GUI 就能看到了
+GUI 的教程已经内置到了 UI 中，**直接打开 GUI** 就能看到了，这里给 CLI 用户提供教程
 
 ### **模式**
 

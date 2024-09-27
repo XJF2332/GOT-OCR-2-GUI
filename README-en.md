@@ -28,7 +28,7 @@ Click a star, please
 
 ## How to use
 
-> If you don't have the folder mentioned here, create a new one
+If you don't have the folder mentioned here, **create a new one**
 
 ### Dependencies
 
@@ -54,11 +54,6 @@ pip install -r requirements-noversion.txt
 ```
 
 #### Other
-
-- ~~[wkhtmltopdf](https://wkhtmltopdf.org/downloads.html), download `.7z` file, unzip it and put it into `wkhtmltopdf`
-  folder~~
-
-> Switched to Edge WebDriver, so you don't need to install this anymore
 
 - [Edge WebDriver](https://developer.microsoft.com/zh-cn/microsoft-edge/tools/webdriver/?form=MA13LH#downloads),
   download the `.zip` file, unzip it and put it into `msedgedriver` folder)
@@ -144,7 +139,8 @@ GOT-OCR-2-GUI
 
 ## Simple Tutorial
 
-> For GUI users, the tutorial is in the GUI, you can just open the GUI and follow the instructions
+For GUI users, the tutorial is in the GUI, you can **just open the GUI** and follow the instructions.   
+Here are tutorials for CLI users.
 
 ### **Modes**
 
