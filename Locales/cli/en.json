@@ -22,11 +22,13 @@
   "crop_mode_error": "Invalid selection, reverting to default mode (Plain Text OCR)......",
   "render_mode_rendering": "Rendering......",
   "render_mode_success": "Render result saved to {html_gb2312_path} and {html_utf8_path}",
-  "pdf_convert_ask": "Convert PDF to image? (Y/N) ",
+  "pdf_convert_ask": "Convert HTML to PDF? (Y/N) ",
   "pdf_convert_success": "PDF has been saved as ./result/{img_name_no_ext}.pdf",
   "pdf_convert_refused": "Exiting......",
   "pdf_convert_error": "Invalid selection",
   "ocr_mode_error": "Invalid selection, reverting to default mode (Plain Text OCR)......",
   "ocr_mode_quit": "Exiting......",
-  "quit": "\nType ---QUIT to exit the program\n"
+  "quit": "\nType ---QUIT to exit the program\n",
+  "renderer_success": "Successfully rendered {img_path}",
+  "renderer_fail": "Rendering failed for {img_path}"
 }

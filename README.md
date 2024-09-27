@@ -87,9 +87,10 @@ GOT-OCR-2-GUI
 
 1. 如果你想用命令行，那就用`CLI.py`
 2. 如果你想用图形界面，那就用`GUI.py`
-3. 如果你想修改语言设置，那就用`language-config-manager.py`
-4. 如果你想执行自动化的渲染操作，在`cmd`里运行`python Renderer.py <image-path>`，比如：`python Renderer.py imgs\test.jpg`
-   ，你可能需要自己再建一个脚本，用`subprocess`来自动给`cmd`发命令
+3. 如果你想修改语言设置，那就用`Language Config Manager.py`
+4. 如果你想执行自动化的渲染操作，~~在`cmd`里运行`python Renderer.py <image-path>`，比如：`python Renderer.py imgs\test.jpg`
+   ，你可能需要自己再建一个脚本，用`subprocess`来自动给`cmd`发命令~~
+4. 如果你想执行自动化的渲染操作，那就用`Renderer.py`，它会自动渲染`imgs`文件夹里所有的`.jpg`和`.png`图片
 
 > 用 GUI 的可以不管，不过用 CLI 的各位记得把要OCR的图放进`imgs`文件夹里（ CLI 目前只检测`.jpg`和`.png`图片）
 
