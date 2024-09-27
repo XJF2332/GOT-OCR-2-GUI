@@ -24,6 +24,7 @@ Click a star, please
 - [x] Set the language using the `.json` files in `Locales`
 - [x] Write a script to manage language configuration files
 - [x] Turn file path constructing method into `os.path.join` instead of formatted string
+- [x] A script for batch rendering
 
 ## How to use
 
