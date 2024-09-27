@@ -28,6 +28,10 @@
 
 ### 依赖
 
+#### torch
+从[torch官网](https://pytorch.org/get-started/locally/)选择适合自己的**GPU版本**的torch安装即可  
+我用的是 Stable 2.4.1 + cu124 ，建议你也用这个版本
+
 #### 使用`pip`安装
 
 ```commandline
@@ -88,8 +92,6 @@ GOT-OCR-2-GUI
 1. 如果你想用命令行，那就用`CLI.py`
 2. 如果你想用图形界面，那就用`GUI.py`
 3. 如果你想修改语言设置，那就用`Language Config Manager.py`
-4. 如果你想执行自动化的渲染操作，~~在`cmd`里运行`python Renderer.py <image-path>`，比如：`python Renderer.py imgs\test.jpg`
-   ，你可能需要自己再建一个脚本，用`subprocess`来自动给`cmd`发命令~~
 4. 如果你想执行自动化的渲染操作，那就用`Renderer.py`，它会自动渲染`imgs`文件夹里所有的`.jpg`和`.png`图片
 
 > 用 GUI 的可以不管，不过用 CLI 的各位记得把要OCR的图放进`imgs`文件夹里（ CLI 目前只检测`.jpg`和`.png`图片）
@@ -121,6 +123,9 @@ GOT-OCR-2-GUI
 
 - Q：为什么我的模型加载失败了？
 - A：检查一下你是不是少了文件。从百度云下载的模型文件似乎缺少了文件，我建议你去前面提到的 Huggingface 下载。
+
+- Q：有什么部署这个项目的建议吗？
+- A：看这个[issue #5](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/5)
 
 ## 简单的教程
 

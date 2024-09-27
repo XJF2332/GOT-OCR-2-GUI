@@ -31,6 +31,10 @@ Click a star, please
 
 ### Dependencies
 
+### torch
+Choose a suitable **GPU version** of `torch` and from [PyTorch](https://pytorch.org/get-started/locally/) and install it.  
+I am using stable 2.4.1 + cu124, so I suggest you to use this version.
+
 #### Use `pip` to install
 
 ```commandline
@@ -94,9 +98,6 @@ GOT-OCR-2-GUI
 1. If you want to use the command line, then use `CLI.py`.
 2. If you prefer a graphical interface, then use `GUI.py`.
 3. If you wish to modify language settings, then use `Language Config Manager.py`.
-4. If you want to perform automated rendering operations, ~~run `python Renderer.py <image-path>` in the `cmd`, for
-   example: `python Renderer.py imgs\test.jpg`. You might need to create your own script using `subprocess` to
-   automatically send commands to `cmd`.~~
 4. If you want to perform automated rendering operations, then use `Renderer.py`, it will automatically render all `.jpg` and `.png` files in the `imgs` folder.
 
 > Those using the GUI can ignore this, but for those using the CLI, remember to place the images you want to OCR into
@@ -136,6 +137,9 @@ GOT-OCR-2-GUI
 - Q: Why did my model fail to load?
 - A: Check if you are missing any files. It seems that the model files downloaded from Baidu Cloud are missing some
   files. I recommend you download from the previously mentioned Huggingface instead.
+
+- Q：Any suggestions on deploying this repo?
+- A: See this [issue #5](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/5)
 
 ## Simple Tutorial
 
