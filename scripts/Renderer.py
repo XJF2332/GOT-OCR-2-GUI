@@ -1,3 +1,6 @@
+from IPython.display import clear_output
+from IPython.display import display
+from IPython.display import Latex
 import re
 import os
 import scripts.html2pdf as html2pdf
@@ -43,17 +46,51 @@ def render(model, tokenizer, image_path, convert_to_pdf=False):
         html_utf8_path = os.path.join("result", f"{img_name_no_ext}-utf8.html")
         html_utf8_local_path = os.path.join("result", f"{img_name_no_ext}-utf8-local.html")
 
+        #生成Laxtex格式的结果
+        res = model.chat_crop(tokenizer, image_path, ocr_type='format')
+        display(Latex(res))
+
         # 渲染OCR结果
         model.chat(tokenizer, image_path, ocr_type='format', render=True, save_render_file=html_gb2312_path)
 
-        # 转换为UTF-8编码
+         # 转换为UTF-8编码
         convert_html_encoding(html_gb2312_path, html_utf8_path)
+
+        # 定义文件路径
+        file_path = html_utf8_path
+
+        # 定义要替换的字符串和替换后的字符串
+        search_string = '(C)'
+        replace_string = r'\(C\\)'
+
+        # 读取文件内容
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                content = file.read()
+            content1 = content
+            # 使用正则表达式进行替换
+            content = re.sub(r'\(C\)', r'(C\\\)', content)
+
+            content1.replace(search_string,replace_string)
+
+            # 将替换后的内容写回文件
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(content)
+
+            print(f"字符串 '{search_string}' 已被替换为 '{replace_string}'。")
+
+        except FileNotFoundError:
+            print(f"文件 '{file_path}' 未找到。")
+        except Exception as e:
+            print(f"发生错误: {e}")
+
+       
 
         # 根据参数决定是否转换为PDF
         if convert_to_pdf:
             repalce_html_content(html_utf8_path, html_utf8_local_path)
             pdf_path = os.path.join("result", f"{img_name_no_ext}.pdf")
             html2pdf.output_pdf(html_utf8_local_path, pdf_path)
-        return True
+        return True,res
     except:
-        return False
+        return False,res
