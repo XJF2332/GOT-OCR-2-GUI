@@ -27,6 +27,24 @@ model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_
 model = model.eval().cuda()
 print(local["model_loaded"])
 
+theme = gr.themes.Base(
+    primary_hue="violet",
+    secondary_hue="indigo",
+    radius_size="sm",
+).set(
+    background_fill_primary='*neutral_50',
+    border_color_accent='*neutral_50',
+    color_accent_soft='*neutral_50',
+    shadow_drop='none',
+    shadow_drop_lg='none',
+    shadow_inset='none',
+    shadow_spread='none',
+    shadow_spread_dark='none',
+    layout_gap='*spacing_xl',
+    checkbox_background_color='*primary_50',
+    checkbox_background_color_focus='*primary_200'
+)
+
 
 # 将文件以GB2312编码读取，并以UTF-8编码写入新文件
 def convert_html_encoding(input_file_path, output_file_path):
@@ -123,7 +141,7 @@ def ocr(image, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
 
 
 # gradio gui
-with gr.Blocks() as demo:
+with gr.Blocks(theme=theme) as demo:
     # OCR选项卡
     with gr.Tab(local["tab_ocr"]):
         with gr.Row():
@@ -131,10 +149,8 @@ with gr.Blocks() as demo:
                 # Fine-grained 设置
                 gr.Markdown(local["fine_grained_settings"])
                 with gr.Row():
-                    with gr.Column():
                         fine_grained_box_x1 = gr.Number(label=local["fine_grained_box_x1"], value=0)
                         fine_grained_box_y1 = gr.Number(label=local["fine_grained_box_y1"], value=0)
-                    with gr.Column():
                         fine_grained_box_x2 = gr.Number(label=local["fine_grained_box_x2"], value=0)
                         fine_grained_box_y2 = gr.Number(label=local["fine_grained_box_y2"], value=0)
                 fine_grained_color = gr.Dropdown(choices=["red", "green", "blue"], label=local["fine_grained_color"])
@@ -143,7 +159,7 @@ with gr.Blocks() as demo:
                 gr.Markdown(local["render_settings"])
                 with gr.Row():
                     img_name = gr.Textbox(label=local["img_name"], value="ocr")
-                    submit_name = gr.Button(local["submit_img_name"])
+                    submit_name = gr.Button(local["submit_img_name"], visible=False)
                 with gr.Row():
                     html_utf8_path = gr.Textbox(label=local["html_file_path"],
                                                 value=os.path.join("result", "ocr-utf8.html"), interactive=False)
@@ -152,6 +168,7 @@ with gr.Blocks() as demo:
                                                       interactive=False)
                     pdf_path = gr.Textbox(label=local["pdf_file_path"], value=os.path.join("result", "ocr-utf8.pdf"),
                                           interactive=False)
+                    img_name.change(func_submit_name, inputs=[img_name], outputs=[html_utf8_path, html_utf8_local_path, pdf_path])
         # OCR设置
         gr.Markdown(local["ocr_settings"])
 
@@ -162,11 +179,11 @@ with gr.Blocks() as demo:
                     choices=["ocr", "format", "fine-grained-ocr", "fine-grained-format", "fine-grained-color-ocr",
                              "fine-grained-color-format", "multi-crop-ocr", "multi-crop-format", "render"],
                     label=local["ocr_mode"])
-                do_ocr = gr.Button(local["do_ocr_btn"])
+                do_ocr = gr.Button(local["do_ocr_btn"], variant="primary")
                 result = gr.Textbox(label=local["result"])
                 with gr.Row():
                     save_as_pdf = gr.Button(local["save_as_pdf"])
-                    save_as_pdf_info = gr.Textbox(show_label=False, interactive=False)
+                save_as_pdf_info = gr.Markdown()
     # 指南选项卡
     with gr.Tab(local["tab_instructions"]):
         # 从对应语言的md文件中加载指南

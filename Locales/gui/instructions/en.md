@@ -17,6 +17,5 @@
 - You can convert HTML to PDF
 ### **How to render**
 1. Input image name in the text box, this will become the base name of the output files
-2. Click the "Submit Image Name" button to apply the name
-3. You will find that three textboxes below changed, which means the name has been applied
-4. Click the "Save as PDF" button to save the HTML file as a PDF file
+2. You will find that three textboxes below changed, which means the name has been applied
+3. Click the "Save as PDF" button to save the HTML file as a PDF file
