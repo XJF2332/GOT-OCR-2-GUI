@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" data-lt-installed="true"><head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script>
+    const text ="\\title{\n"+
+"Problem 23\n"+
+"}\n"+
+"A rectangular piece of paper whose length is \\(\\sqrt{3}\\) times the width has area \\(\\boldsymbol{A}\\). The paper is divided into three equal sections along the opposite lengths, and then a dotted line is drawn from the first divider to the second divider on the opposite side as shown. The paper is then folded flat along this dotted line to create a new shape with area B. What is the ratio \\(B: A\\) ?\n"+
+"\n"+
+"(A) \\(1: 2\\)\n"+
+"(B) \\(3: 5\\)\n"+
+"(C\\) \\(2: 3\\)\n"+
+"(D) \\(3: 4\\)\n"+
+"(E) \\(4: 5\\)\n"+
+"\n"+
+"146\n"+
+"Problem 21\n"+
+"Trapezoid \\(A B C D\\) has parallel sides \\(\\overline{A B}\\) of length 33 and \\(C D\\) of length 21 . The other two sides are of lengths 10 and 14 . The angles at \\(\\overline{A}\\) and \\(\\overline{B}\\) are acute. What is the length of the shorter diagonal of \\(A B C D\\) ?\n"+
+"(A) \\(10 \\sqrt{6}\\)\n"+
+"(B) 25\n"+
+"(C\\) \\(8 \\sqrt{10}\\)\n"+
+"(D) \\(18 \\sqrt{2}\\)\n"+
+"(E) 26\n"+
+"Problem 22\n"+
+"Eight semicircles line the inside of a square with side length 2 as shown. What is the radius of the circle tangent to all of these semicircles?\n"+
+"(A) \\(\\frac{1+\\sqrt{2}}{4}\\)\n"+
+"(B) \\(\\frac{\\sqrt{5}-1}{2}\\)\n"+
+"(C\\) \\(\\frac{\\sqrt{3}+1}{4}\\)\n"+
+"(D) \\(\\frac{2 \\sqrt{3}}{5}\\)\n"+
+"(E) \\(\\frac{\\sqrt{5}}{3}\\)\n"+
+"\n"+
+"15a\n"+
+"Problem 19\n"+
+"The isosceles right triangle \\(A B C\\) has right angle at \\(C\\) and area 12.5 The rays restricting \\(\\angle A C B\\) intersect \\(A B\\) at \\(D\\) and \\(E\\). What is the area of \\(\\triangle C D E\\) ?\n"+
+"(A) \\(\\frac{5 \\sqrt{2}}{3}\\)\n"+
+"(B) \\(\\frac{50 \\sqrt{3}-75}{4}\\)\n"+
+"(C\\) \\(\\frac{15 \\sqrt{3}}{8}\\)\n"+
+"(D) \\(\\frac{50-25 \\sqrt{3}}{2}\\)\n"+
+"(E) \\(\\frac{25}{6}\\)\n" 
+  </script>
+  <style>
+    #content {
+      max-width: 800px;
+      margin: auto;
+    }
+  </style>
+  <script>
+    let script = document.createElement('script');
+    script.src = "markdown-it.js";
+    document.head.append(script);
+
+    script.onload = function() {
+      const isLoaded = window.loadMathJax();
+      if (isLoaded) {
+        console.log('Styles loaded!')
+      }
+
+      const el = window.document.getElementById('content-text');
+      if (el) {
+        const options = {
+          htmlTags: true
+        };
+        const html = window.render(text, options);
+        el.outerHTML = html;
+      }
+    };
+  </script>
+</head>
+<body>
+  <div id="content"><div id="content-text"></div></div>
+</body>
+</html>

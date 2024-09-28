@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" data-lt-installed="true"><head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script>
+    const text ="\\title{\n"+
+"Problem 20\n"+
+"}\n"+
+"Triangle \\(A B C\\) has a right angle at \\(B . A B=1\\). and \\(B C=2\\). The bisector of \\(\\angle B A C\\) meets \\(\\overrightarrow{B C}\\) at \\(D\\). What is \\(\\overrightarrow{B D_{7}}\\)\n"+
+"(A) \\(\\frac{\\sqrt{3}-1}{2}\\)\n"+
+"(B) \\(\\frac{\\sqrt{5}-1}{2}\\)\n"+
+"(C) \\(\\frac{\\sqrt{5}+1}{2}\\)\n"+
+"(D) \\(\\frac{\\sqrt{6}+\\sqrt{2}}{2}\\)\n"+
+"(E) \\(2 \\sqrt{3}-1\\)\n"+
+"Problem 22\n"+
+"A cubical cake with edge length 2 inches is iced on the sides and the top. It is cut vertically into three pieces as shown in this top view, where \\(\\mathcal{M}\\) is the midpoint of a top edge. The piece whose top is triangle \\(\\mathcal{B}\\) contains \\(\\mathcal{C}\\) cubic inches of cake and \\(\\mathcal{S}\\) square inches of icing. What is \\(\\mathcal{C}+\\mathcal{S}\\) ?\n"+
+"(A) \\(\\frac{24}{5}\\)\n"+
+"(B) \\(\\frac{32}{5}\\)\n"+
+"(C) \\(8+\\sqrt{5}\\)\n"+
+"(D) \\(5+\\frac{16 \\sqrt{5}}{5}\\)\n"+
+"(E) \\(10+5 \\sqrt{5}\\)\n"+
+"The keystone arch is an ancient architectural feature. It is composed of congruent isosceles trapezoids fitted together along the non-parallel sides, as shown. The bottom sides of the two end trapezoids are horizontal. In an arch made with 9 trapezoids, let \\(\\mathcal{X}\\) be the angle measure in degrees of the larger interior angle of the trapezoid. What is \\(\\mathcal{X}\\) ?\n"+
+"\n"+
+"(A) 100\n"+
+"(B) 102\n"+
+"(C) 104\n"+
+"(D) 106\n"+
+"(E) 108\n"+
+"\\section*{10a}\n"+
+"Problem 16\n"+
+"Nenogenerate \\(\\triangle A B C\\) has integer side lengths, \\(\\overrightarrow{B D}\\) is an angle bisector, \\(A D=3\\), and \\(D C=8\\). What is the smallest possible value of the perimeter?\n"+
+"(A) 30\n"+
+"(B) 33\n"+
+"(C) 35\n"+
+"(D) 36\n"+
+"(E) 37\n" 
+  </script>
+  <style>
+    #content {
+      max-width: 800px;
+      margin: auto;
+    }
+  </style>
+  <script>
+    let script = document.createElement('script');
+    script.src = "https://cdn.jsdelivr.net/npm/mathpix-markdown-it@1.3.6/es5/bundle.js";
+    document.head.append(script);
+
+    script.onload = function() {
+      const isLoaded = window.loadMathJax();
+      if (isLoaded) {
+        console.log('Styles loaded!')
+      }
+
+      const el = window.document.getElementById('content-text');
+      if (el) {
+        const options = {
+          htmlTags: true
+        };
+        const html = window.render(text, options);
+        el.outerHTML = html;
+      }
+    };
+  </script>
+</head>
+<body>
+  <div id="content"><div id="content-text"></div></div>
+</body>
+</html>
