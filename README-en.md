@@ -25,6 +25,9 @@ Click a star, please
 - [x] Write a script to manage language configuration files
 - [x] Turn file path constructing method into `os.path.join` instead of formatted string
 - [x] A script for batch rendering
+- [x] PDF OCR support, it will generate PDF Files for single images
+- [ ] Merge PDF files into one
+- [ ] HTML to .docx
 
 ## How to use
 
@@ -94,7 +97,8 @@ GOT-OCR-2-GUI
 1. If you want to use the command line, then use `CLI.py`.
 2. If you prefer a graphical interface, then use `GUI.py`.
 3. If you wish to modify language settings, then use `Language Config Manager.py`.
-4. If you want to perform automated rendering operations, then use `Renderer.py`, it will automatically render all `.jpg` and `.png` files in the `imgs` folder.
+4. If you want to perform automated rendering operations, then use `Renderer.py`, it will automatically render all `.jpg` and `.png` files in the `imgs` folder.  
+5. If you want to perform automated rendering on a PDF file, then use `pdf2img and Renderer.py`. Put your PDF file in the `pdf` folder, the script will detect first file. Press Y in command line, and you will get your separated render rusult in the `results` folder.
 
 > Those using the GUI can ignore this, but for those using the CLI, remember to place the images you want to OCR into
 > the `imgs` folder (the CLI currently only detects `.jpg` and `.png` files).

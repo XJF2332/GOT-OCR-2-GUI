@@ -22,7 +22,8 @@
 - [x] 写一个脚本来管理语言配置文件
 - [x] 文件路径构建方法从格式化字符串变成`os.path.join`
 - [x] 批量渲染脚本
-- [ ] pdf处理，先分割成单页的png，然后批量渲染，生成每页的pdf，还缺pdf合并功能
+- [x] pdf处理，先分割成单页的png，然后批量渲染，生成每页的pdf
+- [ ] pdf合并功能
 - [ ] html转word功能，保留公式可以编辑
 
 ## 使用方法
@@ -92,7 +93,7 @@ GOT-OCR-2-GUI
 2. 如果你想用图形界面，那就用`GUI.py`
 3. 如果你想修改语言设置，那就用`Language Config Manager.py`
 4. 如果你想执行自动化的渲染操作，那就用`Renderer.py`，它会自动渲染`imgs`文件夹里所有的`.jpg`和`.png`图片
-5. 如果你想处理一个pdf文件，记得先pip install PyMuPDF,将要转化的pdf文档放入pdf文件夹下，默认只处理识别到的第一个pdf文档，然后用‘pdf2img.py’，在对话框中，输入Y，就可以在result文件夹下得到渲染的每页处理结果。
+5. 如果你想处理一个pdf文件，那就用`pdf2img and Renderer.py`，将要转化的pdf文档放入pdf文件夹下，默认只处理识别到的第一个pdf文档，在对话框中，输入Y，就可以在`result`文件夹下得到渲染的每页处理结果。
 
 > 用 GUI 的可以不管，不过用 CLI 的各位记得把要OCR的图放进`imgs`文件夹里（ CLI 目前只检测`.jpg`和`.png`图片）
 

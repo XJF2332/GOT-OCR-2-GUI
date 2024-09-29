@@ -47,8 +47,8 @@ def render(model, tokenizer, image_path, convert_to_pdf=False):
         html_utf8_local_path = os.path.join("result", f"{img_name_no_ext}-utf8-local.html")
 
         # 生成Latex格式的结果
-        res = model.chat_crop(tokenizer, image_path, ocr_type='format')
-        display(Latex(res))
+        # res = model.chat_crop(tokenizer, image_path, ocr_type='format')
+        # display(Latex(res))
 
         # 渲染OCR结果
         model.chat(tokenizer, image_path, ocr_type='format', render=True, save_render_file=html_gb2312_path)
@@ -89,6 +89,6 @@ def render(model, tokenizer, image_path, convert_to_pdf=False):
             repalce_html_content(html_utf8_path, html_utf8_local_path)
             pdf_path = os.path.join("result", f"{img_name_no_ext}.pdf")
             html2pdf.output_pdf(html_utf8_local_path, pdf_path)
-        return True, res
+        return True
     except:
-        return False, res
+        return False
