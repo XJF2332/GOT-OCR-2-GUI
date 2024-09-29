@@ -4,8 +4,18 @@ from selenium.webdriver.edge.options import Options
 import os
 import base64
 import time
+import re
 
 def output_pdf(html_path, pdf_path):
+    """
+    将HTML文件转换为PDF文件
+    Args:
+        html_path:
+        pdf_path:
+
+    Returns:
+
+    """
     # 设置EdgeDriver的路径
     edge_driver_path = os.path.abspath('./edge_driver/msedgedriver.exe')
 
@@ -46,3 +56,59 @@ def output_pdf(html_path, pdf_path):
     driver.quit()
 
     # print(f'PDF saved as {pdf_file_path}')
+
+
+def convert_html_encoding(html_gb2312_path, html_utf8_path):
+    """
+    转换HTML编码
+    Args:
+        html_gb2312_path:
+        html_utf8_path:
+
+    Returns:
+
+    """
+    # gb2312
+    with open(html_gb2312_path, 'r', encoding='gb2312') as file:
+        content = file.read()
+
+    # utf8
+    with open(html_utf8_path, 'w', encoding='utf-8') as file:
+        file.write(content)
+
+
+# 替换HTML内容
+def repalce_html_content(html_utf8_path, html_utf8_local_path):
+    """
+    替换HTML内容
+    Args:
+        html_utf8_path:
+        html_utf8_local_path:
+
+    Returns:
+
+    """
+    pattern = r'https://cdn.jsdelivr.net/npm/mathpix-markdown-it@1.3.6/es5/bundle.js'
+    replacement = 'markdown-it.js'
+    with open(html_utf8_path, 'r', encoding='utf-8') as file:
+        content = file.read()
+    new_html_content = re.sub(pattern, replacement, content)
+    with open(html_utf8_local_path, 'w', encoding='utf-8') as file:
+        file.write(new_html_content)
+
+
+def all_in_one(html_gb2312_path, html_utf8_path, html_utf8_local_path, pdf_path):
+    """
+    将HTML文件转换为PDF文件
+    Args:
+        html_gb2312_path:
+        html_utf8_path:
+        html_utf8_local_path:
+        pdf_path:
+
+    Returns:
+
+    """
+    convert_html_encoding(html_gb2312_path, html_utf8_path)
+    repalce_html_content(html_utf8_path, html_utf8_local_path)
+    output_pdf(html_utf8_local_path, pdf_path)

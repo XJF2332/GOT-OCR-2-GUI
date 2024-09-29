@@ -51,28 +51,6 @@ def select_image():
     return os.path.join(img_folder, img_files[choice])
 
 
-# 转换HTML编码
-def convert_html_encoding(input_file_path, output_file_path):
-    # gb2312
-    with open(input_file_path, 'r', encoding='gb2312') as file:
-        content = file.read()
-
-    # utf8
-    with open(output_file_path, 'w', encoding='utf-8') as file:
-        file.write(content)
-
-
-# 替换HTML内容
-def repalce_html_content(input_file_path, output_file_path):
-    pattern = r'https://cdn.jsdelivr.net/npm/mathpix-markdown-it@1.3.6/es5/bundle.js'
-    replacement = 'markdown-it.js'
-    with open(input_file_path, 'r', encoding='utf-8') as file:
-        content = file.read()
-    new_html_content = re.sub(pattern, replacement, content)
-    with open(output_file_path, 'w', encoding='utf-8') as file:
-        file.write(new_html_content)
-
-
 # 执行OCR
 def do_ocr(image):
     if not os.path.exists("result"):
@@ -200,22 +178,23 @@ def do_ocr(image):
         html_utf8_local_path = os.path.join("result", f"{img_name_no_ext}-utf8-local.html")
         # 渲染OCR结果
         print("")
-        print(local["render_mode_rendering"])
-        print("")
-        model.chat(tokenizer, image, ocr_type='format', render=True, save_render_file=html_gb2312_path)
-        print("")
-        convert_html_encoding(html_gb2312_path, html_utf8_path)
-        print("")
-        print(local["render_mode_success"].format(html_gb2312_path=html_gb2312_path, html_utf8_path=html_utf8_path))
-        print("")
         conv = input(local["pdf_convert_ask"])
         if conv.lower() == 'y':
-            repalce_html_content(html_utf8_path, html_utf8_local_path)
+            print("")
+            print(local["render_mode_rendering"])
+            print("")
+            model.chat(tokenizer, image, ocr_type='format', render=True, save_render_file=html_gb2312_path)
+            print(local["render_mode_success"].format(html_gb2312_path=html_gb2312_path, html_utf8_path=html_utf8_path))
+            print("")
             pdf_path = os.path.join("result", f"{img_name_no_ext}.pdf")
-            html2pdf.output_pdf(html_utf8_local_path, pdf_path)
+            html2pdf.all_in_one(html_gb2312_path, html_utf8_path, html_utf8_local_path, pdf_path)
             print("")
             print(local["pdf_convert_success"].format(img_name_no_ext=img_name_no_ext))
         elif conv.lower() == 'n':
+            model.chat(tokenizer, image, ocr_type='format', render=True, save_render_file=html_gb2312_path)
+            print(local["render_mode_success"].format(html_gb2312_path=html_gb2312_path, html_utf8_path=html_utf8_path))
+            html2pdf.convert_html_encoding(html_gb2312_path, html_utf8_path)
+            html2pdf.repalce_html_content(html_utf8_path, html_utf8_local_path)
             print("")
             print(local["pdf_convert_refused"])
         else:
