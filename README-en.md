@@ -178,3 +178,8 @@ Here are tutorials for CLI users.
 1. CLI will automaticlly get image name
 2. HTML files will be saved in `result` folder
 3. If you want to convert HTML to PDF, just enter `y` when the CLI ask you
+
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=XJF2332/GOT-OCR-2-GUI&type=Date)](https://star-history.com/#XJF2332/GOT-OCR-2-GUI&Date)

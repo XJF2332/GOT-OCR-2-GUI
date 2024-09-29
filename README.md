@@ -165,3 +165,8 @@ GUI 的教程已经内置到了 UI 中，**直接打开 GUI** 就能看到了，
 3. 如果你想将HTML转换为PDF，只需在CLI询问时输入 `y`
 
 
+
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=XJF2332/GOT-OCR-2-GUI&type=Date)](https://star-history.com/#XJF2332/GOT-OCR-2-GUI&Date)
