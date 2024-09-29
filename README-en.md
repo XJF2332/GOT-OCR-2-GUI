@@ -26,6 +26,7 @@ Click a star, please
 - [x] Turn file path constructing method into `os.path.join` instead of formatted string
 - [x] A script for batch rendering
 - [x] PDF OCR support, it will generate PDF Files for single images
+- [ ] I have to do some cleaning up
 - [ ] Merge PDF files into one
 - [ ] HTML to .docx
 
