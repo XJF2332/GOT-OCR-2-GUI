@@ -4,6 +4,8 @@
 
 ![img.png](img.png)
 
+**⚠️CLI 版本暂时停止更新，在 GUI 做好后，我需要将其重新做成能够从命令行接受参数的形式，以便适应自动化操作⚠️**
+
 ## 关于此项目
 
 模型权重：[镜像站](https://hf-mirror.com/stepfun-ai/GOT-OCR2_0)，[原站点](https://huggingface.co/stepfun-ai/GOT-OCR2_0)  
@@ -23,7 +25,8 @@
 - [x] 文件路径构建方法从格式化字符串变成`os.path.join`
 - [x] 批量渲染脚本
 - [x] pdf处理，先分割成单页的png，然后批量渲染，生成每页的pdf
-- [ ] 我现在需要做一些清理工作
+- [x] 我现在需要做一些清理工作
+- [ ] 更多的配置选项
 - [ ] pdf合并功能
 - [ ] html转word功能，保留公式可以编辑
 
@@ -163,9 +166,6 @@ GUI 的教程已经内置到了 UI 中，**直接打开 GUI** 就能看到了，
 1. CLI将自动获取图像名称
 2. HTML文件将保存在 `result` 文件夹中
 3. 如果你想将HTML转换为PDF，只需在CLI询问时输入 `y`
-
-
-
 
 ## Star History
 

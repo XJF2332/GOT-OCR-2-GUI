@@ -4,6 +4,8 @@
 
 ![img.png](img.png)
 
+**⚠️Development of CLI has been paused. I will make it able to receive params from command line so that it will be more suitable for automatic jobs after I finished the development of GUI.⚠️**
+
 ## About this project
 
 Model
@@ -26,7 +28,8 @@ Click a star, please
 - [x] Turn file path constructing method into `os.path.join` instead of formatted string
 - [x] A script for batch rendering
 - [x] PDF OCR support, it will generate PDF Files for single images
-- [ ] I have to do some cleaning up
+- [x] I have to do some cleaning
+- [ ] More configurable options
 - [ ] Merge PDF files into one
 - [ ] HTML to .docx
 
@@ -60,7 +63,7 @@ pip install -r requirements-noversion.txt
 #### Other
 
 - [Edge WebDriver](https://developer.microsoft.com/zh-cn/microsoft-edge/tools/webdriver/?form=MA13LH#downloads),
-  download the `.zip` file, unzip it and put it into `msedgedriver` folder)
+  download the `.zip` file, unzip it and put it into `msedgedriver` folder
 
 > This requires the Edge browser to be installed on your computer, which is preinstalled on Windows.  
 > The file structure should be:
@@ -99,7 +102,7 @@ GOT-OCR-2-GUI
 2. If you prefer a graphical interface, then use `GUI.py`.
 3. If you wish to modify language settings, then use `Language Config Manager.py`.
 4. If you want to perform automated rendering operations, then use `Renderer.py`, it will automatically render all `.jpg` and `.png` files in the `imgs` folder.  
-5. If you want to perform automated rendering on a PDF file, then use `pdf2img and Renderer.py`. Put your PDF file in the `pdf` folder, the script will detect first file. Press Y in command line, and you will get your separated render rusult in the `results` folder.
+5. If you want to perform automated rendering on a PDF file, then use `pdf2img and Renderer.py`. Put your PDF file in the `pdf` folder, the script will detect first file. Press Y in command line, and you will get your separated render result in the `results` folder.
 
 > Those using the GUI can ignore this, but for those using the CLI, remember to place the images you want to OCR into
 > the `imgs` folder (the CLI currently only detects `.jpg` and `.png` files).
@@ -175,10 +178,9 @@ Here are tutorials for CLI users.
 
 ### **How to render**
 
-1. CLI will automaticlly get image name
+1. CLI will automatically get image name
 2. HTML files will be saved in `result` folder
 3. If you want to convert HTML to PDF, just enter `y` when the CLI ask you
-
 
 ## Star History
 

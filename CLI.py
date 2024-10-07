@@ -2,7 +2,7 @@ import json
 import os
 
 # 打开配置文件
-print("Loading config...")
+print("Loading language config...")
 config_path = os.path.join("Locales", "cli", "config.json")
 with open(config_path, 'r', encoding='utf-8') as file:
     config = json.load(file)

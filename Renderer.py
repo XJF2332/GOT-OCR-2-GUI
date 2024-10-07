@@ -3,9 +3,9 @@ import os
 import glob
 
 # 打开配置文件
-print("Loading config...")
-config_path = os.path.join("Locales", "cli", "config.json")
-with open(config_path, 'r', encoding='utf-8') as file:
+print("Loading language config...")
+lang_config_path = os.path.join("Locales", "cli", "config.json")
+with open(lang_config_path, 'r', encoding='utf-8') as file:
     config = json.load(file)
     lang = config['language']
 
