@@ -15,7 +15,7 @@ with open(lang_file, 'r', encoding='utf-8') as file:
     local = json.load(file)
 
 # 导入transformers库
-print(local["import_libs"])
+print(local["info_import_libs"])
 from transformers import AutoModel, AutoTokenizer
 import scripts.Renderer as Render
 

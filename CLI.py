@@ -14,7 +14,7 @@ with open(lang_file, 'r', encoding='utf-8') as file:
     local = json.load(file)
 
 # 导入transformers库
-print(local["import_libs"])
+print(local["info_import_libs"])
 from transformers import AutoModel, AutoTokenizer
 import re
 import scripts.html2pdf as html2pdf
@@ -58,7 +58,7 @@ def do_ocr(image):
 
     # 主菜单
     print("")
-    print(local["ocr_mode"])
+    print(local["label_ocr_mode"])
     print(local["plaintext_ocr"])
     print(local["format_ocr"])
     print(local["finegrained_ocr"])
@@ -96,7 +96,7 @@ def do_ocr(image):
             # 使用颜色
             elif fine_grained_mode.lower() == 'c':
                 print("")
-                color = input(local["fine_grained_color"])
+                color = input(local["label_fine_grained_color"])
                 print("")
                 res = model.chat(tokenizer, image, ocr_type='ocr', ocr_color=color)
                 print("")
@@ -123,7 +123,7 @@ def do_ocr(image):
             # 使用颜色
             elif fine_grained_mode.lower() == 'c':
                 print("")
-                color = input(local["fine_grained_color"])
+                color = input(local["label_fine_grained_color"])
                 print("")
                 res = model.chat(tokenizer, image, ocr_type='format', ocr_color=color)
                 print("")
