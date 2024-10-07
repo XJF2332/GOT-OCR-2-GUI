@@ -84,11 +84,11 @@ image_files = glob.glob(os.path.join(imgs_path, '*.jpg')) + glob.glob(os.path.jo
 # 逐个发送图片给renderer的render函数
 allres=''
 for image_path in image_files:
-    success,res = Render.render(model, tokenizer, image_path, convert_confirm)
+    success = Render.render(model, tokenizer, image_path, convert_confirm)
     if success:
         print(local["renderer_success"].format(img_path=image_path))
-        allres= allres + '\n' + res
-        print(allres)
+        # allres= allres + '\n' + res
+        # print(allres)
     else:
         print(local["renderer_fail"].format(img_path=image_path))
 
