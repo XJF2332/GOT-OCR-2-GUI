@@ -40,7 +40,7 @@ def output_pdf(html_path, pdf_path):
     driver.get(html_file_path)
 
     # 确保页面已加载
-    time.sleep(2)
+    # time.sleep(2)
 
     # 生成PDF文件
     pdf_data = driver.execute_cdp_cmd('Page.printToPDF', {

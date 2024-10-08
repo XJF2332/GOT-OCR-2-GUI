@@ -17,6 +17,8 @@ from transformers import AutoModel, AutoTokenizer
 import gradio as gr
 import os
 import scripts.html2pdf as html2pdf
+import glob
+import scripts.Renderer as Render
 
 # 加载模型
 print(local["info_load_model"])
@@ -109,6 +111,20 @@ def ocr(image, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
         return str(e)
 
 
+# 渲染器
+def renderer(imgs_path, pdf_convert_confirm):
+    image_files = glob.glob(os.path.join(imgs_path, '*.jpg')) + glob.glob(os.path.join(imgs_path, '*.png'))
+
+    # 逐个发送图片给renderer的render函数
+    for image_path in image_files:
+        gr.Info(message=local["info_render_start"].format(img_file=image_path))
+        success = Render.render(model, tokenizer, image_path, pdf_convert_confirm)
+        if success:
+            gr.Info(message=local["info_render_success"].format(img_file=image_path))
+        else:
+            gr.Error(message=local["error_render_fail"].format(img_file=image_path))
+
+
 # gradio gui
 with gr.Blocks(theme=theme) as demo:
     # OCR选项卡
@@ -157,11 +173,12 @@ with gr.Blocks(theme=theme) as demo:
 
     # 渲染器选项卡
     with gr.Tab(local["tab_renderer"]):
-        gr.Markdown(local["info_developing"])
+        # gr.Markdown(local["info_developing"])
         with gr.Row():
             input_folder_path = gr.Textbox(label=local["label_input_folder_path"], value="imgs", interactive=True)
-            output_folder_path = gr.Textbox(label=local["label_output_folder_path"], value="result", interactive=True)
-        render_btn = gr.Button(local["btn_render"], variant="primary")
+        with gr.Row():
+            pdf_convert_confirm = gr.Checkbox(label=local["label_save_as_pdf"], value=True, interactive=True)
+            render_btn = gr.Button(local["btn_render"], variant="primary")
 
     # 指南选项卡
     with gr.Tab(local["tab_instructions"]):
@@ -184,6 +201,13 @@ with gr.Blocks(theme=theme) as demo:
         fn=html2pdf.all_in_one,
         inputs=[html_gb2312_path, html_utf8_path, html_utf8_local_path, pdf_path],
         outputs=save_as_pdf_info
+    )
+
+    # 点击渲染
+    render_btn.click(
+        fn=renderer,
+        inputs=[input_folder_path, pdf_convert_confirm],
+        outputs=None
     )
 
 # 启动gradio界面
