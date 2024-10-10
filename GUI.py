@@ -16,7 +16,6 @@ print(local["info_import_libs"])
 from transformers import AutoModel, AutoTokenizer
 import gradio as gr
 import os
-import scripts.html2pdf as html2pdf
 import glob
 import scripts.Renderer as Render
 
@@ -55,27 +54,20 @@ def build_name(img_name):
     return [html_gb2312_path, html_utf8_path]
 
 
-# 提交文件名
-def func_submit_name(img_name):
-    # 构建html文件名
-    html_gb2312_path = os.path.join("result", f"{img_name}-gb2312.html")
-    html_utf8_path = os.path.join("result", f"{img_name}-utf8.html")
-    html_utf8_local_path = os.path.join("result", f"{img_name}-utf8-local.html")
-    pdf_path = os.path.join("result", f"{img_name}-utf8.pdf")
-    return html_gb2312_path, html_utf8_path, html_utf8_local_path, pdf_path
+# 更新图片名称
+def update_img_name(image_uploaded):
+    image_name_with_extension = os.path.basename(image_uploaded)
+    return gr.Textbox(label=local["label_img_name"], value=image_name_with_extension)
 
 
 # 进行OCR识别
-def ocr(image, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
-        fine_grained_box_y2, OCR_type, fine_grained_color, img_name):
+def ocr(image_uploaded, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
+        fine_grained_box_y2, OCR_type, fine_grained_color, pdf_convert_confirm):
     # 构建OCR框
     box = [fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2, fine_grained_box_y2]
 
     # 未选择模式
     res = local["error_ocr_mode_none"]
-
-    # 构建html文件名
-    html_gb2312_path, html_utf8_path = build_name(img_name)
 
     # 如果result文件夹不存在，则创建
     if not os.path.exists("result"):
@@ -84,29 +76,28 @@ def ocr(image, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
     try:
         # 根据OCR类型进行OCR识别
         if OCR_type == "ocr":
-            res = model.chat(tokenizer, image, ocr_type='ocr')
+            res = model.chat(tokenizer, image_uploaded, ocr_type='ocr')
         elif OCR_type == "format":
-            res = model.chat(tokenizer, image, ocr_type='format')
+            res = model.chat(tokenizer, image_uploaded, ocr_type='format')
         elif OCR_type == "fine-grained-ocr":
-            res = model.chat(tokenizer, image, ocr_type='ocr', ocr_box=box)
+            res = model.chat(tokenizer, image_uploaded, ocr_type='ocr', ocr_box=box)
         elif OCR_type == "fine-grained-format":
-            res = model.chat(tokenizer, image, ocr_type='format', ocr_box=box)
+            res = model.chat(tokenizer, image_uploaded, ocr_type='format', ocr_box=box)
         elif OCR_type == "fine-grained-color-ocr":
-            res = model.chat(tokenizer, image, ocr_type='ocr', ocr_color=fine_grained_color)
+            res = model.chat(tokenizer, image_uploaded, ocr_type='ocr', ocr_color=fine_grained_color)
         elif OCR_type == "fine-grained-color-format":
-            res = model.chat(tokenizer, image, ocr_type='format', ocr_color=fine_grained_color)
+            res = model.chat(tokenizer, image_uploaded, ocr_type='format', ocr_color=fine_grained_color)
         elif OCR_type == "multi-crop-ocr":
-            res = model.chat_crop(tokenizer, image, ocr_type='ocr')
+            res = model.chat_crop(tokenizer, image_uploaded, ocr_type='ocr')
         elif OCR_type == "multi-crop-format":
-            res = model.chat_crop(tokenizer, image, ocr_type='format')
+            res = model.chat_crop(tokenizer, image_uploaded, ocr_type='format')
         elif OCR_type == "render":
-            # 进行渲染
-            model.chat(tokenizer, image, ocr_type='format', render=True, save_render_file=html_gb2312_path)
-            # 将文件以GB2312编码读取，并以UTF-8编码写入新文件
-            html2pdf.convert_html_encoding(html_gb2312_path, html_utf8_path)
-            # 打印渲染保存成功
-            res = local["info_render_save_success"].format(html_utf8_path=html_utf8_path,
-                                                           html_gb2312_path=html_gb2312_path)
+            success = Render.render(model, tokenizer, image_uploaded, pdf_convert_confirm)
+            image_name_with_extension = os.path.basename(image_uploaded)
+            if success:
+                res = local["info_render_success"].format(img_file=image_name_with_extension)
+            else:
+                res = local["error_render_fail"].format(img_file=image_name_with_extension)
         return res
     except Exception as e:
         return str(e)
@@ -131,6 +122,7 @@ with gr.Blocks(theme=theme) as demo:
     # OCR选项卡
     with gr.Tab(local["tab_ocr"]):
         with gr.Row():
+
             with gr.Column():
                 # Fine-grained 设置
                 gr.Markdown(local["label_fine_grained_settings"])
@@ -141,26 +133,15 @@ with gr.Blocks(theme=theme) as demo:
                     fine_grained_box_y2 = gr.Number(label=local["label_fine_grained_box_y2"], value=0)
                 fine_grained_color = gr.Dropdown(choices=["red", "green", "blue"],
                                                  label=local["label_fine_grained_color"], value="red")
+
             with gr.Column():
                 # 渲染设置
                 gr.Markdown(local["label_render_settings"])
-                with gr.Row():
-                    img_name = gr.Textbox(label=local["label_img_name"], value="ocr")
-                with gr.Row():
-                    html_gb2312_path = gr.Textbox(visible=False, value=os.path.join("result", "ocr-gb2312.html"))
-                    html_utf8_path = gr.Textbox(label=local["label_html_file_path"],
-                                                value=os.path.join("result", "ocr-utf8.html"), interactive=False)
-                    html_utf8_local_path = gr.Textbox(label=local["label_html_local_file_path"],
-                                                      value=os.path.join("result", "ocr-utf8-local.html"),
-                                                      interactive=False)
-                    pdf_path = gr.Textbox(label=local["label_pdf_file_path"],
-                                          value=os.path.join("result", "ocr-utf8.pdf"),
-                                          interactive=False)
-                    img_name.change(func_submit_name, inputs=[img_name],
-                                    outputs=[html_gb2312_path, html_utf8_path, html_utf8_local_path, pdf_path])
-        # OCR设置
-        gr.Markdown(local["label_ocr_settings"])
+                pdf_convert_confirm = gr.Checkbox(label=local["label_save_as_pdf"])
+                img_name = gr.Textbox(label=local["label_img_name"], value="ocr")
 
+        # OCR
+        gr.Markdown(local["label_ocr_settings"])
         with gr.Row():
             upload_img = gr.Image(type="filepath", label=local["label_upload_img"])
             with gr.Column():
@@ -170,46 +151,43 @@ with gr.Blocks(theme=theme) as demo:
                     label=local["label_ocr_mode"], value="ocr")
                 do_ocr = gr.Button(local["btn_do_ocr"], variant="primary")
                 result = gr.Textbox(label=local["label_result"])
-                with gr.Row():
-                    save_as_pdf = gr.Button(local["btn_save_as_pdf"])
-                save_as_pdf_info = gr.Markdown()
 
     # 渲染器选项卡
     with gr.Tab(local["tab_renderer"]):
         with gr.Row():
             input_folder_path = gr.Textbox(label=local["label_input_folder_path"], value="imgs", interactive=True)
         with gr.Row():
-            pdf_convert_confirm = gr.Checkbox(label=local["label_save_as_pdf"], value=True, interactive=True)
-            render_btn = gr.Button(local["btn_render"], variant="primary")
+            batch_pdf_convert_confirm = gr.Checkbox(label=local["label_save_as_pdf"], value=True, interactive=True)
+            batch_render_btn = gr.Button(local["btn_render"], variant="primary")
 
     # 指南选项卡
     with gr.Tab(local["tab_instructions"]):
         # 从对应语言的md文件中加载指南
         with open(os.path.join('Locales', 'gui', 'instructions', f'{lang}.md'), 'r', encoding='utf-8') as file:
             instructions = file.read()
-        # 显示指南
+
         gr.Markdown(instructions)
 
     # 点击进行OCR识别
     do_ocr.click(
         fn=ocr,
         inputs=[upload_img, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
-                fine_grained_box_y2, ocr_mode, fine_grained_color, img_name],
+                fine_grained_box_y2, ocr_mode, fine_grained_color, pdf_convert_confirm],
         outputs=result
     )
 
-    # 点击保存为pdf
-    save_as_pdf.click(
-        fn=html2pdf.all_in_one,
-        inputs=[html_gb2312_path, html_utf8_path, html_utf8_local_path, pdf_path],
-        outputs=save_as_pdf_info
+    # 点击渲染
+    batch_render_btn.click(
+        fn=renderer,
+        inputs=[input_folder_path, batch_pdf_convert_confirm],
+        outputs=None
     )
 
-    # 点击渲染
-    render_btn.click(
-        fn=renderer,
-        inputs=[input_folder_path, pdf_convert_confirm],
-        outputs=None
+    # 更新图片名称
+    upload_img.change(
+        fn=update_img_name,
+        inputs=upload_img,
+        outputs=img_name
     )
 
 # 启动gradio界面

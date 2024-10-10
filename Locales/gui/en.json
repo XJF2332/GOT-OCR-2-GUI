@@ -4,6 +4,7 @@
   "btn_do_ocr": "Perform OCR",
   "btn_render": "Render (batch job)",
   "error_ocr_mode_none": "No OCR mode selected",
+  "error_render_fail": "Failed to render {img_file}",
   "info_import_libs": "Importing libraries......",
   "info_load_model": "Loading model......",
   "info_model_loaded": "Model loaded, starting Webui......",
