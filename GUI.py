@@ -26,12 +26,17 @@ import glob
 import scripts.Renderer as Render
 
 # 加载模型
-print(local["info_load_model"])
-tokenizer = AutoTokenizer.from_pretrained('models', trust_remote_code=True)
-model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_usage=True, device_map='cuda',
-                                  use_safetensors=True, pad_token_id=tokenizer.eos_token_id)
-model = model.eval().cuda()
-print(local["info_model_loaded"])
+if config["load_model_on_start"]:
+    print(local["info_load_model"])
+    tokenizer = AutoTokenizer.from_pretrained('models', trust_remote_code=True)
+    model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_usage=True, device_map='cuda',
+                                      use_safetensors=True, pad_token_id=tokenizer.eos_token_id)
+    model = model.eval().cuda()
+    print(local["info_model_loaded"])
+else:
+    model = None
+    tokenizer = None
+    print(local["info_model_load_skipped"])
 
 
 theme = gr.themes.Base(
@@ -141,8 +146,8 @@ with gr.Blocks(theme=theme) as demo:
             with gr.Column():
                 # 渲染设置
                 gr.Markdown(local["label_render_settings"])
-                pdf_convert_confirm = gr.Checkbox(label=local["label_save_as_pdf"])
                 img_name = gr.Textbox(label=local["label_img_name"], value="ocr")
+                pdf_convert_confirm = gr.Checkbox(label=local["label_save_as_pdf"])
 
         # OCR
         gr.Markdown(local["label_ocr_settings"])

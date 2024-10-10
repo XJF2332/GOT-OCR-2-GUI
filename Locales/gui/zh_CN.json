@@ -8,6 +8,7 @@
   "info_import_libs": "正在导入库......",
   "info_load_model": "正在加载模型......",
   "info_model_loaded": "模型加载完成，正在启动 Webui......",
+  "info_model_load_skipped": "模型加载已跳过",
   "info_pdf_save_success": "PDF 成功保存到了 {pdf_path}",
   "info_render_save_success": "渲染成功保存到了 {html_gb2312_path} 和 {html_utf8_path}",
   "info_render_success": "{img_file} 渲染成功",

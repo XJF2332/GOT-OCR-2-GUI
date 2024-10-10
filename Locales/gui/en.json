@@ -8,6 +8,7 @@
   "info_import_libs": "Importing libraries......",
   "info_load_model": "Loading model......",
   "info_model_loaded": "Model loaded, starting Webui......",
+  "info_model_load_skipped": "Skipping model loading",
   "info_pdf_save_success": "PDF successfully saved to {pdf_path}",
   "info_render_save_success": "Render successfully saved to {html_gb2312_path} and {html_utf8_path}",
   "info_render_success": "Successfully rendered {img_file}",
