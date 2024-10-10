@@ -5,27 +5,34 @@ import glob
 
 from pathlib import Path
 
+print("Loading config......")
+config_path = os.path.join("Configs", "Config.json")
+with open(config_path, 'r', encoding='utf-8') as file:
+    config = json.load(file)
+
+
 def remove_suffix(file_name):
     return Path(file_name).stem
 
-file_list=[]#新建一个空列表用于存放文件全路径
-file_dir=r'./pdf/'#指定即将遍历的文件夹路径
-for files in os.walk(file_dir):#遍历指定文件夹及其下的所有子文件夹
-    for file in files[2]:#遍历每个文件夹里的所有文件，（files[2]:母文件夹和子文件夹下的所有文件信息，files[1]:子文件夹信息，files[0]:母文件夹信息）
-        if os.path.splitext(file)[1]=='.PDF' or os.path.splitext(file)[1]=='.pdf':#检查文件后缀名,逻辑判断用==
+
+file_list = []  # 新建一个空列表用于存放文件全路径
+file_dir = r'./pdf/'  # 指定即将遍历的文件夹路径
+for files in os.walk(file_dir):  # 遍历指定文件夹及其下的所有子文件夹
+    for file in files[2]:  # 遍历每个文件夹里的所有文件，（files[2]:母文件夹和子文件夹下的所有文件信息，files[1]:子文件夹信息，files[0]:母文件夹信息）
+        if os.path.splitext(file)[1] == '.PDF' or os.path.splitext(file)[1] == '.pdf':  # 检查文件后缀名,逻辑判断用==
             # file_list.append(file)#筛选后的文件名为字符串，将得到的文件名放进去列表，方便以后调用
-            file_list.append(file_dir+file)#给文件名加入文件夹路径
-            
+            file_list.append(file_dir + file)  # 给文件名加入文件夹路径
+
 print(file_list)
 
 # 加载pdf 文件
-#doc = fitz.open("/test/demo.pdf")
+# doc = fitz.open("/test/demo.pdf")
 doc = fitz.open(file_list[0])
 
 
 def covert2pic(file_path, zoom, png_path):
     doc = fitz.open(file_path)
-    file_name= remove_suffix(file_path)
+    file_name = remove_suffix(file_path)
     total = doc.page_count
     for pg in range(total):
         page = doc[pg]
@@ -36,7 +43,7 @@ def covert2pic(file_path, zoom, png_path):
         pm = page.get_pixmap(matrix=trans, alpha=False)
         if not os.path.exists(png_path):
             os.mkdir(png_path)
-        save = os.path.join(png_path, file_name+'{}.png'.format(pg+1))
+        save = os.path.join(png_path, file_name + '{}.png'.format(pg + 1))
         pm.save(save)
     doc.close()
 
@@ -44,7 +51,6 @@ def covert2pic(file_path, zoom, png_path):
 pdfPath = file_list[0]
 imagePath = './imgs'
 covert2pic(pdfPath, 200, imagePath)
-
 
 # 打开配置文件
 print("Loading config...")
@@ -82,9 +88,10 @@ imgs_path = os.path.join(os.getcwd(), 'imgs')
 image_files = glob.glob(os.path.join(imgs_path, '*.jpg')) + glob.glob(os.path.join(imgs_path, '*.png'))
 
 # 逐个发送图片给renderer的render函数
-allres=''
+allres = ''
 for image_path in image_files:
-    success = Render.render(model, tokenizer, image_path, convert_confirm)
+    success = Render.render(model=model, tokenizer=tokenizer, image_path=image_path, convert_to_pdf=convert_confirm,
+                            wait=config["pdf_render_wait"], time=config["pdf_render_wait_time"])
     if success:
         print(local["renderer_success"].format(img_path=image_path))
         # allres= allres + '\n' + res
@@ -92,43 +99,38 @@ for image_path in image_files:
     else:
         print(local["renderer_fail"].format(img_path=image_path))
 
-#print(allres)
-
-
-
-
-
+# print(allres)
 
 
 ## 从config.json文件中加载配置
-#print("Loading config...")
-#with open(os.path.join("Locales", "gui", "config.json"), 'r', encoding='utf-8') as file:
+# print("Loading config...")
+# with open(os.path.join("Locales", "gui", "config.json"), 'r', encoding='utf-8') as file:
 #    config = json.load(file)
 #    lang = config['language']
 
 ## 从对应语言的json文件中加载本地化字符串
-#with open(os.path.join("Locales", "gui", f"{lang}.json"), 'r', encoding='utf-8') as file:
+# with open(os.path.join("Locales", "gui", f"{lang}.json"), 'r', encoding='utf-8') as file:
 #    local = json.load(file)
 
 ## 导入库
-#print(local["info_import_libs"])
-#from transformers import AutoModel, AutoTokenizer
-#import gradio as gr
-#import os
-#import re
-#import scripts.html2pdf as html2pdf
+# print(local["info_import_libs"])
+# from transformers import AutoModel, AutoTokenizer
+# import gradio as gr
+# import os
+# import re
+# import scripts.html2pdf as html2pdf
 
 ## 加载模型
-#print(local["info_load_model"])
-#tokenizer = AutoTokenizer.from_pretrained('models', trust_remote_code=True)
-#model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_usage=True, device_map='cuda',
+# print(local["info_load_model"])
+# tokenizer = AutoTokenizer.from_pretrained('models', trust_remote_code=True)
+# model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_usage=True, device_map='cuda',
 #                                  use_safetensors=True, pad_token_id=tokenizer.eos_token_id)
-#model = model.eval().cuda()
-#print(local["info_model_loaded"])
+# model = model.eval().cuda()
+# print(local["info_model_loaded"])
 
 
 ## 将文件以GB2312编码读取，并以UTF-8编码写入新文件
-#def convert_html_encoding(input_file_path, output_file_path):
+# def convert_html_encoding(input_file_path, output_file_path):
 #    # 以GB2312编码读取文件
 #    with open(input_file_path, 'r', encoding='gb2312') as file:
 #        content = file.read()
@@ -139,7 +141,7 @@ for image_path in image_files:
 
 
 ## 替换html文件中的内容
-#def replace_html_content(input_file_path, output_file_path):
+# def replace_html_content(input_file_path, output_file_path):
 #    pattern = r'https://cdn.jsdelivr.net/npm/mathpix-markdown-it@1.3.6/es5/bundle.js'
 #    replacement = 'markdown-it.js'
 #    with open(input_file_path, 'r', encoding='utf-8') as file:
@@ -150,7 +152,7 @@ for image_path in image_files:
 
 
 ## 将html文件转换为pdf文件
-#def func_save_as_pdf(html_utf8_path, html_utf8_local_path, pdf_path):
+# def func_save_as_pdf(html_utf8_path, html_utf8_local_path, pdf_path):
 #    # 替换html文件中的内容
 #    replace_html_content(html_utf8_path, html_utf8_local_path)
 #    # 将html文件转换为pdf文件
@@ -161,7 +163,7 @@ for image_path in image_files:
 
 
 ## 构建文件名
-#def build_name(img_name):
+# def build_name(img_name):
 #    # 构建html文件名
 #    html_gb2312_path = os.path.join("result", f"{img_name}-gb2312.html")
 #    html_utf8_path = os.path.join("result", f"{img_name}-utf8.html")
@@ -169,7 +171,7 @@ for image_path in image_files:
 
 
 ## 提交文件名
-#def func_submit_name(img_name):
+# def func_submit_name(img_name):
 #    # 构建html文件名
 #    html_utf8_path = os.path.join("result", f"{img_name}-utf8.html")
 #    html_utf8_local_path = os.path.join("result", f"{img_name}-utf8-local.html")
@@ -178,7 +180,7 @@ for image_path in image_files:
 
 
 ## 进行OCR识别
-#def ocr(image, label_fine_grained_box_x1, label_fine_grained_box_y1, label_fine_grained_box_x2,
+# def ocr(image, label_fine_grained_box_x1, label_fine_grained_box_y1, label_fine_grained_box_x2,
 #        label_fine_grained_box_y2, OCR_type, label_fine_grained_color, img_name):
 #    # 构建OCR框
 #    box = [label_fine_grained_box_x1, label_fine_grained_box_y1, label_fine_grained_box_x2, label_fine_grained_box_y2]
@@ -222,7 +224,7 @@ for image_path in image_files:
 
 
 ## gradio gui
-#with gr.Blocks() as demo:
+# with gr.Blocks() as demo:
 #    # OCR选项卡
 #    with gr.Tab(local["tab_ocr"]):
 #        with gr.Row():
@@ -295,4 +297,4 @@ for image_path in image_files:
 #    )
 
 ## 启动gradio界面
-#demo.launch()
+# demo.launch()

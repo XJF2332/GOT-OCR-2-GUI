@@ -4,12 +4,17 @@ import os
 # 从config.json文件中加载配置
 print("Loading language config...")
 with open(os.path.join("Locales", "gui", "config.json"), 'r', encoding='utf-8') as file:
-    config = json.load(file)
-    lang = config['language']
+    lang_config = json.load(file)
+    lang = lang_config['language']
 
 # 从对应语言的json文件中加载本地化字符串
 with open(os.path.join("Locales", "gui", f"{lang}.json"), 'r', encoding='utf-8') as file:
     local = json.load(file)
+
+print("Loading config......")
+config_path = os.path.join("Configs", "Config.json")
+with open(config_path, 'r', encoding='utf-8') as file:
+    config = json.load(file)
 
 # 导入库
 print(local["info_import_libs"])
@@ -92,7 +97,9 @@ def ocr(image_uploaded, fine_grained_box_x1, fine_grained_box_y1, fine_grained_b
         elif OCR_type == "multi-crop-format":
             res = model.chat_crop(tokenizer, image_uploaded, ocr_type='format')
         elif OCR_type == "render":
-            success = Render.render(model, tokenizer, image_uploaded, pdf_convert_confirm)
+            success = Render.render(model=model, tokenizer=tokenizer, image_path=image_uploaded,
+                                    convert_to_pdf=pdf_convert_confirm, wait=config["pdf_render_wait"],
+                                    time=config["pdf_render_wait_time"])
             image_name_with_extension = os.path.basename(image_uploaded)
             if success:
                 res = local["info_render_success"].format(img_file=image_name_with_extension)
@@ -110,7 +117,9 @@ def renderer(imgs_path, pdf_convert_confirm):
     # 逐个发送图片给renderer的render函数
     for image_path in image_files:
         gr.Info(message=local["info_render_start"].format(img_file=image_path))
-        success = Render.render(model, tokenizer, image_path, pdf_convert_confirm)
+        success = Render.render(model=model, tokenizer=tokenizer, image_path=image_path,
+                                convert_to_pdf=pdf_convert_confirm, wait=config["pdf_render_wait"],
+                                time=config["pdf_render_wait_time"])
         if success:
             gr.Info(message=local["info_render_success"].format(img_file=image_path))
         else:
@@ -122,7 +131,6 @@ with gr.Blocks(theme=theme) as demo:
     # OCR选项卡
     with gr.Tab(local["tab_ocr"]):
         with gr.Row():
-
             with gr.Column():
                 # Fine-grained 设置
                 gr.Markdown(local["label_fine_grained_settings"])

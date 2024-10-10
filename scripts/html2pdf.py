@@ -6,69 +6,6 @@ import base64
 import time
 import re
 
-def output_pdf(html_path, pdf_path):
-    """
-    将HTML文件转换为PDF文件。
-
-    参数:
-    - html_path: str
-        要转换的HTML文件的路径。
-    - pdf_path: str
-        输出PDF文件的保存路径。
-
-    功能:
-    - 使用Edge浏览器在无头模式下打开HTML文件。
-    - 等待页面加载完成。
-    - 执行打印命令，将页面内容转换为PDF格式。
-    - 将生成的PDF数据保存到指定的文件路径。
-
-    注意:
-    - 需要事先在本地安装EdgeDriver，并设置正确的路径。
-    - 该函数使用了无头模式，因此不会显示浏览器界面。
-    - 生成的PDF文件默认为纵向，不显示页眉和页脚。
-    """
-    # 设置EdgeDriver的路径
-    edge_driver_path = os.path.abspath('./edge_driver/msedgedriver.exe')
-
-    # 设置本地HTML文件的路径
-    html_file_path = 'file://' + os.path.abspath(html_path)
-
-    # 设置输出的PDF文件路径
-    pdf_file_path = pdf_path
-
-    # 设置Edge选项以启用打印
-    edge_options = Options()
-    edge_options.add_argument("--headless")  # 无头模式
-    edge_options.add_argument("--disable-gpu")
-
-    # 初始化Service对象
-    service = Service(executable_path=edge_driver_path)
-
-    # 初始化WebDriver
-    driver = webdriver.Edge(service=service, options=edge_options)
-
-    # 打开HTML文件
-    driver.get(html_file_path)
-
-    # 确保页面已加载
-    # time.sleep(2)
-
-    # 生成PDF文件
-    pdf_data = driver.execute_cdp_cmd('Page.printToPDF', {
-        'landscape': False,
-        'displayHeaderFooter': False
-    })['data']
-
-    # 写入PDF文件
-    with open(pdf_file_path, 'wb') as file:
-        file.write(base64.b64decode(pdf_data))
-
-    # 关闭WebDriver
-    driver.quit()
-
-    # print(f'PDF saved as {pdf_file_path}')
-
-
 def convert_html_encoding(html_gb2312_path, html_utf8_path):
     """
     将GB2312编码的HTML文件转换为UTF-8编码的HTML文件。
@@ -121,7 +58,74 @@ def repalce_html_content(html_utf8_path, html_utf8_local_path):
         file.write(new_html_content)
 
 
-def all_in_one(html_gb2312_path, html_utf8_path, html_utf8_local_path, pdf_path):
+def output_pdf(html_path, pdf_path, waiting_time, wait=False):
+    """
+    将HTML文件转换为PDF文件。
+
+    参数:
+    - html_path: str
+        要转换的HTML文件的路径。
+    - pdf_path: str
+        输出PDF文件的保存路径。
+    - waiting_time: int
+        等待时间（秒）。
+    - wait: bool
+        是否等待页面加载完成。默认为False
+
+    功能:
+    - 使用Edge浏览器在无头模式下打开HTML文件。
+    - 等待页面加载完成。
+    - 执行打印命令，将页面内容转换为PDF格式。
+    - 将生成的PDF数据保存到指定的文件路径。
+
+    注意:
+    - 需要事先在本地安装EdgeDriver，并设置正确的路径。
+    """
+
+    # 设置EdgeDriver的路径
+    edge_driver_path = os.path.abspath('./edge_driver/msedgedriver.exe')
+
+    # 设置本地HTML文件的路径
+    html_file_path = 'file://' + os.path.abspath(html_path)
+
+    # 设置输出的PDF文件路径
+    pdf_file_path = pdf_path
+
+    # 设置Edge选项以启用打印
+    edge_options = Options()
+    edge_options.add_argument("--headless")  # 无头模式
+    edge_options.add_argument("--disable-gpu")
+
+    # 初始化Service对象
+    service = Service(executable_path=edge_driver_path)
+
+    # 初始化WebDriver
+    driver = webdriver.Edge(service=service, options=edge_options)
+
+    # 打开HTML文件
+    driver.get(html_file_path)
+
+    # 确保页面已加载
+    if wait:
+        time.sleep(waiting_time)
+    else:
+        pass
+
+    # 生成PDF文件
+    pdf_data = driver.execute_cdp_cmd('Page.printToPDF', {
+        'landscape': False,
+        'displayHeaderFooter': False
+    })['data']
+
+    # 写入PDF文件
+    with open(pdf_file_path, 'wb') as file:
+        file.write(base64.b64decode(pdf_data))
+
+    # 关闭WebDriver
+    driver.quit()
+
+
+def all_in_one(html_gb2312_path, html_utf8_path, html_utf8_local_path, pdf_path, wait, waiting_time):
     """
     将GB2312编码的HTML文件转换为UTF-8编码，替换内容，并最终输出为PDF文件。
 
@@ -134,6 +138,10 @@ def all_in_one(html_gb2312_path, html_utf8_path, html_utf8_local_path, pdf_path)
         替换内容后的UTF-8编码HTML文件的本地保存路径。
     - pdf_path: str
         最终生成的PDF文件的保存路径。
+    - wait: bool
+        是否等待页面加载完成。
+    - time: int
+        等待时间（秒）。
 
     功能:
     - 使用`convert_html_encoding`函数将GB2312编码的HTML文件转换为UTF-8编码。
@@ -142,4 +150,4 @@ def all_in_one(html_gb2312_path, html_utf8_path, html_utf8_local_path, pdf_path)
     """
     convert_html_encoding(html_gb2312_path, html_utf8_path)
     repalce_html_content(html_utf8_path, html_utf8_local_path)
-    output_pdf(html_utf8_local_path, pdf_path)
+    output_pdf(html_utf8_local_path, pdf_path, waiting_time, wait)

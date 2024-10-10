@@ -6,8 +6,13 @@ import glob
 print("Loading language config...")
 lang_config_path = os.path.join("Locales", "cli", "config.json")
 with open(lang_config_path, 'r', encoding='utf-8') as file:
+    lang_config = json.load(file)
+    lang = lang_config['language']
+
+print("Loading config......")
+config_path = os.path.join("Configs", "Config.json")
+with open(config_path, 'r', encoding='utf-8') as file:
     config = json.load(file)
-    lang = config['language']
 
 # 打开语言文件
 lang_file = os.path.join('Locales', 'cli', f'{lang}.json')
@@ -39,7 +44,8 @@ image_files = glob.glob(os.path.join(imgs_path, '*.jpg')) + glob.glob(os.path.jo
 
 # 逐个发送图片给renderer的render函数
 for image_path in image_files:
-    success = Render.render(model, tokenizer, image_path, convert_confirm)
+    success = Render.render(model=model, tokenizer=tokenizer, image_path=image_path, convert_to_pdf=convert_confirm,
+                            wait=config["pdf_render_wait"], time=config["pdf_render_wait_time"])
     if success:
         print(local["renderer_success"].format(img_path=image_path))
     else:

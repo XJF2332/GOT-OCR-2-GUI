@@ -6,7 +6,7 @@ import scripts.html2pdf as html2pdf
 # from IPython.display import Latex
 
 
-def render(model, tokenizer, image_path, convert_to_pdf=False):
+def render(model, tokenizer, image_path, wait, time, convert_to_pdf):
     """
     使用OCR模型渲染图像内容到HTML文件，并可选择性地转换为PDF文件。
 
@@ -17,8 +17,12 @@ def render(model, tokenizer, image_path, convert_to_pdf=False):
         用于处理文本的tokenizer实例。
     - image_path: str
         待处理图像的文件路径。
-    - convert_to_pdf: bool, 可选
-        指定是否将生成的HTML文件转换为PDF文件。默认为False。
+    - wait: bool
+        是否等待页面加载完成。默认为False
+    - time: int
+        等待页面加载的时间（秒）。默认为10
+    - convert_to_pdf: bool
+        是否将生成的HTML文件转换为PDF文件。
 
     功能:
     - 使用OCR模型对图像进行识别，并将识别结果渲染到HTML文件中。
@@ -85,7 +89,7 @@ def render(model, tokenizer, image_path, convert_to_pdf=False):
         if convert_to_pdf:
             html2pdf.repalce_html_content(html_utf8_path, html_utf8_local_path)
             pdf_path = os.path.join("result", f"{img_name_no_ext}.pdf")
-            html2pdf.output_pdf(html_utf8_local_path, pdf_path)
+            html2pdf.output_pdf(html_utf8_local_path, pdf_path, wait=wait, waiting_time=time)
         return True
     except:
         return False
