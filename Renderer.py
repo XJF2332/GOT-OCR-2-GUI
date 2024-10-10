@@ -2,22 +2,23 @@ import json
 import os
 import glob
 
-# 打开配置文件
+# 打开语言配置文件
 print("Loading language config...")
 lang_config_path = os.path.join("Locales", "cli", "config.json")
 with open(lang_config_path, 'r', encoding='utf-8') as file:
     lang_config = json.load(file)
     lang = lang_config['language']
 
-print("Loading config......")
-config_path = os.path.join("Configs", "Config.json")
-with open(config_path, 'r', encoding='utf-8') as file:
-    config = json.load(file)
-
 # 打开语言文件
 lang_file = os.path.join('Locales', 'cli', f'{lang}.json')
 with open(lang_file, 'r', encoding='utf-8') as file:
     local = json.load(file)
+
+# 打开配置文件
+print("Loading config......")
+config_path = os.path.join("Configs", "Config.json")
+with open(config_path, 'r', encoding='utf-8') as file:
+    config = json.load(file)
 
 # 导入transformers库
 print(local["info_import_libs"])

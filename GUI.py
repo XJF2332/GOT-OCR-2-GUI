@@ -11,6 +11,7 @@ with open(os.path.join("Locales", "gui", "config.json"), 'r', encoding='utf-8') 
 with open(os.path.join("Locales", "gui", f"{lang}.json"), 'r', encoding='utf-8') as file:
     local = json.load(file)
 
+# 加载配置文件
 print("Loading config......")
 config_path = os.path.join("Configs", "Config.json")
 with open(config_path, 'r', encoding='utf-8') as file:
@@ -32,6 +33,7 @@ model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_
 model = model.eval().cuda()
 print(local["info_model_loaded"])
 
+
 theme = gr.themes.Base(
     primary_hue="violet",
     secondary_hue="indigo",
@@ -51,14 +53,6 @@ theme = gr.themes.Base(
 )
 
 
-# 构建文件名
-def build_name(img_name):
-    # 构建html文件名
-    html_gb2312_path = os.path.join("result", f"{img_name}-gb2312.html")
-    html_utf8_path = os.path.join("result", f"{img_name}-utf8.html")
-    return [html_gb2312_path, html_utf8_path]
-
-
 # 更新图片名称
 def update_img_name(image_uploaded):
     image_name_with_extension = os.path.basename(image_uploaded)
@@ -68,10 +62,11 @@ def update_img_name(image_uploaded):
 # 进行OCR识别
 def ocr(image_uploaded, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
         fine_grained_box_y2, OCR_type, fine_grained_color, pdf_convert_confirm):
+
     # 构建OCR框
     box = [fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2, fine_grained_box_y2]
 
-    # 未选择模式
+    # 默认值
     res = local["error_ocr_mode_none"]
 
     # 如果result文件夹不存在，则创建
@@ -128,6 +123,7 @@ def renderer(imgs_path, pdf_convert_confirm):
 
 # gradio gui
 with gr.Blocks(theme=theme) as demo:
+
     # OCR选项卡
     with gr.Tab(local["tab_ocr"]):
         with gr.Row():
