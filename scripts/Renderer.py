@@ -1,42 +1,39 @@
-from IPython.display import clear_output
-from IPython.display import display
-from IPython.display import Latex
 import re
 import os
 import scripts.html2pdf as html2pdf
-
-
-# 转换HTML编码
-def convert_html_encoding(input_file_path, output_file_path):
-    # gb2312
-    with open(input_file_path, 'r', encoding='gb2312') as file:
-        content = file.read()
-
-    # utf8
-    with open(output_file_path, 'w', encoding='utf-8') as file:
-        file.write(content)
-
-
-# 替换HTML内容
-def repalce_html_content(input_file_path, output_file_path):
-    pattern = r'https://cdn.jsdelivr.net/npm/mathpix-markdown-it@1.3.6/es5/bundle.js'
-    replacement = 'markdown-it.js'
-    with open(input_file_path, 'r', encoding='utf-8') as file:
-        content = file.read()
-    new_html_content = re.sub(pattern, replacement, content)
-    with open(output_file_path, 'w', encoding='utf-8') as file:
-        file.write(new_html_content)
+# from IPython.display import clear_output
+# from IPython.display import display
+# from IPython.display import Latex
 
 
 def render(model, tokenizer, image_path, convert_to_pdf=False):
     """
-    渲染 OCR 结果为 HTML 并可选转换为 PDF。
+    使用OCR模型渲染图像内容到HTML文件，并可选择性地转换为PDF文件。
 
-    Args:
-        model: 加载的 OCR 模型。
-        tokenizer: 模型对应的分词器。
-        image_path: 待识别图像的路径。
-        convert_to_pdf: 是否将渲染结果转换为 PDF (布尔值)。
+    参数:
+    - model: object
+        用于执行OCR的模型实例。
+    - tokenizer: object
+        用于处理文本的tokenizer实例。
+    - image_path: str
+        待处理图像的文件路径。
+    - convert_to_pdf: bool, 可选
+        指定是否将生成的HTML文件转换为PDF文件。默认为False。
+
+    功能:
+    - 使用OCR模型对图像进行识别，并将识别结果渲染到HTML文件中。
+    - 将渲染的HTML文件从GB2312编码转换为UTF-8编码。
+    - 可选地将HTML文件中的特定字符串进行替换。
+    - 如果`convert_to_pdf`为True，则将HTML文件转换为PDF文件。
+
+    返回:
+    - bool
+        如果整个过程成功完成，返回True；如果过程中发生任何错误，返回False。
+
+    注意:
+    - `image_path`必须指向一个有效的图像文件。
+    - 生成的HTML和PDF文件将保存在`result`目录下，该目录必须存在且可写。
+    - 如果`convert_to_pdf`为True，则函数将尝试生成PDF文件，这要求系统中已安装相应的浏览器驱动。
     """
     try:
         # 定义输出HTML路径
@@ -54,7 +51,7 @@ def render(model, tokenizer, image_path, convert_to_pdf=False):
         model.chat(tokenizer, image_path, ocr_type='format', render=True, save_render_file=html_gb2312_path)
 
         # 转换为UTF-8编码
-        convert_html_encoding(html_gb2312_path, html_utf8_path)
+        html2pdf.convert_html_encoding(html_gb2312_path, html_utf8_path)
 
         # 定义文件路径
         file_path = html_utf8_path
@@ -81,14 +78,12 @@ def render(model, tokenizer, image_path, convert_to_pdf=False):
 
         except FileNotFoundError:
             print(f"文件 '{file_path}' 未找到。")
-            # return f"文件 '{file_path}' 未找到。"
         except Exception as e:
             print(f"发生错误: {e}")
-            # return f"发生错误: {e}"
 
         # 根据参数决定是否转换为PDF
         if convert_to_pdf:
-            repalce_html_content(html_utf8_path, html_utf8_local_path)
+            html2pdf.repalce_html_content(html_utf8_path, html_utf8_local_path)
             pdf_path = os.path.join("result", f"{img_name_no_ext}.pdf")
             html2pdf.output_pdf(html_utf8_local_path, pdf_path)
         return True

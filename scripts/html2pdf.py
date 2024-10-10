@@ -8,13 +8,24 @@ import re
 
 def output_pdf(html_path, pdf_path):
     """
-    将HTML文件转换为PDF文件
-    Args:
-        html_path:
-        pdf_path:
+    将HTML文件转换为PDF文件。
 
-    Returns:
+    参数:
+    - html_path: str
+        要转换的HTML文件的路径。
+    - pdf_path: str
+        输出PDF文件的保存路径。
 
+    功能:
+    - 使用Edge浏览器在无头模式下打开HTML文件。
+    - 等待页面加载完成。
+    - 执行打印命令，将页面内容转换为PDF格式。
+    - 将生成的PDF数据保存到指定的文件路径。
+
+    注意:
+    - 需要事先在本地安装EdgeDriver，并设置正确的路径。
+    - 该函数使用了无头模式，因此不会显示浏览器界面。
+    - 生成的PDF文件默认为纵向，不显示页眉和页脚。
     """
     # 设置EdgeDriver的路径
     edge_driver_path = os.path.abspath('./edge_driver/msedgedriver.exe')
@@ -60,13 +71,22 @@ def output_pdf(html_path, pdf_path):
 
 def convert_html_encoding(html_gb2312_path, html_utf8_path):
     """
-    转换HTML编码
-    Args:
-        html_gb2312_path:
-        html_utf8_path:
+    将GB2312编码的HTML文件转换为UTF-8编码的HTML文件。
 
-    Returns:
+    参数:
+    - html_gb2312_path: str
+        GB2312编码的HTML文件的路径。
+    - html_utf8_path: str
+        转换为UTF-8编码后HTML文件的保存路径。
 
+    功能:
+    - 读取指定路径的GB2312编码的HTML文件。
+    - 将读取的内容转换为UTF-8编码。
+    - 将转换后的内容写入到新的HTML文件中。
+
+    注意:
+    - 确保输入文件确实使用GB2312编码，否则转换可能会失败。
+    - 输出文件将使用UTF-8编码，这是现代Web标准推荐使用的编码。
     """
     # gb2312
     with open(html_gb2312_path, 'r', encoding='gb2312') as file:
@@ -77,16 +97,20 @@ def convert_html_encoding(html_gb2312_path, html_utf8_path):
         file.write(content)
 
 
-# 替换HTML内容
 def repalce_html_content(html_utf8_path, html_utf8_local_path):
     """
-    替换HTML内容
-    Args:
-        html_utf8_path:
-        html_utf8_local_path:
+    替换HTML文件中的内容。
 
-    Returns:
+    参数:
+    - html_utf8_path: str
+        输入的UTF-8编码的HTML文件路径。
+    - html_utf8_local_path: str
+        替换内容后的HTML文件保存路径。
 
+    功能:
+    - 读取UTF-8编码的HTML文件内容。
+    - 替换HTML文件中的特定内容。
+    - 将替换后的内容写入新的HTML文件。
     """
     pattern = r'https://cdn.jsdelivr.net/npm/mathpix-markdown-it@1.3.6/es5/bundle.js'
     replacement = 'markdown-it.js'
@@ -99,15 +123,22 @@ def repalce_html_content(html_utf8_path, html_utf8_local_path):
 
 def all_in_one(html_gb2312_path, html_utf8_path, html_utf8_local_path, pdf_path):
     """
-    将HTML文件转换为PDF文件
-    Args:
-        html_gb2312_path:
-        html_utf8_path:
-        html_utf8_local_path:
-        pdf_path:
+    将GB2312编码的HTML文件转换为UTF-8编码，替换内容，并最终输出为PDF文件。
 
-    Returns:
+    参数:
+    - html_gb2312_path: str
+        GB2312编码的原始HTML文件的路径。
+    - html_utf8_path: str
+        转换为UTF-8编码后的HTML文件的临时保存路径。
+    - html_utf8_local_path: str
+        替换内容后的UTF-8编码HTML文件的本地保存路径。
+    - pdf_path: str
+        最终生成的PDF文件的保存路径。
 
+    功能:
+    - 使用`convert_html_encoding`函数将GB2312编码的HTML文件转换为UTF-8编码。
+    - 使用`replace_html_content`函数替换UTF-8编码HTML文件中的特定内容。
+    - 使用`output_pdf`函数将替换内容后的HTML文件输出为PDF文件。
     """
     convert_html_encoding(html_gb2312_path, html_utf8_path)
     repalce_html_content(html_utf8_path, html_utf8_local_path)
