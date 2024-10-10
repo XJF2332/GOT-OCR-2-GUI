@@ -105,7 +105,8 @@ def ocr(image, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
             # 将文件以GB2312编码读取，并以UTF-8编码写入新文件
             html2pdf.convert_html_encoding(html_gb2312_path, html_utf8_path)
             # 打印渲染保存成功
-            res = local["info_render_save_success"].format(html_utf8_path=html_utf8_path, html_gb2312_path=html_gb2312_path)
+            res = local["info_render_save_success"].format(html_utf8_path=html_utf8_path,
+                                                           html_gb2312_path=html_gb2312_path)
         return res
     except Exception as e:
         return str(e)
@@ -138,7 +139,8 @@ with gr.Blocks(theme=theme) as demo:
                     fine_grained_box_y1 = gr.Number(label=local["label_fine_grained_box_y1"], value=0)
                     fine_grained_box_x2 = gr.Number(label=local["label_fine_grained_box_x2"], value=0)
                     fine_grained_box_y2 = gr.Number(label=local["label_fine_grained_box_y2"], value=0)
-                fine_grained_color = gr.Dropdown(choices=["red", "green", "blue"], label=local["label_fine_grained_color"], value="red")
+                fine_grained_color = gr.Dropdown(choices=["red", "green", "blue"],
+                                                 label=local["label_fine_grained_color"], value="red")
             with gr.Column():
                 # 渲染设置
                 gr.Markdown(local["label_render_settings"])
@@ -151,7 +153,8 @@ with gr.Blocks(theme=theme) as demo:
                     html_utf8_local_path = gr.Textbox(label=local["label_html_local_file_path"],
                                                       value=os.path.join("result", "ocr-utf8-local.html"),
                                                       interactive=False)
-                    pdf_path = gr.Textbox(label=local["label_pdf_file_path"], value=os.path.join("result", "ocr-utf8.pdf"),
+                    pdf_path = gr.Textbox(label=local["label_pdf_file_path"],
+                                          value=os.path.join("result", "ocr-utf8.pdf"),
                                           interactive=False)
                     img_name.change(func_submit_name, inputs=[img_name],
                                     outputs=[html_gb2312_path, html_utf8_path, html_utf8_local_path, pdf_path])
@@ -173,7 +176,6 @@ with gr.Blocks(theme=theme) as demo:
 
     # 渲染器选项卡
     with gr.Tab(local["tab_renderer"]):
-        # gr.Markdown(local["info_developing"])
         with gr.Row():
             input_folder_path = gr.Textbox(label=local["label_input_folder_path"], value="imgs", interactive=True)
         with gr.Row():
