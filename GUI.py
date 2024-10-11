@@ -1,13 +1,11 @@
 import json
 import os
 
-# 从config.json文件中加载配置
+# 加载语言设置
 print("Loading language config...")
 with open(os.path.join("Locales", "gui", "config.json"), 'r', encoding='utf-8') as file:
     lang_config = json.load(file)
     lang = lang_config['language']
-
-# 从对应语言的json文件中加载本地化字符串
 with open(os.path.join("Locales", "gui", f"{lang}.json"), 'r', encoding='utf-8') as file:
     local = json.load(file)
 
@@ -37,7 +35,6 @@ else:
     model = None
     tokenizer = None
     print(local["info_model_load_skipped"])
-
 
 theme = gr.themes.Base(
     primary_hue="violet",
