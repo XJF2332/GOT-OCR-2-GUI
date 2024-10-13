@@ -1,0 +1,5 @@
+{
+    "load_model_on_start": "Load model when you start the program",
+    "pdf_render_wait": "Wait for the browser to make sure the pdf is fully loaded",
+    "pdf_render_wait_time": "How long (seconds) to wait for the browser to make sure the pdf is fully loaded"
+}

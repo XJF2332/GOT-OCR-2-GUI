@@ -117,7 +117,7 @@ GOT-OCR-2-GUI
   correspond to the file names without extensions in the `language.json` files.
 - If you wish to add language support, for the CLI, just add a new `language.json` file (I strongly recommend using an
   existing file as a starting point). For the GUI, you will also need the corresponding `language.md` file.
-- You can run `Language Config Manager.py` to manage the language configuration files.
+- You can run `Config Manager.py` to manage the language and other configuration files.
 
 ## Tips
 

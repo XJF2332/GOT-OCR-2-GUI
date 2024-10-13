@@ -1,5 +1,15 @@
 import os
 import json
+import sys
+
+
+def clear():
+    # 如果是Windows系统
+    if os.name == 'nt':
+        os.system('cls')
+    else:
+        # 对于mac和linux（os.name是'posix'）
+        os.system('clear')
 
 
 def find_json_files(directory):
@@ -21,13 +31,14 @@ def write_config_language(config_path, language):
         config_file.truncate()
 
 
-def main():
+def lang_manager():
     # 获取用户选择的子文件夹
     print("Choose a UI you want to manage:")
     print("1. cli")
     print("2. gui")
     subfolder_choice = int(input("input your choice (1 or 2): "))
     subfolder = 'cli' if subfolder_choice == 1 else 'gui' if subfolder_choice == 2 else None
+    clear()  # 清除屏幕，准备显示功能选择
     if subfolder is None:
         print("Invalid input, please input 1 or 2.")
         return
@@ -38,6 +49,7 @@ def main():
     print("2. Write new language config")
     action_choice = int(input("Input your choice (1 or 2):"))
     action = 'read' if action_choice == 1 else 'write' if action_choice == 2 else None
+    clear()  # 清除屏幕，准备执行用户选择的操作
     if action is None:
         print("Invalid input, please input 1 or 2.")
         return
@@ -70,5 +82,5 @@ def main():
             print("\nInvalid input, please input a valid number.")
 
 
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    lang_manager()
