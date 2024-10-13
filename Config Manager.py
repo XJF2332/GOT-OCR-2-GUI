@@ -49,7 +49,7 @@ while True:
             current_value = config_data[setting_key]
             value_type = type(current_value).__name__
 
-            new_value = input(f"Enter the new value for '{setting_key}' (current type is {value_type}: ")
+            new_value = input(f"Enter the new value for '{setting_key}' (current type is {value_type}): ")
 
             # 转换类型
             if value_type == 'int':
