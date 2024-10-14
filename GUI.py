@@ -21,7 +21,8 @@ from transformers import AutoModel, AutoTokenizer
 import gradio as gr
 import os
 import glob
-import scripts.Renderer as Render
+import scripts.Renderer as Renderer
+import scripts.PDF2ImagePlusRenderer as PDFHandler
 
 # 加载模型
 if config["load_model_on_start"]:
@@ -94,9 +95,9 @@ def ocr(image_uploaded, fine_grained_box_x1, fine_grained_box_y1, fine_grained_b
         elif OCR_type == "multi-crop-format":
             res = model.chat_crop(tokenizer, image_uploaded, ocr_type='format')
         elif OCR_type == "render":
-            success = Render.render(model=model, tokenizer=tokenizer, image_path=image_uploaded,
-                                    convert_to_pdf=pdf_convert_confirm, wait=config["pdf_render_wait"],
-                                    time=config["pdf_render_wait_time"])
+            success = Renderer.render(model=model, tokenizer=tokenizer, image_path=image_uploaded,
+                                      convert_to_pdf=pdf_convert_confirm, wait=config["pdf_render_wait"],
+                                      time=config["pdf_render_wait_time"])
             image_name_with_extension = os.path.basename(image_uploaded)
             if success:
                 res = local["info_render_success"].format(img_file=image_name_with_extension)
@@ -114,9 +115,9 @@ def renderer(imgs_path, pdf_convert_confirm):
     # 逐个发送图片给renderer的render函数
     for image_path in image_files:
         gr.Info(message=local["info_render_start"].format(img_file=image_path))
-        success = Render.render(model=model, tokenizer=tokenizer, image_path=image_path,
-                                convert_to_pdf=pdf_convert_confirm, wait=config["pdf_render_wait"],
-                                time=config["pdf_render_wait_time"])
+        success = Renderer.render(model=model, tokenizer=tokenizer, image_path=image_path,
+                                  convert_to_pdf=pdf_convert_confirm, wait=config["pdf_render_wait"],
+                                  time=config["pdf_render_wait_time"])
         if success:
             gr.Info(message=local["info_render_success"].format(img_file=image_path))
         else:
@@ -165,6 +166,12 @@ with gr.Blocks(theme=theme) as demo:
         with gr.Row():
             batch_pdf_convert_confirm = gr.Checkbox(label=local["label_save_as_pdf"], value=True, interactive=True)
             batch_render_btn = gr.Button(local["btn_render"], variant="primary")
+
+    # PDF选项卡
+    with gr.Tab("PDF"):
+        gr.Markdown(local["info_developing"])
+        pdf_file = gr.File(label=local["label_pdf_file"], file_count="single", file_types=["pdf"])
+        pdf_ocr_btn = gr.Button(local["btn_pdf_ocr"], variant="primary")
 
     # 指南选项卡
     with gr.Tab(local["tab_instructions"]):

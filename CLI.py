@@ -17,7 +17,7 @@ with open(lang_file, 'r', encoding='utf-8') as file:
 print(local["info_import_libs"])
 from transformers import AutoModel, AutoTokenizer
 import re
-import scripts.html2pdf as html2pdf
+import scripts.HTML2PDF as html2pdf
 
 # 加载模型
 print(local["load_models"])

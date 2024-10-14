@@ -1,6 +1,6 @@
 import re
 import os
-import scripts.html2pdf as html2pdf
+import scripts.HTML2PDF as html2pdf
 # from IPython.display import clear_output
 # from IPython.display import display
 # from IPython.display import Latex
