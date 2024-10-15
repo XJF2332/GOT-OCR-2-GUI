@@ -34,7 +34,7 @@ Click a star, please
 - [x] Integrated batch renderer into GUI
 - [x] More configuration options
 - [ ] Refactor PDF to image script
-- [ ] Create an `alpha` branch, put all unfinished tasks into this branch
+- [x] Create an `alpha` branch, put all unfinished tasks into this branch
 - [ ] HTML to Word conversion functionality, retaining editable formulas
 
 ## How to use
