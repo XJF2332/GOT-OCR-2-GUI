@@ -21,17 +21,18 @@ Click a star, please
 
 ## Latest Development Progress
 
-- [x] Preliminary implementation of PDF export feature
-- [x] Fixed rendering issues with `LaTeX` in PDFs
-- [x] Set the language using the `.json` files in `Locales`
-- [x] Write a script to manage language configuration files
-- [x] Turn file path constructing method into `os.path.join` instead of formatted string
-- [x] A script for batch rendering
-- [x] PDF OCR support, it will generate PDF Files for single images
-- [x] Make auto-renderer into GUI
-- [x] More configurable options
-- [ ] Merge PDF files into one
-- [ ] HTML to .docx
+- [x] Preliminary implementation of PDF export functionality
+- [x] Fixed LaTeX rendering issues in PDFs
+- [x] Implemented functionality to set language using `.json` files
+- [x] Wrote a script to manage language configuration files
+- [x] Changed file path construction method from formatted strings to `os.path.join`
+- [x] Batch rendering script
+- [x] PDF processing, split into single-page PNGs first, then batch render to generate PDFs for each page
+- [x] Integrated batch renderer into GUI
+- [x] More configuration options
+- [ ] Refactor PDF to image script
+- [ ] Create an `alpha` branch, put all unfinished tasks into this branch
+- [ ] HTML to Word conversion functionality, retaining editable formulas
 
 ## How to use
 
