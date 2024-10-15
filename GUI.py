@@ -126,7 +126,7 @@ def pdf_ocr(mode, pdf_file, target_dpi, pdf_convert):
         if success:
             gr.Info(message=local["info_pdf_split_success"].format(pdf_file=pdf_name))
         else:
-            gr.Error(message=local["error_pdf_split_fail"].format(pdf_file=pdf_name))
+            raise gr.Error(duration=0, message=local["error_pdf_split_fail"].format(pdf_file=pdf_name))
     elif mode == "render":
         gr.Info(message=local["info_pdf_render_start"].format(pdf_file=pdf_name))
         success = PDFHandler.pdf_renderer(model=model, tokenizer=tokenizer, pdf_path=pdf_file, target_dpi=target_dpi,
@@ -135,7 +135,7 @@ def pdf_ocr(mode, pdf_file, target_dpi, pdf_convert):
         if success:
             gr.Info(message=local["info_pdf_render_success"].format(pdf_file=pdf_name))
         else:
-            gr.Error(message=local["error_pdf_render_fail"].format(pdf_file=pdf_name))
+            raise gr.Error(duration=0, message=local["error_pdf_render_fail"].format(pdf_file=pdf_name))
 
 
 # 渲染器
@@ -151,7 +151,7 @@ def renderer(imgs_path, pdf_convert_confirm):
         if success:
             gr.Info(message=local["info_render_success"].format(img_file=image_path))
         else:
-            gr.Error(message=local["error_render_fail"].format(img_file=image_path))
+            raise gr.Error(duration=0, message=local["error_render_fail"].format(img_file=image_path))
 
 
 # gradio gui

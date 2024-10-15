@@ -44,26 +44,12 @@ def split_pdf(pdf_path, img_path, target_dpi):
             # 保存图像
             output_path = os.path.join(f"{img_path}", f"{pdf_path_base}_{page_number}.png")
             pix.save(output_path)
-            print(f"Saved {output_path}")
+            print(f"[debug] 已保存 {output_path}")
 
         doc.close()
         return True
     except:
         return False
-
-
-def get_pdf_file_list(path):
-    """
-    获取指定目录下所有文件列表
-
-    参数:
-    path -- 要搜索的目录路径
-
-    返回:
-    files -- 文件列表
-    """
-    pdf_files_list = glob.glob(os.path.join(path, "*.pdf"))
-    return pdf_files_list
 
 
 def get_sorted_png_files(directory, prefix):
@@ -126,14 +112,16 @@ def pdf_renderer(model, tokenizer, pdf_path, target_dpi, pdf_convert, wait, time
         # 获取图片列表
         img_list = get_sorted_png_files(directory="imgs", prefix=pdf_name)
         if len(img_list) == 0:
-            print("No image file found in the current directory.")
+            print("[debug] 未找到图片文件")
             return 1
         else:
             pass
         # 调用渲染器
         for img in img_list:
-            Renderer.render(model=model, tokenizer=tokenizer, image_path=img, wait=wait, time=time,
-                            convert_to_pdf=pdf_convert)
+            success = Renderer.render(model=model, tokenizer=tokenizer, image_path=img, wait=wait, time=time,
+                                      convert_to_pdf=pdf_convert)
+            if not success:
+                return False
         return True
     except:
         return False

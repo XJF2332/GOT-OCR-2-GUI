@@ -81,9 +81,9 @@ def render(model, tokenizer, image_path, wait, time, convert_to_pdf):
             print(f"[debug] 字符串 '{search_string}' 已被替换为 '{replace_string}'。")
 
         except FileNotFoundError:
-            print(f"文件 '{file_path}' 未找到。")
+            print(f"[debug] 文件 '{file_path}' 未找到。")
         except Exception as e:
-            print(f"发生错误: {e}")
+            print(f"[debug] 发生错误: {e}")
 
         # 根据参数决定是否转换为PDF
         if convert_to_pdf:
