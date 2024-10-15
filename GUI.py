@@ -37,22 +37,19 @@ else:
     tokenizer = None
     print(local["info_model_load_skipped"])
 
-theme = gr.themes.Base(
-    primary_hue="violet",
-    secondary_hue="indigo",
+theme = gr.themes.Ocean(
+    primary_hue="indigo",
+    secondary_hue="violet",
     radius_size="sm",
 ).set(
-    background_fill_primary='*neutral_50',
-    border_color_accent='*neutral_50',
-    color_accent_soft='*neutral_50',
-    shadow_drop='none',
-    shadow_drop_lg='none',
-    shadow_inset='none',
-    shadow_spread='none',
-    shadow_spread_dark='none',
-    layout_gap='*spacing_xl',
-    checkbox_background_color='*primary_50',
-    checkbox_background_color_focus='*primary_200'
+    body_background_fill='*neutral_50',
+    body_background_fill_dark='*neutral_950',
+    body_text_color='*neutral_950',
+    body_text_color_dark='*neutral_200',
+    background_fill_secondary='*neutral_100',
+    button_transform_active='scale(0.98)',
+    button_large_radius='*radius_sm',
+    button_small_radius='*radius_sm'
 )
 
 
@@ -62,10 +59,17 @@ def update_img_name(image_uploaded):
     return gr.Textbox(label=local["label_img_name"], value=image_name_with_extension)
 
 
+# 显示保存PDF勾选框
+def show_pdf_pdf_convert_confirm(pdf_ocr_mode):
+    if pdf_ocr_mode == "render":
+        return gr.Checkbox(label=local["label_save_as_pdf"], interactive=True, visible=True)
+    else:
+        return gr.Checkbox(label=local["label_save_as_pdf"], interactive=True, visible=False)
+
+
 # 进行OCR识别
 def ocr(image_uploaded, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
         fine_grained_box_y2, OCR_type, fine_grained_color, pdf_convert_confirm):
-
     # 构建OCR框
     box = [fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2, fine_grained_box_y2]
 
@@ -126,7 +130,6 @@ def renderer(imgs_path, pdf_convert_confirm):
 
 # gradio gui
 with gr.Blocks(theme=theme) as demo:
-
     # OCR选项卡
     with gr.Tab(local["tab_ocr"]):
         with gr.Row():
@@ -170,8 +173,17 @@ with gr.Blocks(theme=theme) as demo:
     # PDF选项卡
     with gr.Tab("PDF"):
         gr.Markdown(local["info_developing"])
-        pdf_file = gr.File(label=local["label_pdf_file"], file_count="single", file_types=["pdf"])
-        pdf_ocr_btn = gr.Button(local["btn_pdf_ocr"], variant="primary")
+        with gr.Row():
+            with gr.Column():
+                pdf_file_name = gr.Textbox(value="input", interactive=False, label=local["label_pdf_file_name"])
+                pdf_file = gr.File(label=local["label_pdf_file"], file_count="single", file_types=["pdf"])
+            with gr.Column():
+                pdf_ocr_mode = gr.Dropdown(
+                    choices=["ocr", "format", "fine-grained-ocr", "fine-grained-format", "fine-grained-color-ocr",
+                             "fine-grained-color-format", "multi-crop-ocr", "multi-crop-format", "render"],
+                    label=local["label_ocr_mode"], value="ocr", interactive=True)
+                pdf_pdf_convert_confirm = gr.Checkbox(label=local["label_save_as_pdf"], interactive=True, visible=False)
+                pdf_ocr_btn = gr.Button(local["btn_pdf_ocr"], variant="primary")
 
     # 指南选项卡
     with gr.Tab(local["tab_instructions"]):
@@ -201,6 +213,13 @@ with gr.Blocks(theme=theme) as demo:
         fn=update_img_name,
         inputs=upload_img,
         outputs=img_name
+    )
+
+    # PDF OCR保存PDF选项
+    pdf_ocr_mode.change(
+        fn=show_pdf_pdf_convert_confirm,
+        inputs=pdf_ocr_mode,
+        outputs=pdf_pdf_convert_confirm
     )
 
 # 启动gradio界面

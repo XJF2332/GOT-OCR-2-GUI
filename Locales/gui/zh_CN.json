@@ -32,6 +32,7 @@
   "label_ocr_mode": "OCR 模式",
   "label_result": "结果",
   "label_input_folder_path": "输入文件夹路径",
+  "label_pdf_file_name": "PDF 文件名",
   "label_save_as_pdf": "保存为 PDF",
   "label_output_folder_path": "输出文件夹路径",
   "tab_ocr": "OCR",

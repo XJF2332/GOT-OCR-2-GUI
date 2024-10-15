@@ -25,6 +25,9 @@
 - You can choose whether to convert HTML files to PDF (by default, it will convert).
 - Click the batch render button, and you will find the rendered files in the `result` folder.
 
+## **PDF Tab**
+- Under developing, only has UI for now, no function yet.
+
 ## **Instructions Tab**
 - You are now looking at the Instructions tab (≧∀≦)ゞ
 

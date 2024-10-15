@@ -32,6 +32,7 @@
   "label_ocr_mode": "OCR mode",
   "label_result": "Result",
   "label_input_folder_path": "Input folder path",
+  "label_pdf_file_name": "PDF file name",
   "label_save_as_pdf": "Save as PDF",
   "label_output_folder_path": "Output folder path",
   "tab_ocr": "OCR",
