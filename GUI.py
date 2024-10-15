@@ -59,6 +59,12 @@ def update_img_name(image_uploaded):
     return gr.Textbox(label=local["label_img_name"], value=image_name_with_extension)
 
 
+# 更新 PDF 名称
+def update_pdf_name(pdf_uploaded):
+    pdf_name_with_extension = os.path.basename(pdf_uploaded)
+    return gr.Textbox(label=local["label_pdf_file"], value=pdf_name_with_extension)
+
+
 # 显示保存PDF勾选框
 def show_pdf_pdf_convert_confirm(pdf_ocr_mode):
     if pdf_ocr_mode == "render":
@@ -110,6 +116,26 @@ def ocr(image_uploaded, fine_grained_box_x1, fine_grained_box_y1, fine_grained_b
         return res
     except Exception as e:
         return str(e)
+
+
+# PDF OCR
+def pdf_ocr(mode, pdf_file, target_dpi, pdf_convert):
+    pdf_name = os.path.basename(pdf_file)
+    if mode == "split-to-image":
+        success = PDFHandler.split_pdf(pdf_path=pdf_file, img_path="imgs", target_dpi=target_dpi)
+        if success:
+            gr.Info(message=local["info_pdf_split_success"].format(pdf_file=pdf_name))
+        else:
+            gr.Error(message=local["error_pdf_split_fail"].format(pdf_file=pdf_name))
+    elif mode == "render":
+        gr.Info(message=local["info_pdf_render_start"].format(pdf_file=pdf_name))
+        success = PDFHandler.pdf_renderer(model=model, tokenizer=tokenizer, pdf_path=pdf_file, target_dpi=target_dpi,
+                                          pdf_convert=pdf_convert, wait=config["pdf_render_wait"],
+                                          time=config["pdf_render_wait_time"])
+        if success:
+            gr.Info(message=local["info_pdf_render_success"].format(pdf_file=pdf_name))
+        else:
+            gr.Error(message=local["error_pdf_render_fail"].format(pdf_file=pdf_name))
 
 
 # 渲染器
@@ -176,12 +202,12 @@ with gr.Blocks(theme=theme) as demo:
         with gr.Row():
             with gr.Column():
                 pdf_file_name = gr.Textbox(value="input", interactive=False, label=local["label_pdf_file_name"])
-                pdf_file = gr.File(label=local["label_pdf_file"], file_count="single", file_types=["pdf"])
+                pdf_file = gr.File(label=local["label_pdf_file"], file_count="single", file_types=[".pdf"])
             with gr.Column():
                 pdf_ocr_mode = gr.Dropdown(
-                    choices=["ocr", "format", "fine-grained-ocr", "fine-grained-format", "fine-grained-color-ocr",
-                             "fine-grained-color-format", "multi-crop-ocr", "multi-crop-format", "render"],
-                    label=local["label_ocr_mode"], value="ocr", interactive=True)
+                    choices=["split-to-image", "render"],
+                    label=local["label_ocr_mode"], value="split-to-image", interactive=True)
+                dpi = gr.Number(label=local["label_target_dpi"], minimum=72, maximum=300, step=1, value=150)
                 pdf_pdf_convert_confirm = gr.Checkbox(label=local["label_save_as_pdf"], interactive=True, visible=False)
                 pdf_ocr_btn = gr.Button(local["btn_pdf_ocr"], variant="primary")
 
@@ -220,6 +246,20 @@ with gr.Blocks(theme=theme) as demo:
         fn=show_pdf_pdf_convert_confirm,
         inputs=pdf_ocr_mode,
         outputs=pdf_pdf_convert_confirm
+    )
+
+    # PDF OCR
+    pdf_ocr_btn.click(
+        fn=pdf_ocr,
+        inputs=[pdf_ocr_mode, pdf_file, dpi, pdf_pdf_convert_confirm],
+        outputs=None
+    )
+
+    # 更新 PDF 名称
+    pdf_file.change(
+        fn=update_pdf_name,
+        inputs=pdf_file,
+        outputs=pdf_file_name
     )
 
 # 启动gradio界面

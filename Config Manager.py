@@ -1,7 +1,7 @@
 import json
 from scripts import LangConfigMgr
 import os
-import sys
+
 
 def clear():
     # 如果是Windows系统
@@ -11,9 +11,11 @@ def clear():
         # 对于mac和linux（os.name是'posix'）
         os.system('clear')
 
+
 while True:
     clear()  # 在循环开始时清屏
-    mgr_choice = int(input("What do you want to do?\n1. Configure language\n2. Configure other settings\n3. Exit\nEnter your choice (1~3): "))
+    mgr_choice = int(input(
+        "What do you want to do?\n1. Configure language\n2. Configure other settings\n3. Exit\nEnter your choice (1~3): "))
 
     if mgr_choice == 1:
         clear()

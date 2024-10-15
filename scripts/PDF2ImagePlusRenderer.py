@@ -1,102 +1,139 @@
 import fitz
-import json
 import os
 import glob
+import scripts.Renderer as Renderer
 
-from pathlib import Path
-
-
-def main():
-    print("Loading config......")
-    config_path = os.path.join("Configs", "Config.json")
-    with open(config_path, 'r', encoding='utf-8') as file:
-        config = json.load(file)
+pdf_path_base = ''
 
 
-    def remove_suffix(file_name):
-        return Path(file_name).stem
+def get_base_name(path):
+    return os.path.basename(path)
 
 
-    file_list = []  # 新建一个空列表用于存放文件全路径
-    file_dir = r'pdf'  # 指定即将遍历的文件夹路径
-    for files in os.walk(file_dir):  # 遍历指定文件夹及其下的所有子文件夹
-        for file in files[2]:  # 遍历每个文件夹里的所有文件，（files[2]:母文件夹和子文件夹下的所有文件信息，files[1]:子文件夹信息，files[0]:母文件夹信息）
-            if os.path.splitext(file)[1] == '.PDF' or os.path.splitext(file)[1] == '.pdf':  # 检查文件后缀名,逻辑判断用==
-                # file_list.append(file)#筛选后的文件名为字符串，将得到的文件名放进去列表，方便以后调用
-                file_list.append(file_dir + file)  # 给文件名加入文件夹路径
-
-    print(file_list)
-
-    # 加载 pdf 文件
-    doc = fitz.open(file_list[0])
+def remove_extension(base_name):
+    return os.path.splitext(base_name)[0]
 
 
-    def covert2pic(file_path, zoom, png_path):
-        doc = fitz.open(file_path)
-        file_name = remove_suffix(file_path)
-        total = doc.page_count
-        for pg in range(total):
-            page = doc[pg]
-            zoom = int(zoom)  # 值越大，分辨率越高，文件越清晰
-            rotate = int(0)
+def split_pdf(pdf_path, img_path, target_dpi):
+    """
+    将PDF文件拆分为单页PDF文件，并保存为PNG图像文件。
 
-            trans = fitz.Matrix(zoom / 100.0, zoom / 100.0).prerotate(rotate)
-            pm = page.get_pixmap(matrix=trans, alpha=False)
-            if not os.path.exists(png_path):
-                os.mkdir(png_path)
-            save = os.path.join(png_path, file_name + '{}.png'.format(pg + 1))
-            pm.save(save)
+    参数:
+    pdf_path -- PDF文件路径
+    img_path -- 保存PNG图像文件的目录路径
+    target_dpi -- 目标DPI
+
+    返回:
+    True -- 成功拆分PDF文件
+    False -- 拆分PDF文件失败
+    """
+    try:
+        doc = fitz.open(pdf_path)
+
+        pdf_path_base = get_base_name(path=pdf_path)
+        pdf_path_base = remove_extension(pdf_path_base)
+
+        for page_number in range(len(doc)):
+            zoom = target_dpi / 72.0
+            matrix = fitz.Matrix(zoom, zoom)
+
+            # 将PDF页面转换为图像
+            page = doc[page_number]
+            pix = page.get_pixmap(matrix=matrix)
+
+            # 保存图像
+            output_path = os.path.join(f"{img_path}", f"{pdf_path_base}_{page_number}.png")
+            pix.save(output_path)
+            print(f"Saved {output_path}")
+
         doc.close()
+        return True
+    except:
+        return False
 
 
-    pdfPath = file_list[0]
-    imagePath = 'imgs'
-    covert2pic(pdfPath, 200, imagePath)
+def get_pdf_file_list(path):
+    """
+    获取指定目录下所有文件列表
 
-    # 打开配置文件
-    print("Loading config...")
-    config_path = os.path.join("Locales", "cli", "config.json")
-    with open(config_path, 'r', encoding='utf-8') as file:
-        config = json.load(file)
-        lang = config['language']
+    参数:
+    path -- 要搜索的目录路径
 
-    # 打开语言文件
-    lang_file = os.path.join('Locales', 'cli', f'{lang}.json')
-    with open(lang_file, 'r', encoding='utf-8') as file:
-        local = json.load(file)
+    返回:
+    files -- 文件列表
+    """
+    pdf_files_list = glob.glob(os.path.join(path, "*.pdf"))
+    return pdf_files_list
 
-    # 导入transformers库
-    print(local["info_import_libs"])
-    from transformers import AutoModel, AutoTokenizer
-    import scripts.Renderer as Render
 
-    # 加载模型
-    print(local["load_models"])
-    tokenizer = AutoTokenizer.from_pretrained('models', trust_remote_code=True)
-    model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_usage=True, device_map='cuda',
-                                      use_safetensors=True, pad_token_id=tokenizer.eos_token_id)
-    model = model.eval().cuda()
-    print(local["load_models_success"])
+def get_sorted_png_files(directory, prefix):
+    """
+    获取指定目录下，符合前缀和整数后缀的PNG文件列表，并按整数大小排序。
 
-    pdf_convert = input(local["pdf_convert_ask"])
-    if pdf_convert == "y" or pdf_convert == "Y":
-        convert_confirm = True
-    else:
-        convert_confirm = False
+    参数:
+    directory -- 要搜索的目录路径
+    prefix -- 文件名前缀
 
-    # 读取imgs文件夹下的jpg和png图片
-    imgs_path = os.path.join(os.getcwd(), 'imgs')
-    image_files = glob.glob(os.path.join(imgs_path, '*.jpg')) + glob.glob(os.path.join(imgs_path, '*.png'))
+    返回:
+    sorted_files -- 按整数大小排序的文件列表
+    """
+    # 构建匹配模式
+    pattern = os.path.join(directory, f"{prefix}_*.png")
 
-    # 逐个发送图片给renderer的render函数
-    allres = ''
-    for image_path in image_files:
-        success = Render.render(model=model, tokenizer=tokenizer, image_path=image_path, convert_to_pdf=convert_confirm,
-                                wait=config["pdf_render_wait"], time=config["pdf_render_wait_time"])
-        if success:
-            print(local["renderer_success"].format(img_path=image_path))
+    # 获取所有匹配的文件
+    files = glob.glob(pattern)
+
+    # 定义一个函数，用于从文件名中提取整数部分
+    def extract_integer(filename):
+        # 假设文件名格式正确，去掉扩展名 .png 和前缀
+        number_part = os.path.basename(filename).replace(f"{prefix}_", "").replace(".png", "")
+        return int(number_part)
+
+    # 按整数大小排序文件列表
+    sorted_files = sorted(files, key=extract_integer)
+    return sorted_files
+
+
+def pdf_renderer(model, tokenizer, pdf_path, target_dpi, pdf_convert, wait, time):
+    """
+    将PDF文件转换为图片，并调用渲染器进行渲染。
+
+    参数:
+    model -- 模型
+    tokenizer -- 分词器
+    pdf_path -- PDF文件路径
+    target_dpi -- 目标DPI
+    pdf_convert -- 是否转换为PDF
+    wait -- 等待时间
+    time -- 时间
+
+    返回:
+    True -- 成功渲染
+    False -- 渲染失败
+    """
+    # 创建目录
+    if not os.path.exists("pdf"):
+        os.makedirs("pdf")
+    if not os.path.exists("imgs"):
+        os.makedirs("imgs")
+
+    try:
+        # 将 pdf 文件转换为图片
+        split_pdf(pdf_path=pdf_path, img_path="imgs", target_dpi=target_dpi)
+        # pdf 文件名
+        pdf_name = get_base_name(path=pdf_path)
+        pdf_name = remove_extension(pdf_name)
+        # 获取图片列表
+        img_list = get_sorted_png_files(directory="imgs", prefix=pdf_name)
+        if len(img_list) == 0:
+            print("No image file found in the current directory.")
+            return 1
         else:
-            print(local["renderer_fail"].format(img_path=image_path))
-
-if __name__ == '__main__':
-    main()
+            pass
+        # 调用渲染器
+        for img in img_list:
+            Renderer.render(model=model, tokenizer=tokenizer, image_path=img, wait=wait, time=time,
+                            convert_to_pdf=pdf_convert)
+        return True
+    except:
+        return False
