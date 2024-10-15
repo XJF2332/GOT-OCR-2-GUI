@@ -4,7 +4,10 @@
 
 ![img.png](img.png)
 
-**⚠️Development of CLI has been paused. I will make it able to receive params from command line so that it will be more suitable for automatic jobs after I finished the development of GUI.⚠️**
+**⚠️Development of CLI has been paused. I will make it able to receive params from command line so that it will be more suitable for automatic jobs after I finished the development of GUI.⚠️**  
+**⚠️PyCharm says that gradio has malicious code, I don't know what happened. Evidence is down here. Anyway, be careful.⚠️**
+
+![img_1.png](img_1.png)
 
 ## About this project
 
