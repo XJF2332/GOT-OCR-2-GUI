@@ -24,19 +24,29 @@ import glob
 import scripts.Renderer as Renderer
 import scripts.PDF2ImagePlusRenderer as PDFHandler
 
-# 加载模型
-if config["load_model_on_start"]:
+model = None
+tokenizer = None
+
+
+# 加载模型函数
+def load_model():
     print(local["info_load_model"])
     tokenizer = AutoTokenizer.from_pretrained('models', trust_remote_code=True)
     model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_usage=True, device_map='cuda',
                                       use_safetensors=True, pad_token_id=tokenizer.eos_token_id)
     model = model.eval().cuda()
     print(local["info_model_loaded"])
+    return model, tokenizer
+
+
+# 决定是否加载模型
+if config["load_model_on_start"]:
+    model, tokenizer = load_model()
 else:
-    model = None
-    tokenizer = None
     print(local["info_model_load_skipped"])
 
+
+# 主题
 theme = gr.themes.Ocean(
     primary_hue="indigo",
     secondary_hue="violet",
@@ -65,7 +75,7 @@ def update_pdf_name(pdf_uploaded):
     return gr.Textbox(label=local["label_pdf_file"], value=pdf_name_with_extension)
 
 
-# 显示保存PDF勾选框
+# 显示保存PDF勾选框（ PDF 标签页）
 def show_pdf_pdf_convert_confirm(pdf_ocr_mode):
     if pdf_ocr_mode == "render":
         return gr.Checkbox(label=local["label_save_as_pdf"], interactive=True, visible=True)
@@ -73,21 +83,21 @@ def show_pdf_pdf_convert_confirm(pdf_ocr_mode):
         return gr.Checkbox(label=local["label_save_as_pdf"], interactive=True, visible=False)
 
 
-# 进行OCR识别
+# 进行 OCR 识别
 def ocr(image_uploaded, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
         fine_grained_box_y2, OCR_type, fine_grained_color, pdf_convert_confirm):
-    # 构建OCR框
+    # 构建 OCR 框
     box = [fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2, fine_grained_box_y2]
 
     # 默认值
     res = local["error_ocr_mode_none"]
 
-    # 如果result文件夹不存在，则创建
+    # 如果 result 文件夹不存在，则创建
     if not os.path.exists("result"):
         os.makedirs("result")
 
     try:
-        # 根据OCR类型进行OCR识别
+        # 根据 OCR 类型进行 OCR 识别
         if OCR_type == "ocr":
             res = model.chat(tokenizer, image_uploaded, ocr_type='ocr')
         elif OCR_type == "format":
@@ -142,7 +152,7 @@ def pdf_ocr(mode, pdf_file, target_dpi, pdf_convert):
 def renderer(imgs_path, pdf_convert_confirm):
     image_files = glob.glob(os.path.join(imgs_path, '*.jpg')) + glob.glob(os.path.join(imgs_path, '*.png'))
 
-    # 逐个发送图片给renderer的render函数
+    # 逐个发送图片给 renderer 的 render 函数
     for image_path in image_files:
         gr.Info(message=local["info_render_start"].format(img_file=image_path))
         success = Renderer.render(model=model, tokenizer=tokenizer, image_path=image_path,
@@ -156,7 +166,7 @@ def renderer(imgs_path, pdf_convert_confirm):
 
 # gradio gui
 with gr.Blocks(theme=theme) as demo:
-    # OCR选项卡
+    # OCR 选项卡
     with gr.Tab(local["tab_ocr"]):
         with gr.Row():
             with gr.Column():
@@ -196,7 +206,7 @@ with gr.Blocks(theme=theme) as demo:
             batch_pdf_convert_confirm = gr.Checkbox(label=local["label_save_as_pdf"], value=True, interactive=True)
             batch_render_btn = gr.Button(local["btn_render"], variant="primary")
 
-    # PDF选项卡
+    # PDF 选项卡
     with gr.Tab("PDF"):
         gr.Markdown(local["info_developing"])
         with gr.Row():
@@ -219,7 +229,7 @@ with gr.Blocks(theme=theme) as demo:
 
         gr.Markdown(instructions)
 
-    # 点击进行OCR识别
+    # 点击进行 OCR 识别
     do_ocr.click(
         fn=ocr,
         inputs=[upload_img, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
@@ -241,7 +251,7 @@ with gr.Blocks(theme=theme) as demo:
         outputs=img_name
     )
 
-    # PDF OCR保存PDF选项
+    # PDF OCR 保存 PDF 选项
     pdf_ocr_mode.change(
         fn=show_pdf_pdf_convert_confirm,
         inputs=pdf_ocr_mode,
@@ -262,5 +272,5 @@ with gr.Blocks(theme=theme) as demo:
         outputs=pdf_file_name
     )
 
-# 启动gradio界面
+# 启动 gradio 界面
 demo.launch()
