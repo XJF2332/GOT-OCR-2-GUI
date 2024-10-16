@@ -1,5 +1,5 @@
 {
-    "load_model_on_start": false,
+    "load_model_on_start": true,
     "pdf_render_wait": false,
     "pdf_render_wait_time": 2,
     "pdf_split_dpi": 150
