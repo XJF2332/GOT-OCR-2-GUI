@@ -4,6 +4,8 @@
   "btn_do_ocr": "Perform OCR",
   "btn_render": "Render (batch job)",
   "btn_pdf_ocr": "Do OCR for PDF file",
+  "btn_unload_model": "Unload model",
+  "btn_load_model": "Load model",
   "error_ocr_mode_none": "No OCR mode selected",
   "error_render_fail": "Failed to render {img_file}",
   "error_pdf_split_fail": "Failed to split {pdf_file} to image",
@@ -20,6 +22,8 @@
   "info_render_success": "Successfully rendered {img_file}",
   "info_render_start": "Rendering {img_file} ......",
   "info_developing": "This function is under development, please wait for the next version",
+  "info_model_already_loaded": "Model loaded",
+  "info_model_not_loaded": "Model not loaded",
   "label_fine_grained_settings": "Fine-grained mode settings",
   "label_fine_grained_box_x1": "Box coordinate x1",
   "label_fine_grained_box_y1": "Box coordinate y1",
@@ -43,5 +47,6 @@
   "label_output_folder_path": "Output folder path",
   "tab_ocr": "OCR",
   "tab_instructions": "Instructions",
-  "tab_renderer": "Renderer"
+  "tab_renderer": "Renderer",
+  "tab_model": "Model"
 }

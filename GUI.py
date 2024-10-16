@@ -31,12 +31,21 @@ tokenizer = None
 # 加载模型函数
 def load_model():
     print(local["info_load_model"])
+    global model, tokenizer
     tokenizer = AutoTokenizer.from_pretrained('models', trust_remote_code=True)
     model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_usage=True, device_map='cuda',
                                       use_safetensors=True, pad_token_id=tokenizer.eos_token_id)
     model = model.eval().cuda()
     print(local["info_model_loaded"])
-    return model, tokenizer
+    return local["info_model_already_loaded"]
+
+
+# 卸载模型函数
+def unload_model():
+    global model, tokenizer
+    model = None
+    tokenizer = None
+    return local["info_model_not_loaded"]
 
 
 # 决定是否加载模型
@@ -44,7 +53,6 @@ if config["load_model_on_start"]:
     model, tokenizer = load_model()
 else:
     print(local["info_model_load_skipped"])
-
 
 # 主题
 theme = gr.themes.Ocean(
@@ -221,6 +229,17 @@ with gr.Blocks(theme=theme) as demo:
                 pdf_pdf_convert_confirm = gr.Checkbox(label=local["label_save_as_pdf"], interactive=True, visible=False)
                 pdf_ocr_btn = gr.Button(local["btn_pdf_ocr"], variant="primary")
 
+    # 模型选项卡
+    with gr.Tab(local["tab_model"]):
+        gr.Markdown(local["info_developing"])
+        if config["load_model_on_start"]:
+            model_status = gr.Textbox(show_label=False, value=local["info_model_already_loaded"], interactive=False)
+        else:
+            model_status = gr.Textbox(show_label=False, value=local["info_model_not_loaded"], interactive=False)
+        with gr.Row():
+            unload_model_btn = gr.Button(local["btn_unload_model"], variant="secondary")
+            load_model_btn = gr.Button(local["btn_load_model"], variant="primary")
+
     # 指南选项卡
     with gr.Tab(local["tab_instructions"]):
         # 从对应语言的md文件中加载指南
@@ -270,6 +289,20 @@ with gr.Blocks(theme=theme) as demo:
         fn=update_pdf_name,
         inputs=pdf_file,
         outputs=pdf_file_name
+    )
+
+    # 加载模型
+    load_model_btn.click(
+        fn=load_model,
+        inputs=None,
+        outputs=model_status
+    )
+
+    # 卸载模型
+    unload_model_btn.click(
+        fn=unload_model,
+        inputs=None,
+        outputs=model_status
     )
 
 # 启动 gradio 界面

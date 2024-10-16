@@ -4,6 +4,8 @@
   "btn_do_ocr": "执行 OCR",
   "btn_render": "批量渲染",
   "btn_pdf_ocr": "对 PDF 文件执行 OCR",
+  "btn_unload_model": "卸载模型",
+  "btn_load_model": "加载模型",
   "error_ocr_mode_none": "未选择 OCR 模式",
   "error_render_fail": "{img_file} 渲染失败",
   "error_pdf_split_fail": "{pdf_file} 分割失败",
@@ -20,6 +22,8 @@
   "info_render_success": "{img_file} 渲染成功",
   "info_render_start": "开始渲染 {img_file}",
   "info_developing": "正在施工......",
+  "info_model_already_loaded": "模型已加载",
+  "info_model_not_loaded": "模型未加载",
   "label_fine_grained_settings": "fine-grained 模式设置",
   "label_fine_grained_box_x1": "框坐标 x1",
   "label_fine_grained_box_y1": "框坐标 y1",
@@ -43,5 +47,6 @@
   "label_output_folder_path": "输出文件夹路径",
   "tab_ocr": "OCR",
   "tab_instructions": "说明",
-  "tab_renderer": "渲染器"
+  "tab_renderer": "渲染器",
+  "tab_model": "模型"
 }
