@@ -32,6 +32,8 @@ tokenizer = None
 def load_model():
     print(local["info_load_model"])
     global model, tokenizer
+    model = None
+    tokenizer = None
     tokenizer = AutoTokenizer.from_pretrained('models', trust_remote_code=True)
     model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_usage=True, device_map='cuda',
                                       use_safetensors=True, pad_token_id=tokenizer.eos_token_id)

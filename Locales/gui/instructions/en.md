@@ -26,7 +26,23 @@
 - Click the batch render button, and you will find the rendered files in the `result` folder.
 
 ## **PDF Tab**
-- Under developing, only has UI for now, no function yet.
+- Under Construction
+- Upload the PDF file you want to recognize, the PDF file name will be updated automatically. Remember this name (though you can always check it if you forget).
+- PDF OCR has two modes: `split-to-image` and `render`.
+- The `split-to-image` mode will split the PDF file into images. The images are located in the `imgs` folder, named as `{PDF Name}_{Page Number}.png`. After that, you can go to the OCR tab to recognize these images, or to the Renderer tab to render them.
+- The `split-to-image` mode can run without loading the model.
+- The `render` mode will execute `split-to-image`, and then render the split images.
+- The Renderer does not distinguish between images from PDFs and those that are not, but the `render` mode on the PDF tab will only render images that have been split from a PDF file.
+- You can set the DPI for splitting images, with a default of 150.
+
+## **Model Tab**
+- Under Construction
+- Sometimes I might forget to change back my settings from testing, and the program won't load the model when it starts. This is where you can use the functions here.
+- You can check the model status in the text box to see if it has been loaded.
+- Click the `Load Model` button to load the model.
+- Click the `Unload Model` button to unload the model.
+- The program will automatically unload any loaded model before loading a new one, this process is executed automatically and does not require manual unloading.
+
 
 ## **Instructions Tab**
 - You are now looking at the Instructions tab (≧∀≦)ゞ
