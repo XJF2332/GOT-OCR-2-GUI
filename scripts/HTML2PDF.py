@@ -25,13 +25,18 @@ def convert_html_encoding(html_gb2312_path, html_utf8_path):
     - 确保输入文件确实使用GB2312编码，否则转换可能会失败。
     - 输出文件将使用UTF-8编码，这是现代Web标准推荐使用的编码。
     """
-    # gb2312
-    with open(html_gb2312_path, 'r', encoding='gb2312') as file:
-        content = file.read()
+    try:
+        # gb2312
+        print(f"[Info-HTML2PDF.convert_html_encoding] 正在打开：{html_gb2312_path}")
+        with open(html_gb2312_path, 'r', encoding='gb2312') as file:
+            content = file.read()
 
-    # utf8
-    with open(html_utf8_path, 'w', encoding='utf-8') as file:
-        file.write(content)
+        # utf8
+        print(f"[Info-HTML2PDF.convert_html_encoding] 正在转码：{html_utf8_path}")
+        with open(html_utf8_path, 'w', encoding='utf-8') as file:
+            file.write(content)
+    except Exception as e:
+        print(f"[Error-HTML2PDF.convert_html_encoding] {e}")
 
 
 def repalce_html_content(html_utf8_path, html_utf8_local_path):
@@ -49,13 +54,19 @@ def repalce_html_content(html_utf8_path, html_utf8_local_path):
     - 替换HTML文件中的特定内容。
     - 将替换后的内容写入新的HTML文件。
     """
-    pattern = r'https://cdn.jsdelivr.net/npm/mathpix-markdown-it@1.3.6/es5/bundle.js'
-    replacement = 'markdown-it.js'
-    with open(html_utf8_path, 'r', encoding='utf-8') as file:
-        content = file.read()
-    new_html_content = re.sub(pattern, replacement, content)
-    with open(html_utf8_local_path, 'w', encoding='utf-8') as file:
-        file.write(new_html_content)
+    try:
+        print(f"[Info-HTML2PDF.repalce_html_content] 正在准备替换：{html_utf8_path}")
+        pattern = r'https://cdn.jsdelivr.net/npm/mathpix-markdown-it@1.3.6/es5/bundle.js'
+        replacement = 'markdown-it.js'
+        print(f"[Info-HTML2PDF.repalce_html_content] 正在打开：{html_utf8_path}")
+        with open(html_utf8_path, 'r', encoding='utf-8') as file:
+            content = file.read()
+        new_html_content = re.sub(pattern, replacement, content)
+        print(f"[Info-HTML2PDF.repalce_html_content] 正在写入：{html_utf8_local_path}")
+        with open(html_utf8_local_path, 'w', encoding='utf-8') as file:
+            file.write(new_html_content)
+    except Exception as e:
+        print(f"[Error-HTML2PDF.repalce_html_content] {e}")
 
 
 def output_pdf(html_path, pdf_path, waiting_time, wait=False):
@@ -81,48 +92,57 @@ def output_pdf(html_path, pdf_path, waiting_time, wait=False):
     注意:
     - 需要事先在本地安装EdgeDriver，并设置正确的路径。
     """
+    try:
+        print(f"[Info-HTML2PDF.output_pdf] 正在转换 PDF ：{html_path}")
+        print(f"[Info-HTML2PDF.output_pdf] 正在初始化 WebDriver")
 
-    # 设置EdgeDriver的路径
-    edge_driver_path = os.path.abspath('./edge_driver/msedgedriver.exe')
+        # 设置EdgeDriver的路径
+        edge_driver_path = os.path.abspath('./edge_driver/msedgedriver.exe')
 
-    # 设置本地HTML文件的路径
-    html_file_path = 'file://' + os.path.abspath(html_path)
+        # 设置本地HTML文件的路径
+        html_file_path = 'file://' + os.path.abspath(html_path)
 
-    # 设置输出的PDF文件路径
-    pdf_file_path = pdf_path
+        # 设置输出的PDF文件路径
+        pdf_file_path = pdf_path
 
-    # 设置Edge选项以启用打印
-    edge_options = Options()
-    edge_options.add_argument("--headless")  # 无头模式
-    edge_options.add_argument("--disable-gpu")
+        # 设置Edge选项以启用打印
+        edge_options = Options()
+        edge_options.add_argument("--headless")  # 无头模式
+        edge_options.add_argument("--disable-gpu")
 
-    # 初始化Service对象
-    service = Service(executable_path=edge_driver_path)
+        # 初始化Service对象
+        service = Service(executable_path=edge_driver_path)
 
-    # 初始化WebDriver
-    driver = webdriver.Edge(service=service, options=edge_options)
+        # 初始化WebDriver
+        driver = webdriver.Edge(service=service, options=edge_options)
 
-    # 打开HTML文件
-    driver.get(html_file_path)
+        print(f"[Info-HTML2PDF.output_pdf] 正在打开：{html_file_path}")
+        # 打开HTML文件
+        driver.get(html_file_path)
 
-    # 确保页面已加载
-    if wait:
-        time.sleep(waiting_time)
-    else:
-        pass
+        # 确保页面已加载
+        if wait:
+            time.sleep(waiting_time)
+        else:
+            pass
 
-    # 生成PDF文件
-    pdf_data = driver.execute_cdp_cmd('Page.printToPDF', {
-        'landscape': False,
-        'displayHeaderFooter': False
-    })['data']
+        # 生成PDF文件
+        print(f"[Info-HTML2PDF.output_pdf] 正在生成 PDF：{pdf_file_path}")
+        pdf_data = driver.execute_cdp_cmd('Page.printToPDF', {
+            'landscape': False,
+            'displayHeaderFooter': False
+        })['data']
 
-    # 写入PDF文件
-    with open(pdf_file_path, 'wb') as file:
-        file.write(base64.b64decode(pdf_data))
+        # 写入PDF文件
+        print(f"[Info-HTML2PDF.output_pdf] 正在写入：{pdf_file_path}")
+        with open(pdf_file_path, 'wb') as file:
+            file.write(base64.b64decode(pdf_data))
 
-    # 关闭WebDriver
-    driver.quit()
+        # 关闭WebDriver
+        print(f"[Info-HTML2PDF.output_pdf] 正在关闭 WebDriver")
+        driver.quit()
+    except Exception as e:
+        print(f"[Error-HTML2PDF.output_pdf] {e}")
 
 
 def all_in_one(html_gb2312_path, html_utf8_path, html_utf8_local_path, pdf_path, wait, waiting_time):
@@ -148,6 +168,10 @@ def all_in_one(html_gb2312_path, html_utf8_path, html_utf8_local_path, pdf_path,
     - 使用`replace_html_content`函数替换UTF-8编码HTML文件中的特定内容。
     - 使用`output_pdf`函数将替换内容后的HTML文件输出为PDF文件。
     """
-    convert_html_encoding(html_gb2312_path, html_utf8_path)
-    repalce_html_content(html_utf8_path, html_utf8_local_path)
-    output_pdf(html_utf8_local_path, pdf_path, waiting_time, wait)
+    try:
+        print(f"[Info-HTML2PDF.all_in_one] 正在转换：{html_gb2312_path}")
+        convert_html_encoding(html_gb2312_path, html_utf8_path)
+        repalce_html_content(html_utf8_path, html_utf8_local_path)
+        output_pdf(html_utf8_local_path, pdf_path, waiting_time, wait)
+    except Exception as e:
+        print(f"[Error-HTML2PDF.all_in_one] {e}")
