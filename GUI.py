@@ -85,12 +85,20 @@ def update_pdf_name(pdf_uploaded):
     return gr.Textbox(label=local["label_pdf_file"], value=pdf_name_with_extension)
 
 
-# 显示保存PDF勾选框（ PDF 标签页）
+# 显示保存 PDF 勾选框（ PDF 标签页）
 def show_pdf_pdf_convert_confirm(pdf_ocr_mode):
     if pdf_ocr_mode == "render":
         return gr.Checkbox(label=local["label_save_as_pdf"], interactive=True, visible=True)
     else:
         return gr.Checkbox(label=local["label_save_as_pdf"], interactive=True, visible=False)
+
+
+# 显示合并 PDF 勾选框（ PDF 标签页）
+def show_pdf_pdf_merge_confirm(pdf_convert_confirm):
+    if pdf_convert_confirm:
+        return gr.Checkbox(label=local["label_merge_pdf"], interactive=True, visible=True)
+    else:
+        return gr.Checkbox(label=local["label_merge_pdf"], interactive=True, visible=False)
 
 
 # 进行 OCR 识别
@@ -185,6 +193,16 @@ def renderer(imgs_path, pdf_convert_confirm):
 
 # gradio gui
 with gr.Blocks(theme=theme) as demo:
+    # 模型面板
+    with gr.Column(variant="panel"):
+        if config["load_model_on_start"]:
+            model_status = gr.Markdown(local["info_model_already_loaded"])
+        else:
+            model_status = gr.Markdown(local["info_model_not_loaded"])
+        with gr.Row():
+            unload_model_btn = gr.Button(local["btn_unload_model"], variant="secondary")
+            load_model_btn = gr.Button(local["btn_load_model"], variant="primary")
+
     # OCR 选项卡
     with gr.Tab(local["tab_ocr"]):
         with gr.Row():
@@ -233,23 +251,15 @@ with gr.Blocks(theme=theme) as demo:
                 pdf_file_name = gr.Textbox(value="input", interactive=False, label=local["label_pdf_file_name"])
                 pdf_file = gr.File(label=local["label_pdf_file"], file_count="single", file_types=[".pdf"])
             with gr.Column():
-                pdf_ocr_mode = gr.Dropdown(
-                    choices=["split-to-image", "render"],
-                    label=local["label_ocr_mode"], value="split-to-image", interactive=True)
-                dpi = gr.Number(label=local["label_target_dpi"], minimum=72, maximum=300, step=1, value=150)
-                pdf_pdf_convert_confirm = gr.Checkbox(label=local["label_save_as_pdf"], interactive=True, visible=False)
+                with gr.Group():
+                    pdf_ocr_mode = gr.Dropdown(
+                        choices=["split-to-image", "render"],
+                        label=local["label_ocr_mode"], value="split-to-image", interactive=True)
+                    dpi = gr.Number(label=local["label_target_dpi"], minimum=72, maximum=300, step=1, value=150)
+                    with gr.Row():
+                        pdf_pdf_convert_confirm = gr.Checkbox(label=local["label_save_as_pdf"], interactive=True, visible=False)
+                        pdf_pdf_merge_confirm = gr.Checkbox(label=local["label_merge_pdf"], interactive=True, visible=False)
                 pdf_ocr_btn = gr.Button(local["btn_pdf_ocr"], variant="primary")
-
-    # 模型选项卡
-    with gr.Tab(local["tab_model"]):
-        gr.Markdown(local["info_developing"])
-        if config["load_model_on_start"]:
-            model_status = gr.Textbox(show_label=False, value=local["info_model_already_loaded"], interactive=False)
-        else:
-            model_status = gr.Textbox(show_label=False, value=local["info_model_not_loaded"], interactive=False)
-        with gr.Row():
-            unload_model_btn = gr.Button(local["btn_unload_model"], variant="secondary")
-            load_model_btn = gr.Button(local["btn_load_model"], variant="primary")
 
     # 指南选项卡
     with gr.Tab(local["tab_instructions"]):
@@ -287,6 +297,14 @@ with gr.Blocks(theme=theme) as demo:
         inputs=pdf_ocr_mode,
         outputs=pdf_pdf_convert_confirm
     )
+
+    # PDF OCR 合并 PDF 选项
+    pdf_pdf_convert_confirm.change(
+        fn=show_pdf_pdf_merge_confirm,
+        inputs=pdf_pdf_convert_confirm,
+        outputs=pdf_pdf_merge_confirm
+    )
+
 
     # PDF OCR
     pdf_ocr_btn.click(

@@ -1,5 +1,15 @@
 # Instructions
+
+## **Top**
+- Under Construction
+- Sometimes I might forget to change back my settings from testing, and the program won't load the model when it starts. This is where you can use the functions here.
+- You can check the model status in the text box to see if it has been loaded.
+- Click the `Load Model` button to load the model.
+- Click the `Unload Model` button to unload the model.
+- The program will automatically unload any loaded model before loading a new one, this process is executed automatically and does not require manual unloading.
+
 ## **OCR Tab**
+
 ### `OCR` Modes
 - ocr: Standard OCR
 - format: OCR with formatting
@@ -19,6 +29,7 @@
 1. Input image name in the text box, this will become the base name of the output files
 2. You will find that three textboxes below changed, which means the name has been applied
 3. Click the "Save as PDF" button to save the HTML file as a PDF file
+
 ## **Renderer Tab**
 - Enter the folder where you want to batch render images.
 - The renderer will detect `.jpg` and `.png` files in the folder.
@@ -34,15 +45,6 @@
 - The `render` mode will execute `split-to-image`, and then render the split images.
 - The Renderer does not distinguish between images from PDFs and those that are not, but the `render` mode on the PDF tab will only render images that have been split from a PDF file.
 - You can set the DPI for splitting images, with a default of 150.
-
-## **Model Tab**
-- Under Construction
-- Sometimes I might forget to change back my settings from testing, and the program won't load the model when it starts. This is where you can use the functions here.
-- You can check the model status in the text box to see if it has been loaded.
-- Click the `Load Model` button to load the model.
-- Click the `Unload Model` button to unload the model.
-- The program will automatically unload any loaded model before loading a new one, this process is executed automatically and does not require manual unloading.
-
 
 ## **Instructions Tab**
 - You are now looking at the Instructions tab (≧∀≦)ゞ
