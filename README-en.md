@@ -24,18 +24,20 @@ Click a star, please
 
 ## Latest Development Progress
 
-- [x] Preliminary implementation of PDF export functionality
-- [x] Fixed LaTeX rendering issues in PDFs
-- [x] Implemented functionality to set language using `.json` files
+- [x] Preliminary implementation of PDF export feature
+- [x] Fixed LaTeX rendering issues in PDF
+- [x] Implemented functionality to set language using `.json`
 - [x] Wrote a script to manage language configuration files
-- [x] Changed file path construction method from formatted strings to `os.path.join`
 - [x] Batch rendering script
-- [x] PDF processing, split into single-page PNGs first, then batch render to generate PDFs for each page
-- [x] Integrated batch renderer into GUI
+- [x] PDF processing, split into individual page pngs first, then batch render to generate pdf for each page
+- [x] Integrated the batch renderer into the GUI
 - [x] More configuration options
-- [ ] Refactor PDF to image script
-- [x] Create an `alpha` branch, put all unfinished tasks into this branch
-- [ ] HTML to Word conversion functionality, retaining editable formulas
+- [x] Refactored the PDF processing script
+- [x] Pulled an `Alpha` branch, put unfinished tasks into this
+- [ ] PDF processing should be able to render a whole PDF, not one PDF per page
+- [ ] Support for `llama-cpp-python`, hoping to accelerate inference
+- [ ] html to word functionality, preserve formulas for editing
+
 
 ## How to use
 

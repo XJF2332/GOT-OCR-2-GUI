@@ -55,6 +55,7 @@ def render(model, tokenizer, image_path, wait, time, convert_to_pdf):
         model.chat(tokenizer, image_path, ocr_type='format', render=True, save_render_file=html_gb2312_path)
 
         # 转换为UTF-8编码
+        print(f"[Info-Renderer.render] 正在将文件 '{html_gb2312_path}' 从 GB2312 编码转换为 UTF-8 编码。")
         html2pdf.convert_html_encoding(html_gb2312_path, html_utf8_path)
 
         # 定义文件路径
@@ -66,6 +67,7 @@ def render(model, tokenizer, image_path, wait, time, convert_to_pdf):
 
         # 读取文件内容
         try:
+            print(f"[Info-Renderer.render] 正在读取文件 '{file_path}'。")
             with open(file_path, 'r', encoding='utf-8') as file:
                 content = file.read()
             content1 = content
@@ -75,21 +77,24 @@ def render(model, tokenizer, image_path, wait, time, convert_to_pdf):
             content1.replace(search_string, replace_string)
 
             # 将替换后的内容写回文件
+            print(f"[Info-Renderer.render] 正在将替换后的内容写回文件 '{file_path}'。")
             with open(file_path, 'w', encoding='utf-8') as file:
                 file.write(content)
 
-            print(f"[debug] 字符串 '{search_string}' 已被替换为 '{replace_string}'。")
+            print(f"[Info-Renderer.render] 字符串 '{search_string}' 已被替换为 '{replace_string}'。")
 
         except FileNotFoundError:
-            print(f"[debug] 文件 '{file_path}' 未找到。")
+            print(f"[Info-Renderer.render] 文件 '{file_path}' 未找到。")
         except Exception as e:
-            print(f"[debug] 发生错误: {e}")
+            print(f"[Error-Renderer.render] 发生错误: {e}")
 
         # 根据参数决定是否转换为PDF
         if convert_to_pdf:
+            print(f"[Info-Renderer.render] 正在将文件 '{html_utf8_path}' 转换为 PDF 文件。")
             html2pdf.repalce_html_content(html_utf8_path, html_utf8_local_path)
             pdf_path = os.path.join("result", f"{img_name_no_ext}.pdf")
             html2pdf.output_pdf(html_utf8_local_path, pdf_path, wait=wait, waiting_time=time)
         return True
-    except:
+    except Exception as e:
+        print(f"[Error-Renderer.render] 发生错误: {e}")
         return False
