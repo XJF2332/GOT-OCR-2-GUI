@@ -42,6 +42,8 @@
 
 ### 依赖
 
+此环境在**python 3.11.9**下经过测试能够正常工作
+
 #### torch
 从[torch官网](https://pytorch.org/get-started/locally/)选择适合自己的**GPU版本**的torch安装即可  
 我用的是 Stable 2.4.1 + cu124 ，建议你也用这个版本

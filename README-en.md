@@ -46,7 +46,9 @@ Sometimes, I will disable model loading on startup for developing, and forget to
 
 ### Dependencies
 
-### torch
+此环境在**python 3.11.9**下经过测试能够正常工作
+
+#### torch
 Choose a suitable **GPU version** of `torch` and from [PyTorch](https://pytorch.org/get-started/locally/) and install it.  
 I am using stable 2.4.1 + cu124, so I suggest you to use this version.
 
