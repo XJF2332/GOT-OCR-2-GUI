@@ -38,13 +38,14 @@ Click a star, please
 - [ ] Support for `llama-cpp-python`, hoping to accelerate inference
 - [ ] html to word functionality, preserve formulas for editing
 
-
 ## How to use
 
 If you don't have the folder mentioned here, **create a new one**  
 Sometimes, I will disable model loading on startup for developing, and forget to enable it again. You can check model status at `Model` tab, if it says model not loaded, click `Load Model` button to load it.
 
 ### Dependencies
+
+This environment was tested under **python 3.11.9**.
 
 ### torch
 Choose a suitable **GPU version** of `torch` and from [PyTorch](https://pytorch.org/get-started/locally/) and install it.  
