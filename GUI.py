@@ -52,7 +52,7 @@ def unload_model():
 
 # 决定是否加载模型
 if config["load_model_on_start"]:
-    model, tokenizer = load_model()
+    load_model()
 else:
     print("[Info-GUI] " + local["info_model_load_skipped"])
 
