@@ -257,8 +257,10 @@ with gr.Blocks(theme=theme) as demo:
                         label=local["label_ocr_mode"], value="split-to-image", interactive=True)
                     dpi = gr.Number(label=local["label_target_dpi"], minimum=72, maximum=300, step=1, value=150)
                     with gr.Row():
-                        pdf_pdf_convert_confirm = gr.Checkbox(label=local["label_save_as_pdf"], interactive=True, visible=False)
-                        pdf_pdf_merge_confirm = gr.Checkbox(label=local["label_merge_pdf"], interactive=True, visible=False)
+                        pdf_pdf_convert_confirm = gr.Checkbox(label=local["label_save_as_pdf"], interactive=True,
+                                                              visible=False)
+                        pdf_pdf_merge_confirm = gr.Checkbox(label=local["label_merge_pdf"], interactive=True,
+                                                            visible=False)
                 pdf_ocr_btn = gr.Button(local["btn_pdf_ocr"], variant="primary")
 
     # 指南选项卡
@@ -304,7 +306,6 @@ with gr.Blocks(theme=theme) as demo:
         inputs=pdf_pdf_convert_confirm,
         outputs=pdf_pdf_merge_confirm
     )
-
 
     # PDF OCR
     pdf_ocr_btn.click(

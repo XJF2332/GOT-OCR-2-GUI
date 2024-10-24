@@ -45,12 +45,16 @@
 此环境在**python 3.11.9**下经过测试能够正常工作
 
 #### torch
+
 从[torch官网](https://pytorch.org/get-started/locally/)选择适合自己的**GPU版本**的torch安装即可  
 我用的是 Stable 2.4.1 + cu124 ，建议你也用这个版本
 
 #### PyMuPDF
-实测如果直接从`requirements.txt`里安装的话会报`ModuleNotFoundError: No module named 'frontend'`，但单独安装的话就不会这样，具体原因不清楚  
+
+实测如果直接从`requirements.txt`里安装的话会报`ModuleNotFoundError: No module named 'frontend'`
+，但单独安装的话就不会这样，具体原因不清楚  
 另外，如果还是报`ModuleNotFoundError`的话就先卸载`PyMuPDF`，再重新安装一次应该能解决，实测`pip install -U PyMuPDF`是没用的
+
 ```commandline
 pip install fitz
 pip install PyMuPDF
@@ -113,8 +117,11 @@ GOT-OCR-2-GUI
 2. 如果你想用图形界面，那就用`GUI.py`
 3. 如果你想修改设置，那就用`Config Manager.py`
 4. 如果你想执行自动化的渲染操作，那就用`Renderer.py`，它会自动渲染`imgs`文件夹里所有的`.jpg`和`.png`图片
-5. ~~如果你想处理一个pdf文件，那就用`pdf2img and Renderer.py`，将要转化的pdf文档放入pdf文件夹下，默认只处理识别到的第一个pdf文档，在对话框中，输入Y，就可以在`result`文件夹下得到渲染的每页处理结果。~~
-6. pdf处理功能正在重构，如果你想要使用，就先去`scripts`文件夹把`PDF2ImagePlusRenderer.py`找出来复制到项目根目录安卓上面的说明用着（不保证总是有用，用法可能随着重构发生变化）
+5. ~~如果你想处理一个pdf文件，那就用`pdf2img and Renderer.py`
+   ，将要转化的pdf文档放入pdf文件夹下，默认只处理识别到的第一个pdf文档，在对话框中，输入Y，就可以在`result`
+   文件夹下得到渲染的每页处理结果。~~
+6. pdf处理功能正在重构，如果你想要使用，就先去`scripts`文件夹把`PDF2ImagePlusRenderer.py`
+   找出来复制到项目根目录安卓上面的说明用着（不保证总是有用，用法可能随着重构发生变化）
 
 > 用 GUI 的可以不管，不过用 CLI 的各位记得把要OCR的图放进`imgs`文件夹里（ CLI 目前只检测`.jpg`和`.png`图片）
 
@@ -138,9 +145,10 @@ GOT-OCR-2-GUI
 
 ## 常见问题
 
-- Q：什么是“HTML本地文件”？难道还有没保存在本地的HTML文件吗？  
-- A：因为模型输出的HTML文件虽然保存在本地，但使用了外部脚本，因此即使文件在本地，还是需要网络来打开它。于是我把外部脚本下载了进来，就是前面提到的`mardown-it.js`
-。这么做主要是防止网络问题造成的PDF导出失败。
+- Q：什么是“HTML本地文件”？难道还有没保存在本地的HTML文件吗？
+- A：因为模型输出的HTML文件虽然保存在本地，但使用了外部脚本，因此即使文件在本地，还是需要网络来打开它。于是我把外部脚本下载了进来，就是前面提到的
+  `mardown-it.js`
+  。这么做主要是防止网络问题造成的PDF导出失败。
 
 
 - Q：为什么我的模型加载失败了？

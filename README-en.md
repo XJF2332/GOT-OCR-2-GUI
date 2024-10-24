@@ -4,8 +4,10 @@
 
 ![img.png](img.png)
 
-**⚠️Development of CLI has been paused. I will make it able to receive params from command line so that it will be more suitable for automatic jobs after I finished the development of GUI.⚠️**  
-**⚠️PyCharm says that gradio has malicious code, I don't know what happened. Evidence is down here. Anyway, be careful.⚠️**
+**⚠️Development of CLI has been paused. I will make it able to receive params from command line so that it will be more
+suitable for automatic jobs after I finished the development of GUI.⚠️**  
+**⚠️PyCharm says that gradio has malicious code, I don't know what happened. Evidence is down here. Anyway, be
+careful.⚠️**
 
 ![img_1.png](img_1.png)
 
@@ -41,19 +43,27 @@ Click a star, please
 ## How to use
 
 If you don't have the folder mentioned here, **create a new one**  
-Sometimes, I will disable model loading on startup for developing, and forget to enable it again. You can check model status at `Model` tab, if it says model not loaded, click `Load Model` button to load it.
+Sometimes, I will disable model loading on startup for developing, and forget to enable it again. You can check model
+status at `Model` tab, if it says model not loaded, click `Load Model` button to load it.
 
 ### Dependencies
 
 此环境在**python 3.11.9**下经过测试能够正常工作
 
 #### torch
-Choose a suitable **GPU version** of `torch` and from [PyTorch](https://pytorch.org/get-started/locally/) and install it.  
-I am using stable 2.4.1 + cu124, so I suggest you to use this version.  
+
+Choose a suitable **GPU version** of `torch` and from [PyTorch](https://pytorch.org/get-started/locally/) and install
+it.  
+I am using stable 2.4.1 + cu124, so I suggest you to use this version.
 
 #### PyMuPDF
-I have tested that if you install it directly through `requiremtns.txt`, then you will get `ModuleNotFoundError: No module named 'frontend'` error. But if you install it separately in commandline, it will work fine. I don't know the reason why, just try it yourself.
-By the way, if you still get the `ModuleNotFoundError`, try to uninstall and reinstall `fitz` and `PyMuPDF` separately. I have tested that `pip install -U` won't work. Strange.
+
+I have tested that if you install it directly through `requiremtns.txt`, then you will get
+`ModuleNotFoundError: No module named 'frontend'` error. But if you install it separately in commandline, it will work
+fine. I don't know the reason why, just try it yourself.
+By the way, if you still get the `ModuleNotFoundError`, try to uninstall and reinstall `fitz` and `PyMuPDF` separately.
+I have tested that `pip install -U` won't work. Strange.
+
 ```commandline
 pip install fitz
 pip install PyMuPDF
@@ -117,10 +127,14 @@ GOT-OCR-2-GUI
 1. If you want to use the command line, then use `CLI.py`.
 2. If you want to use the graphical interface, then use `GUI.py`.
 3. If you want to modify settings, then use `Config Manager.py`.
-4. If you want to perform automated rendering operations, then use `Renderer.py`, which will automatically render all `.jpg` and `.png` images in the `imgs` folder.
-5. ~~If you want to process a PDF file, then use `pdf2img and Renderer.py`, place the PDF document to be converted into the pdf folder. By default, only the first recognized PDF document will be processed. Enter Y in the dialog box, and you will get the rendered processing results for each page in the `result` folder.~~
-6. The PDF processing feature is being refactored. If you want to use it, go to the `scripts` folder first, find `PDF2ImagePlusRenderer.py`, copy it to the root directory of the project, and follow the instructions above for use (no guarantee that it will always work, as the usage may change with the refactoring).
-
+4. If you want to perform automated rendering operations, then use `Renderer.py`, which will automatically render all
+   `.jpg` and `.png` images in the `imgs` folder.
+5. ~~If you want to process a PDF file, then use `pdf2img and Renderer.py`, place the PDF document to be converted into
+   the pdf folder. By default, only the first recognized PDF document will be processed. Enter Y in the dialog box, and
+   you will get the rendered processing results for each page in the `result` folder.~~
+6. The PDF processing feature is being refactored. If you want to use it, go to the `scripts` folder first, find
+   `PDF2ImagePlusRenderer.py`, copy it to the root directory of the project, and follow the instructions above for use (
+   no guarantee that it will always work, as the usage may change with the refactoring).
 
 > Those using the GUI can ignore this, but for those using the CLI, remember to place the images you want to OCR into
 > the `imgs` folder (the CLI currently only detects `.jpg` and `.png` files).
