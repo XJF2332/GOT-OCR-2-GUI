@@ -91,7 +91,7 @@ def show_pdf_pdf_convert_confirm(pdf_ocr_mode):
     if pdf_ocr_mode == "render":
         return gr.Checkbox(label=local["label_save_as_pdf"], interactive=True, visible=True)
     else:
-        return gr.Checkbox(label=local["label_save_as_pdf"], interactive=True, visible=False)
+        return gr.Checkbox(label=local["label_save_as_pdf"], interactive=True, visible=False, value=False)
 
 
 # 更新合并 PDF 勾选框可见性（ PDF 标签页）
@@ -99,7 +99,7 @@ def show_pdf_pdf_merge_confirm(pdf_convert_confirm):
     if pdf_convert_confirm:
         return gr.Checkbox(label=local["label_merge_pdf"], interactive=True, visible=True)
     else:
-        return gr.Checkbox(label=local["label_merge_pdf"], interactive=True, visible=False)
+        return gr.Checkbox(label=local["label_merge_pdf"], interactive=True, visible=False, value=False)
 
 
 # 提取prefix
@@ -236,14 +236,13 @@ def renderer(imgs_path, pdf_convert_confirm):
 # gradio gui
 with gr.Blocks(theme=theme) as demo:
     # 模型面板
-    with gr.Column(variant="panel"):
+    with gr.Row(variant="panel", equal_height=True):
         if config["load_model_on_start"]:
-            model_status = gr.Markdown(local["info_model_already_loaded"])
+            model_status = gr.Textbox(local["info_model_already_loaded"], show_label=False)
         else:
-            model_status = gr.Markdown(local["info_model_not_loaded"])
-        with gr.Row():
-            unload_model_btn = gr.Button(local["btn_unload_model"], variant="secondary")
-            load_model_btn = gr.Button(local["btn_load_model"], variant="primary")
+            model_status = gr.Textbox(local["info_model_not_loaded"], show_label=False)
+        unload_model_btn = gr.Button(local["btn_unload_model"], variant="secondary")
+        load_model_btn = gr.Button(local["btn_load_model"], variant="primary")
 
     # OCR 选项卡
     with gr.Tab(local["tab_ocr"]):
