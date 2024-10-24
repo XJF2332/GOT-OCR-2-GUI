@@ -38,7 +38,6 @@ Click a star, please
 - [ ] Support for `llama-cpp-python`, hoping to accelerate inference
 - [ ] html to word functionality, preserve formulas for editing
 
-
 ## How to use
 
 If you don't have the folder mentioned here, **create a new one**  
@@ -50,7 +49,15 @@ Sometimes, I will disable model loading on startup for developing, and forget to
 
 #### torch
 Choose a suitable **GPU version** of `torch` and from [PyTorch](https://pytorch.org/get-started/locally/) and install it.  
-I am using stable 2.4.1 + cu124, so I suggest you to use this version.
+I am using stable 2.4.1 + cu124, so I suggest you to use this version.  
+
+#### PyMuPDF
+I have tested that if you install it directly through `requiremtns.txt`, then you will get `ModuleNotFoundError: No module named 'frontend'` error. But if you install it separately in commandline, it will work fine. I don't know the reason why, just try it yourself.
+By the way, if you still get the `ModuleNotFoundError`, try to uninstall and reinstall `fitz` and `PyMuPDF` separately. I have tested that `pip install -U` won't work. Strange.
+```commandline
+pip install fitz
+pip install PyMuPDF
+```
 
 #### Use `pip` to install
 

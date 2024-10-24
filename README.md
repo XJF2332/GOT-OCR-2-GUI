@@ -48,6 +48,14 @@
 从[torch官网](https://pytorch.org/get-started/locally/)选择适合自己的**GPU版本**的torch安装即可  
 我用的是 Stable 2.4.1 + cu124 ，建议你也用这个版本
 
+#### PyMuPDF
+实测如果直接从`requirements.txt`里安装的话会报`ModuleNotFoundError: No module named 'frontend'`，但单独安装的话就不会这样，具体原因不清楚  
+另外，如果还是报`ModuleNotFoundError`的话就先卸载`PyMuPDF`，再重新安装一次应该能解决，实测`pip install -U PyMuPDF`是没用的
+```commandline
+pip install fitz
+pip install PyMuPDF
+```
+
 #### 使用`pip`安装
 
 ```commandline
