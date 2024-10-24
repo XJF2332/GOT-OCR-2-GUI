@@ -37,8 +37,7 @@
 
 ## 使用方法
 
-如果这里面提到的文件夹你没有，那就**新建一个**  
-我开发的时候可能会让它在启动的时候不加载模型，然后忘记把这个设置调回去。你可以到`模型`标签页看一下模型状态，如果是未加载的话点一下加载模型就行了
+如果这里面提到的文件夹你没有，那就**新建一个**
 
 ### 依赖
 
@@ -53,7 +52,7 @@
 
 实测如果直接从`requirements.txt`里安装的话会报`ModuleNotFoundError: No module named 'frontend'`
 ，但单独安装的话就不会这样，具体原因不清楚  
-另外，如果还是报`ModuleNotFoundError`的话就先卸载`PyMuPDF`，再重新安装一次应该能解决，实测`pip install -U PyMuPDF`是没用的
+另外，如果还是报`ModuleNotFoundError`的话就先卸载`fitz`和`PyMuPDF`，再重新安装一次应该能解决，实测`pip install -U PyMuPDF`是没用的
 
 ```commandline
 pip install fitz

@@ -42,9 +42,7 @@ Click a star, please
 
 ## How to use
 
-If you don't have the folder mentioned here, **create a new one**  
-Sometimes, I will disable model loading on startup for developing, and forget to enable it again. You can check model
-status at `Model` tab, if it says model not loaded, click `Load Model` button to load it.
+If you don't have the folder mentioned here, **create a new one**
 
 ### Dependencies
 
