@@ -87,7 +87,7 @@ def update_pdf_name(pdf_uploaded):
 
 
 # 更新保存 PDF 勾选框可见性（ PDF 标签页）
-def show_pdf_pdf_convert_confirm(pdf_ocr_mode):
+def update_pdf_pdf_convert_confirm_visibility(pdf_ocr_mode):
     if pdf_ocr_mode == "render":
         return gr.Checkbox(label=local["label_save_as_pdf"], interactive=True, visible=True)
     else:
@@ -95,11 +95,19 @@ def show_pdf_pdf_convert_confirm(pdf_ocr_mode):
 
 
 # 更新合并 PDF 勾选框可见性（ PDF 标签页）
-def show_pdf_pdf_merge_confirm(pdf_convert_confirm):
+def update_pdf_pdf_merge_confirm_visibility(pdf_convert_confirm):
     if pdf_convert_confirm:
         return gr.Checkbox(label=local["label_merge_pdf"], interactive=True, visible=True)
     else:
         return gr.Checkbox(label=local["label_merge_pdf"], interactive=True, visible=False, value=False)
+
+
+# 更新目标 DPI 输入框可见性（ PDF 标签页）
+def update_pdf_pdf_dpi_visibility(pdf_ocr_mode):
+    if pdf_ocr_mode == "merge":
+        return gr.Number(label=local["label_target_dpi"], minimum=72, maximum=300, step=1, value=150, visible=False)
+    else:
+        return gr.Number(label=local["label_target_dpi"], minimum=72, maximum=300, step=1, value=150, visible=True)
 
 
 # 提取prefix
@@ -336,14 +344,21 @@ with gr.Blocks(theme=theme) as demo:
 
     # 更新 PDF OCR 保存 PDF 选项
     pdf_ocr_mode.change(
-        fn=show_pdf_pdf_convert_confirm,
+        fn=update_pdf_pdf_convert_confirm_visibility,
         inputs=pdf_ocr_mode,
         outputs=pdf_pdf_convert_confirm
     )
 
+    # 更新 PDF OCR DPI 输入框
+    pdf_ocr_mode.change(
+        fn=update_pdf_pdf_dpi_visibility,
+        inputs=pdf_ocr_mode,
+        outputs=dpi
+    )
+
     # 更新 PDF OCR 合并 PDF 选项
     pdf_pdf_convert_confirm.change(
-        fn=show_pdf_pdf_merge_confirm,
+        fn=update_pdf_pdf_merge_confirm_visibility,
         inputs=pdf_pdf_convert_confirm,
         outputs=pdf_pdf_merge_confirm
     )
