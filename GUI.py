@@ -86,7 +86,7 @@ def update_pdf_name(pdf_uploaded):
     return gr.Textbox(label=local["label_pdf_file"], value=pdf_name_with_extension)
 
 
-# 显示保存 PDF 勾选框（ PDF 标签页）
+# 更新保存 PDF 勾选框可见性（ PDF 标签页）
 def show_pdf_pdf_convert_confirm(pdf_ocr_mode):
     if pdf_ocr_mode == "render":
         return gr.Checkbox(label=local["label_save_as_pdf"], interactive=True, visible=True)
@@ -94,7 +94,7 @@ def show_pdf_pdf_convert_confirm(pdf_ocr_mode):
         return gr.Checkbox(label=local["label_save_as_pdf"], interactive=True, visible=False)
 
 
-# 显示合并 PDF 勾选框（ PDF 标签页）
+# 更新合并 PDF 勾选框可见性（ PDF 标签页）
 def show_pdf_pdf_merge_confirm(pdf_convert_confirm):
     if pdf_convert_confirm:
         return gr.Checkbox(label=local["label_merge_pdf"], interactive=True, visible=True)
@@ -105,13 +105,9 @@ def show_pdf_pdf_merge_confirm(pdf_convert_confirm):
 # 提取prefix
 def extract_pdf_pattern(filename):
     """
-    Extracts the string part from a filename of the format <string>_0.pdf.
-
-    Args:
-    filename (str): The filename in the format <string>_0.pdf.
-
-    Returns:
-    str: The extracted string.
+    从文件名中提取前缀，如果文件名不满足格式 <string>_0.pdf，则抛出 ValueError 异常
+    :param filename: 文件名
+    :return: 前缀
     """
     # Split the filename at the last underscore
     parts = filename.rsplit('_', 1)
