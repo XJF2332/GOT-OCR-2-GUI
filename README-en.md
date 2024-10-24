@@ -36,7 +36,7 @@ Click a star, please
 - [x] More configuration options
 - [x] Refactored the PDF processing script
 - [x] Pulled an `Alpha` branch, put unfinished tasks into this
-- [ ] PDF processing should be able to render a whole PDF, not one PDF per page
+- [x] PDF processing should be able to render a whole PDF, not one PDF per page
 - [ ] Support for `llama-cpp-python`, hoping to accelerate inference
 - [ ] html to word functionality, preserve formulas for editing
 
