@@ -28,6 +28,9 @@ def split_pdf(pdf_path, img_path, target_dpi):
     False -- 拆分PDF文件失败
     """
     try:
+        if not os.path.exists(img_path):
+            print(f"[Debug-PDF2ImagePlusRenderer.split_pdf] 图片目录不存在，正在创建：{img_path}")
+            os.makedirs(img_path)
         print(f"[Info-PDF2ImagePlusRenderer.split_pdf] 正在拆分PDF文件：{pdf_path}")
         print(f"[Info-PDF2ImagePlusRenderer.split_pdf] 正在打开：{pdf_path}")
         doc = fitz.open(pdf_path)
@@ -49,6 +52,7 @@ def split_pdf(pdf_path, img_path, target_dpi):
             pix.save(output_path)
             print(f"[Info-PDF2ImagePlusRenderer.split_pdf] 已保存 {output_path}")
 
+        print(f"[Info-PDF2ImagePlusRenderer.split_pdf] 拆分PDF文件完成")
         doc.close()
         return True
     except Exception as e:
