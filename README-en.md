@@ -36,15 +36,13 @@ Click a star, please
 - [x] More configuration options
 - [x] Refactored the PDF processing script
 - [x] Pulled an `Alpha` branch, put unfinished tasks into this
-- [ ] PDF processing should be able to render a whole PDF, not one PDF per page
+- [x] PDF processing should be able to render a whole PDF, not one PDF per page
 - [ ] Support for `llama-cpp-python`, hoping to accelerate inference
 - [ ] html to word functionality, preserve formulas for editing
 
 ## How to use
 
-If you don't have the folder mentioned here, **create a new one**  
-Sometimes, I will disable model loading on startup for developing, and forget to enable it again. You can check model
-status at `Model` tab, if it says model not loaded, click `Load Model` button to load it.
+If you don't have the folder mentioned here, **create a new one**
 
 ### Dependencies
 
