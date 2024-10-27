@@ -127,12 +127,6 @@ GOT-OCR-2-GUI
 3. If you want to modify settings, then use `Config Manager.py`.
 4. If you want to perform automated rendering operations, then use `Renderer.py`, which will automatically render all
    `.jpg` and `.png` images in the `imgs` folder.
-5. ~~If you want to process a PDF file, then use `pdf2img and Renderer.py`, place the PDF document to be converted into
-   the pdf folder. By default, only the first recognized PDF document will be processed. Enter Y in the dialog box, and
-   you will get the rendered processing results for each page in the `result` folder.~~
-6. The PDF processing feature is being refactored. If you want to use it, go to the `scripts` folder first, find
-   `PDF2ImagePlusRenderer.py`, copy it to the root directory of the project, and follow the instructions above for use (
-   no guarantee that it will always work, as the usage may change with the refactoring).
 
 > Those using the GUI can ignore this, but for those using the CLI, remember to place the images you want to OCR into
 > the `imgs` folder (the CLI currently only detects `.jpg` and `.png` files).
