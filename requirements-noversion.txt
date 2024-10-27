@@ -84,6 +84,7 @@ regex
 requests
 rich
 ruff
+safehttpx
 safetensors
 scipy
 selenium
