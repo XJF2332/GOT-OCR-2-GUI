@@ -50,6 +50,9 @@ Choose a suitable **GPU version** of `torch` and from [PyTorch](https://pytorch.
 it.  
 I am using stable 2.4.1 + cu124, so I suggest you to use this version.
 
+#### FlashAttention
+Not a must-have, but if you want to install it, check [#12](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/12)
+
 #### PyMuPDF
 
 I have tested that if you install it directly through `requiremtns.txt`, then you will get

@@ -46,6 +46,9 @@
 从[torch官网](https://pytorch.org/get-started/locally/)选择适合自己的**GPU版本**的torch安装即可  
 我用的是 Stable 2.4.1 + cu124 ，建议你也用这个版本
 
+#### FlashAttention
+不是强制要求，不过如果你想安装的话可以看[#12](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/12)
+
 #### PyMuPDF
 
 实测如果直接从`requirements.txt`里安装的话会报`ModuleNotFoundError: No module named 'frontend'`
