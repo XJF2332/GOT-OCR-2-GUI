@@ -15,22 +15,22 @@
 
 ### `OCR` Modes
 
-- ocr: Standard OCR
-- format: OCR with formatting
+- OCR: Standard OCR
+- Formatted OCR: OCR with formatting
 
 ### `Fine-Grained` Modes
 
-- fine-grained-ocr: OCR content within a specific box
-- fine-grained-format: OCR and format content within a specific box
-- fine-grained-color-ocr: OCR content within a box of a specific color (I haven't tried this, but it seems like you
+- Fine-grained OCR (with coordinate bounding boxes): OCR content within a specific box
+- Fine-grained Formatted OCR (with coordinate bounding boxes): OCR and format content within a specific box
+- Fine-grained OCR (with color bounding boxes): OCR content within a box of a specific color (I haven't tried this, but it seems like you
   would need to draw a red/green/blue box first and then select the color in the GUI)
-- fine-grained-color-format: OCR and format content within a box of a specific color
+- Fine-grained Formatted OCR (with color bounding boxes): OCR and format content within a box of a specific color
 
 ### `Multi-Crop` Modes
 
 - Suitable for more complex images
 
-### `Render` Modes
+### `Render` Mode
 
 - Exist files will be overwritten!!!Check the file path before clicking the button!!!
 - Render OCR content and save it as an HTML file

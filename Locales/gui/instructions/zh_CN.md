@@ -12,21 +12,21 @@
 
 ### `OCR` 模式
 
-- ocr: 标准OCR
-- format: 带格式化的OCR
+- OCR: 标准OCR
+- 格式化 OCR: 带格式化的OCR
 
 ### `fine-grained` 模式
 
-- fine-grained-ocr: 在特定框内进行OCR内容识别
-- fine-grained-format: 在特定框内进行OCR内容识别并格式化
-- fine-grained-color-ocr: 在特定颜色的框内进行OCR内容识别（我还没尝试过这个，但看起来你需要先画一个红/绿/蓝色的框，然后在GUI中选择颜色）
-- fine-grained-color-format: 在特定颜色的框内进行OCR内容识别并格式化
+- fine-grained OCR （使用坐标画框）: 在特定框内进行OCR内容识别
+- fine-grained 格式化 OCR （使用坐标画框）: 在特定框内进行OCR内容识别并格式化
+- fine-grained OCR （使用颜色画框）: 在特定颜色的框内进行OCR内容识别（我还没尝试过这个，但看起来你需要先画一个红/绿/蓝色的框，然后在GUI中选择颜色）
+- fine-grained 格式化 OCR （使用颜色画框）: 在特定颜色的框内进行OCR内容识别并格式化
 
 ### `multi-crop` 模式
 
 - 适用于更复杂的图像
 
-### `render` 模式
+### `渲染` 模式
 
 - 已存在的文件将被覆盖！！！点击按钮前请检查文件路径！！！
 - 渲染OCR内容并将其保存为HTML文件
