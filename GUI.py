@@ -131,7 +131,7 @@ def extract_pdf_pattern(filename):
 def ocr(image_uploaded, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
         fine_grained_box_y2, OCR_type, fine_grained_color, pdf_convert_confirm):
     # 构建 OCR 框
-    print("[Info-GUI.ocr] 正在构建框")
+    print("[Info-GUI.ocr] 正在构建框，如未选择 fine-grained 模式可以忽略这个信息")
     box = [fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2, fine_grained_box_y2]
 
     # 默认值
@@ -278,8 +278,13 @@ with gr.Blocks(theme=theme) as demo:
             upload_img = gr.Image(type="filepath", label=local["label_upload_img"])
             with gr.Column():
                 ocr_mode = gr.Dropdown(
-                    choices=["ocr", "format", "fine-grained-ocr", "fine-grained-format", "fine-grained-color-ocr",
-                             "fine-grained-color-format", "multi-crop-ocr", "multi-crop-format", "render"],
+                    choices=[(local["mode_ocr"], "ocr"), (local["mode_format"], "format"),
+                             (local["mode_fine-grained-ocr"], "fine-grained-ocr"),
+                             (local["mode_fine-grained-format"], "fine-grained-format"),
+                             (local["mode_fine-grained-color-ocr"], "fine-grained-color-ocr"),
+                             (local["mode_fine-grained-color-format"],"fine-grained-color-format"),
+                             (local["mode_multi-crop-ocr"],"multi-crop-ocr"),
+                             (local["mode_multi-crop-format"],"multi-crop-format"), (local["mode_render"],"render")],
                     label=local["label_ocr_mode"], value="ocr")
                 do_ocr = gr.Button(local["btn_do_ocr"], variant="primary")
                 result = gr.Textbox(label=local["label_result"])
