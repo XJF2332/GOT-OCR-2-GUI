@@ -132,7 +132,7 @@ def ocr(image_uploaded, fine_grained_box_x1, fine_grained_box_y1, fine_grained_b
         fine_grained_box_y2, OCR_type, fine_grained_color, pdf_convert_confirm):
     # 构建 OCR 框
     print("[Info-GUI.ocr] 正在构建框，如未选择 fine-grained 模式可以忽略这个信息")
-    box = [fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2, fine_grained_box_y2]
+    box = f"[{fine_grained_box_x1}, {fine_grained_box_y1}, {fine_grained_box_x2}, {fine_grained_box_y2}]"
 
     # 默认值
     res = local["error_ocr_mode_none"]
