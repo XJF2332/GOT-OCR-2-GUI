@@ -1,6 +1,8 @@
 import json
 import os
 
+##########################
+
 # 加载语言设置
 print("[Info-GUI] 正在加载语言设置")
 with open(os.path.join("Locales", "gui", "config.json"), 'r', encoding='utf-8') as file:
@@ -9,11 +11,15 @@ with open(os.path.join("Locales", "gui", "config.json"), 'r', encoding='utf-8') 
 with open(os.path.join("Locales", "gui", f"{lang}.json"), 'r', encoding='utf-8') as file:
     local = json.load(file)
 
+##########################
+
 # 加载配置文件
 print("[Info-GUI] 正在加载配置文件")
 config_path = os.path.join("Configs", "Config.json")
 with open(config_path, 'r', encoding='utf-8') as file:
     config = json.load(file)
+
+##########################
 
 # 导入库
 print("[Info-GUI] " + local["info_import_libs"])
@@ -25,9 +31,12 @@ import scripts.Renderer as Renderer
 import scripts.PDF2ImagePlusRenderer as PDFHandler
 import scripts.PDFMerger as PDFMerger
 
+##########################
+
 model = None
 tokenizer = None
 
+##########################
 
 # 加载模型函数
 def load_model():
@@ -42,6 +51,7 @@ def load_model():
     print("[Info-GUI] " + local["info_model_loaded"])
     return local["info_model_already_loaded"]
 
+##########################
 
 # 卸载模型函数
 def unload_model():
@@ -50,12 +60,15 @@ def unload_model():
     tokenizer = None
     return local["info_model_not_loaded"]
 
+##########################
 
 # 决定是否加载模型
 if config["load_model_on_start"]:
     load_model()
 else:
     print("[Info-GUI] " + local["info_model_load_skipped"])
+
+##########################
 
 # 主题
 theme = gr.themes.Ocean(
@@ -73,18 +86,21 @@ theme = gr.themes.Ocean(
     button_small_radius='*radius_sm'
 )
 
+##########################
 
 # 更新图片名称
 def update_img_name(image_uploaded):
     image_name_with_extension = os.path.basename(image_uploaded)
     return gr.Textbox(label=local["label_img_name"], value=image_name_with_extension)
 
+##########################
 
 # 更新 PDF 名称
 def update_pdf_name(pdf_uploaded):
     pdf_name_with_extension = os.path.basename(pdf_uploaded)
     return gr.Textbox(label=local["label_pdf_file"], value=pdf_name_with_extension)
 
+##########################
 
 # 更新保存 PDF 勾选框可见性（ PDF 标签页）
 def update_pdf_pdf_convert_confirm_visibility(pdf_ocr_mode):
@@ -93,6 +109,7 @@ def update_pdf_pdf_convert_confirm_visibility(pdf_ocr_mode):
     else:
         return gr.Checkbox(label=local["label_save_as_pdf"], interactive=True, visible=False, value=False)
 
+##########################
 
 # 更新合并 PDF 勾选框可见性（ PDF 标签页）
 def update_pdf_pdf_merge_confirm_visibility(pdf_convert_confirm):
@@ -101,6 +118,7 @@ def update_pdf_pdf_merge_confirm_visibility(pdf_convert_confirm):
     else:
         return gr.Checkbox(label=local["label_merge_pdf"], interactive=True, visible=False, value=False)
 
+##########################
 
 # 更新目标 DPI 输入框可见性（ PDF 标签页）
 def update_pdf_pdf_dpi_visibility(pdf_ocr_mode):
@@ -109,6 +127,7 @@ def update_pdf_pdf_dpi_visibility(pdf_ocr_mode):
     else:
         return gr.Number(label=local["label_target_dpi"], minimum=72, maximum=300, step=1, value=150, visible=True)
 
+##########################
 
 # 提取prefix
 def extract_pdf_pattern(filename):
@@ -126,6 +145,7 @@ def extract_pdf_pattern(filename):
     else:
         raise ValueError("[GUI.extract_pdf_pattern] 输入不满足格式：<string>_0.pdf")
 
+##########################
 
 # 进行 OCR 识别
 def ocr(image_uploaded, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
@@ -174,10 +194,13 @@ def ocr(image_uploaded, fine_grained_box_x1, fine_grained_box_y1, fine_grained_b
     except Exception as e:
         return str(e)
 
+##########################
 
 # PDF OCR
 def pdf_ocr(mode, pdf_file, target_dpi, pdf_convert, pdf_merge):
     pdf_name = os.path.basename(pdf_file)
+    # ---------------------------------- #
+    # 分割模式
     if mode == "split-to-image":
         print("[Info-GUI] 正在分割 PDF 文件")
         success = PDFHandler.split_pdf(pdf_path=pdf_file, img_path="imgs", target_dpi=target_dpi)
@@ -187,36 +210,44 @@ def pdf_ocr(mode, pdf_file, target_dpi, pdf_convert, pdf_merge):
         else:
             print("[Error-GUI] PDF 文件分割失败")
             raise gr.Error(duration=0, message=local["error_pdf_split_fail"].format(pdf_file=pdf_name))
+    # ---------------------------------- #
+    # 渲染模式
     elif mode == "render":
         print(f"[Info-GUI] 开始渲染PDF文件：{pdf_name}")
         gr.Info(message=local["info_pdf_render_start"].format(pdf_file=pdf_name))
         success = PDFHandler.pdf_renderer(model=model, tokenizer=tokenizer, pdf_path=pdf_file, target_dpi=target_dpi,
                                           pdf_convert=pdf_convert, wait=config["pdf_render_wait"],
                                           time=config["pdf_render_wait_time"])
+        # 渲染成功判定
         if success:
             print(f"[Info-GUI] PDF 文件渲染成功：{pdf_name}")
             gr.Info(message=local["info_pdf_render_success"].format(pdf_file=pdf_name))
-        else:
+            # 渲染成功则合并
+            if pdf_merge: # 决定是否要合并
+                print(f"[Info-GUI] 开始合并 PDF 文件：{pdf_name}")
+                gr.Info(message=local["info_pdf_merge_start"].format(pdf_file=pdf_name))
+                success = PDFMerger.merge_pdfs(prefix=pdf_name)
+                # 合并成功判定
+                if success:
+                    print(f"[Info-GUI] PDF 文件合并成功：{pdf_name}")
+                    gr.Info(message=local["info_pdf_merge_success"].format(pdf_file=pdf_name))
+                else:
+                    print(f"[Error-GUI] PDF 文件合并失败：{pdf_name}")
+                    raise gr.Error(duration=0, message=local["error_pdf_merge_fail"].format(pdf_file=pdf_name))
+            else: # 不合并
+                gr.Warning(message=local["info_pdf_merge_skip"].format(pdf_file=pdf_name))
+                print(f"[Info-GUI] 跳过合并 PDF 文件：{pdf_name}")
+        else: # 渲染失败
             print(f"[Error-GUI] PDF 文件渲染失败：{pdf_name}")
             raise gr.Error(duration=0, message=local["error_pdf_render_fail"].format(pdf_file=pdf_name))
-        if pdf_merge:
-            print(f"[Info-GUI] 开始合并 PDF 文件：{pdf_name}")
-            gr.Info(message=local["info_pdf_merge_start"].format(pdf_file=pdf_name))
-            success = PDFMerger.merge_pdfs(prefix=pdf_name)
-            if success:
-                print(f"[Info-GUI] PDF 文件合并成功：{pdf_name}")
-                gr.Info(message=local["info_pdf_merge_success"].format(pdf_file=pdf_name))
-            else:
-                print(f"[Error-GUI] PDF 文件合并失败：{pdf_name}")
-                raise gr.Error(duration=0, message=local["error_pdf_merge_fail"].format(pdf_file=pdf_name))
-        else:
-            gr.Warning(message=local["info_pdf_merge_skip"].format(pdf_file=pdf_name))
-            print(f"[Info-GUI] 跳过合并 PDF 文件：{pdf_name}")
+    # ---------------------------------- #
+    # 合并模式
     elif mode == "merge":
         print(f"[Info-GUI] 开始合并 PDF 文件：{pdf_name}")
         gr.Info(message=local["info_pdf_merge_start"].format(pdf_file=pdf_name))
         prefix = extract_pdf_pattern(pdf_name)
         success = PDFMerger.merge_pdfs(prefix=prefix)
+        # 合并成功判定
         if success:
             print(f"[Info-GUI] PDF 文件合并成功：{pdf_name}")
             gr.Info(message=local["info_pdf_merge_success"].format(pdf_file=pdf_name))
@@ -224,6 +255,7 @@ def pdf_ocr(mode, pdf_file, target_dpi, pdf_convert, pdf_merge):
             print(f"[Error-GUI] PDF 文件合并失败：{pdf_name}")
             raise gr.Error(duration=0, message=local["error_pdf_merge_fail"].format(pdf_file=pdf_name))
 
+##########################
 
 # 渲染器
 def renderer(imgs_path, pdf_convert_confirm):
@@ -240,23 +272,28 @@ def renderer(imgs_path, pdf_convert_confirm):
         else:
             raise gr.Error(duration=0, message=local["error_render_fail"].format(img_file=image_path))
 
+##########################
 
 # gradio gui
 with gr.Blocks(theme=theme) as demo:
+    # ---------------------------------- #
     # 模型面板
     with gr.Row(variant="panel", equal_height=True):
+        # 根据配置文件决定模型初始状态显示
         if config["load_model_on_start"]:
             model_status = gr.Textbox(local["info_model_already_loaded"], show_label=False)
         else:
             model_status = gr.Textbox(local["info_model_not_loaded"], show_label=False)
+        # 模型按钮
         unload_model_btn = gr.Button(local["btn_unload_model"], variant="secondary")
         load_model_btn = gr.Button(local["btn_load_model"], variant="primary")
-
+    # ---------------------------------- #
     # OCR 选项卡
     with gr.Tab(local["tab_ocr"]):
+        # 特殊模式设置
         with gr.Row():
+            # Fine-grained 设置
             with gr.Column():
-                # Fine-grained 设置
                 gr.Markdown(local["label_fine_grained_settings"])
                 with gr.Row():
                     fine_grained_box_x1 = gr.Number(label=local["label_fine_grained_box_x1"], value=0)
@@ -265,18 +302,19 @@ with gr.Blocks(theme=theme) as demo:
                     fine_grained_box_y2 = gr.Number(label=local["label_fine_grained_box_y2"], value=0)
                 fine_grained_color = gr.Dropdown(choices=["red", "green", "blue"],
                                                  label=local["label_fine_grained_color"], value="red")
-
+            # 渲染设置
             with gr.Column():
-                # 渲染设置
                 gr.Markdown(local["label_render_settings"])
                 img_name = gr.Textbox(label=local["label_img_name"], value="ocr")
                 pdf_convert_confirm = gr.Checkbox(label=local["label_save_as_pdf"])
-
-        # OCR
+        # OCR 相关
         gr.Markdown(local["label_ocr_settings"])
         with gr.Row():
+            # 上传图片
             upload_img = gr.Image(type="filepath", label=local["label_upload_img"])
+            # 其他组件
             with gr.Column():
+                # 模式
                 ocr_mode = gr.Dropdown(
                     choices=[(local["mode_ocr"], "ocr"), (local["mode_format"], "format"),
                              (local["mode_fine-grained-ocr"], "fine-grained-ocr"),
@@ -286,45 +324,54 @@ with gr.Blocks(theme=theme) as demo:
                              (local["mode_multi-crop-ocr"],"multi-crop-ocr"),
                              (local["mode_multi-crop-format"],"multi-crop-format"), (local["mode_render"],"render")],
                     label=local["label_ocr_mode"], value="ocr")
+                # OCR 按钮和结果
                 do_ocr = gr.Button(local["btn_do_ocr"], variant="primary")
                 result = gr.Textbox(label=local["label_result"])
-
+    # ---------------------------------- #
     # 渲染器选项卡
     with gr.Tab(local["tab_renderer"]):
         with gr.Row():
+            # 输入
             input_folder_path = gr.Textbox(label=local["label_input_folder_path"], value="imgs", interactive=True)
         with gr.Row():
+            # PDF 转换设置
             batch_pdf_convert_confirm = gr.Checkbox(label=local["label_save_as_pdf"], value=True, interactive=True)
+            # 按钮
             batch_render_btn = gr.Button(local["btn_render"], variant="primary")
-
+    # ---------------------------------- #
     # PDF 选项卡
     with gr.Tab("PDF"):
-        gr.Markdown(local["info_developing"])
         with gr.Row():
+            # PDF 文件
             with gr.Column():
                 pdf_file_name = gr.Textbox(value="input.pdf", interactive=False, label=local["label_pdf_file_name"])
                 pdf_file = gr.File(label=local["label_pdf_file"], file_count="single", file_types=[".pdf"])
+            # OCR 设置
             with gr.Column():
+                # 模式和 DPI
                 with gr.Group():
                     pdf_ocr_mode = gr.Dropdown(
                         choices=["split-to-image", "render", "merge"],
                         label=local["label_ocr_mode"], value="split-to-image", interactive=True)
                     dpi = gr.Number(label=local["label_target_dpi"], minimum=72, maximum=300, step=1, value=150)
+                    # PDF 转换设置
                     with gr.Row():
+                        # 渲染结果为 PDF
                         pdf_pdf_convert_confirm = gr.Checkbox(label=local["label_save_as_pdf"], interactive=True,
                                                               visible=False)
+                        # 合并每一页
                         pdf_pdf_merge_confirm = gr.Checkbox(label=local["label_merge_pdf"], interactive=True,
                                                             visible=False)
+                # 按钮
                 pdf_ocr_btn = gr.Button(local["btn_pdf_ocr"], variant="primary")
-
+    # ---------------------------------- #
     # 指南选项卡
     with gr.Tab(local["tab_instructions"]):
         # 从对应语言的md文件中加载指南
         with open(os.path.join('Locales', 'gui', 'instructions', f'{lang}.md'), 'r', encoding='utf-8') as file:
             instructions = file.read()
-
         gr.Markdown(instructions)
-
+    # ---------------------------------- #
     # 点击进行 OCR 识别
     do_ocr.click(
         fn=ocr,
@@ -332,69 +379,72 @@ with gr.Blocks(theme=theme) as demo:
                 fine_grained_box_y2, ocr_mode, fine_grained_color, pdf_convert_confirm],
         outputs=result
     )
-
+    # ---------------------------------- #
     # 点击渲染
     batch_render_btn.click(
         fn=renderer,
         inputs=[input_folder_path, batch_pdf_convert_confirm],
         outputs=None
     )
-
+    # ---------------------------------- #
     # 更新图片名称
     upload_img.change(
         fn=update_img_name,
         inputs=upload_img,
         outputs=img_name
     )
-
+    # ---------------------------------- #
     # 更新 PDF OCR 保存 PDF 选项
     pdf_ocr_mode.change(
         fn=update_pdf_pdf_convert_confirm_visibility,
         inputs=pdf_ocr_mode,
         outputs=pdf_pdf_convert_confirm
     )
-
+    # ----------------------------------- #
     # 更新 PDF OCR DPI 输入框
     pdf_ocr_mode.change(
         fn=update_pdf_pdf_dpi_visibility,
         inputs=pdf_ocr_mode,
         outputs=dpi
     )
-
+    # ----------------------------------- #
     # 更新 PDF OCR 合并 PDF 选项
     pdf_pdf_convert_confirm.change(
         fn=update_pdf_pdf_merge_confirm_visibility,
         inputs=pdf_pdf_convert_confirm,
         outputs=pdf_pdf_merge_confirm
     )
-
+    # ----------------------------------- #
     # PDF OCR
     pdf_ocr_btn.click(
         fn=pdf_ocr,
         inputs=[pdf_ocr_mode, pdf_file, dpi, pdf_pdf_convert_confirm, pdf_pdf_merge_confirm],
         outputs=None
     )
-
+    # ----------------------------------- #
     # 更新 PDF 名称
     pdf_file.change(
         fn=update_pdf_name,
         inputs=pdf_file,
         outputs=pdf_file_name
     )
-
+    # ----------------------------------- #
     # 加载模型
     load_model_btn.click(
         fn=load_model,
         inputs=None,
         outputs=model_status
     )
-
+    # ----------------------------------- #
     # 卸载模型
     unload_model_btn.click(
         fn=unload_model,
         inputs=None,
         outputs=model_status
     )
+    # ----------------------------------- #
+
+##########################
 
 # 启动 gradio 界面
 demo.launch()
