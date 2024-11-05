@@ -89,6 +89,7 @@ safetensors==0.4.5
 scipy==1.14.1
 selenium==4.25.0
 semantic-version==2.10.0
+send2trash==1.8.3
 shellingham==1.5.4
 simplejson==3.19.3
 six==1.16.0
