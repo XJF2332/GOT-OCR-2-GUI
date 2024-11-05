@@ -89,6 +89,7 @@ safetensors
 scipy
 selenium
 semantic-version
+send2trash
 shellingham
 simplejson
 six
