@@ -24,6 +24,7 @@ import glob
 import scripts.Renderer as Renderer
 import scripts.PDF2ImagePlusRenderer as PDFHandler
 import scripts.PDFMerger as PDFMerger
+import scripts.TempCleaner as TempCleaner
 
 ##########################
 
@@ -82,7 +83,6 @@ except AttributeError:
     print("[Warning-GUI] 海洋主题不可用，使用默认主题 (Ocean theme not available, using default theme")
     theme = gr.themes.Default()
 
-
 ##########################
 
 # 更新图片名称 (Updating image name)
@@ -140,7 +140,7 @@ def extract_pdf_pattern(filename):
     if len(parts) == 2 and parts[1] == '0.pdf':
         return parts[0]
     else:
-        raise ValueError("[GUI.extract_pdf_pattern] 输入不满足格式：<string>_0.pdf")
+        raise ValueError("[Error-GUI.extract_pdf_pattern] 输入不满足格式：<string>_0.pdf (Input does not meet the format: <string>_0.pdf)")
 
 ##########################
 
@@ -156,7 +156,7 @@ def ocr(image_uploaded, fine_grained_box_x1, fine_grained_box_y1, fine_grained_b
 
     # 如果 result 文件夹不存在，则创建 (Creating the 'result' folder if it does not exist)
     if not os.path.exists("result"):
-        print("[Debug-GUI.ocr] 检测到 result 文件夹不存在，正在创建 result 文件夹")
+        print("[Debug-GUI.ocr] 检测到 result 文件夹不存在，正在创建 result 文件夹" + " (Detected that the 'result' folder does not exist, creating the 'result' folder)")
         os.makedirs("result")
 
     try:
@@ -185,11 +185,21 @@ def ocr(image_uploaded, fine_grained_box_x1, fine_grained_box_y1, fine_grained_b
             image_name_with_extension = os.path.basename(image_uploaded)
             if success:
                 res = local["info_render_success"].format(img_file=image_name_with_extension)
+                if clean_temp and pdf_convert_confirm:
+                    TempCleaner.cleaner(["result"],
+                                        [f"{os.path.splitext(image_name_with_extension)[0]}-gb2312.html",
+                                                     f"{os.path.splitext(image_name_with_extension)[0]}-utf8.html",
+                                                     f"{os.path.splitext(image_name_with_extension)[0]}-utf8-local.html"])
+                if clean_temp and not pdf_convert_confirm:
+                    TempCleaner.cleaner(["result"], [f"{os.path.splitext(image_name_with_extension)[0]}-gb2312.html"])
+                else:
+                    print("[Info-GUI.ocr] 已跳过临时文件清理" + " (Temporary file cleanup skipped)")
             else:
                 res = local["error_render_fail"].format(img_file=image_name_with_extension)
         return res
     except Exception as e:
         return str(e)
+
 
 ##########################
 
@@ -197,39 +207,43 @@ def ocr(image_uploaded, fine_grained_box_x1, fine_grained_box_y1, fine_grained_b
 def pdf_ocr(mode, pdf_file, target_dpi, pdf_convert, pdf_merge):
     pdf_name = os.path.basename(pdf_file)
     # ---------------------------------- #
-    # 分割模式
+    # 分割模式 (Split mode)
     if mode == "split-to-image":
-        print("[Info-GUI] 正在分割 PDF 文件")
+        print("[Info-GUI] 正在分割 PDF 文件" + " (Splitting PDF file)")
         success = PDFHandler.split_pdf(pdf_path=pdf_file, img_path="imgs", target_dpi=target_dpi)
         if success:
-            print("[Info-GUI] PDF 文件分割成功")
+            print("[Info-GUI] PDF 文件分割成功" + " (PDF file split successfully)")
             gr.Info(message=local["info_pdf_split_success"].format(pdf_file=pdf_name))
         else:
-            print("[Error-GUI] PDF 文件分割失败")
+            print("[Error-GUI] PDF 文件分割失败" + " (PDF file split failed)")
             raise gr.Error(duration=0, message=local["error_pdf_split_fail"].format(pdf_file=pdf_name))
     # ---------------------------------- #
-    # 渲染模式
+    # 渲染模式 (Rendering mode)
     elif mode == "render":
-        print(f"[Info-GUI] 开始渲染PDF文件：{pdf_name}")
+        print(f"[Info-GUI] 开始渲染 PDF 文件：{pdf_name}" + " (Starting to render PDF file)")
         gr.Info(message=local["info_pdf_render_start"].format(pdf_file=pdf_name))
         success = PDFHandler.pdf_renderer(model=model, tokenizer=tokenizer, pdf_path=pdf_file, target_dpi=target_dpi,
                                           pdf_convert=pdf_convert, wait=config["pdf_render_wait"],
                                           time=config["pdf_render_wait_time"])
-        # 渲染成功判定
+        # 渲染成功判定 (Rendering success determination)
         if success:
-            print(f"[Info-GUI] PDF 文件渲染成功：{pdf_name}")
+            print(f"[Info-GUI] PDF 文件渲染成功：{pdf_name}" + " (PDF file rendered successfully)")
             gr.Info(message=local["info_pdf_render_success"].format(pdf_file=pdf_name))
             # 渲染成功则合并
             if pdf_merge: # 决定是否要合并
                 print(f"[Info-GUI] 开始合并 PDF 文件：{pdf_name}")
                 gr.Info(message=local["info_pdf_merge_start"].format(pdf_file=pdf_name))
                 success = PDFMerger.merge_pdfs(prefix=pdf_name)
-                # 合并成功判定
+                # 合并成功判定 (Merging success determination)
                 if success:
-                    print(f"[Info-GUI] PDF 文件合并成功：{pdf_name}")
+                    print(f"[Info-GUI] PDF 文件合并成功：{pdf_name}" + " (PDF file merged successfully)")
                     gr.Info(message=local["info_pdf_merge_success"].format(pdf_file=pdf_name))
+                    # 合并成功，清理临时文件 (Merged successfully, cleaning up temporary files)
+                    if clean_temp:
+                        print(f"[Info-GUI] 开始清理临时文件：{pdf_name}" + " (Starting to clean up temporary files)")
+                        TempCleaner.cleaner(["result"], [f"{extract_pdf_pattern(pdf_name)}_\d+.pdf"])
                 else:
-                    print(f"[Error-GUI] PDF 文件合并失败：{pdf_name}")
+                    print(f"[Error-GUI] PDF 文件合并失败：{pdf_name}" + " (PDF file merging failed)")
                     raise gr.Error(duration=0, message=local["error_pdf_merge_fail"].format(pdf_file=pdf_name))
             else: # 不合并
                 gr.Warning(message=local["info_pdf_merge_skip"].format(pdf_file=pdf_name))
@@ -238,18 +252,24 @@ def pdf_ocr(mode, pdf_file, target_dpi, pdf_convert, pdf_merge):
             print(f"[Error-GUI] PDF 文件渲染失败：{pdf_name}")
             raise gr.Error(duration=0, message=local["error_pdf_render_fail"].format(pdf_file=pdf_name))
     # ---------------------------------- #
-    # 合并模式
+    # 合并模式 (Merging mode)
     elif mode == "merge":
-        print(f"[Info-GUI] 开始合并 PDF 文件：{pdf_name}")
+        print(f"[Info-GUI] 开始合并 PDF 文件：{pdf_name}" + " (Starting to merge PDF file)")
         gr.Info(message=local["info_pdf_merge_start"].format(pdf_file=pdf_name))
         prefix = extract_pdf_pattern(pdf_name)
         success = PDFMerger.merge_pdfs(prefix=prefix)
-        # 合并成功判定
+        # 合并成功判定 (Merging success determination)
         if success:
-            print(f"[Info-GUI] PDF 文件合并成功：{pdf_name}")
+            print(f"[Info-GUI] PDF 文件合并成功：{pdf_name}" + " (PDF file merged successfully)")
             gr.Info(message=local["info_pdf_merge_success"].format(pdf_file=pdf_name))
+            if clean_temp:
+                # 合并成功，清理临时文件 (Merged successfully, cleaning up temporary files)
+                print("[Info-GUI] 开始清理临时文件" + " (Starting to clean up temporary files)")
+                TempCleaner.cleaner(["result"], [f"{extract_pdf_pattern(pdf_name)}_\d+.pdf"])
+            else:
+                print("[Info-GUI] 跳过清理临时文件" + " (Skipping cleaning up temporary files)")
         else:
-            print(f"[Error-GUI] PDF 文件合并失败：{pdf_name}")
+            print(f"[Error-GUI] PDF 文件合并失败：{pdf_name}" + " (PDF file merging failed)")
             raise gr.Error(duration=0, message=local["error_pdf_merge_fail"].format(pdf_file=pdf_name))
 
 ##########################
@@ -266,6 +286,15 @@ def renderer(imgs_path, pdf_convert_confirm):
                                   time=config["pdf_render_wait_time"])
         if success:
             print(f"[Info-GUI] 成功渲染：{image_path}")
+            if clean_temp and pdf_convert_confirm:
+                TempCleaner.cleaner(["result"],
+                                    [f"{os.path.splitext(os.path.basename(image_path))[0]}-gb2312.html",
+                                     f"{os.path.splitext(os.path.basename(image_path))[0]}-utf8.html",
+                                     f"{os.path.splitext(os.path.basename(image_path))[0]}-utf8-local.html"])
+            if clean_temp and not pdf_convert_confirm:
+                TempCleaner.cleaner(["result"], [f"{os.path.splitext(os.path.basename(image_path))[0]}-gb2312.html"])
+            else:
+                print("[Info-GUI.renderer] 已跳过临时文件清理")
         else:
             raise gr.Error(duration=0, message=local["error_render_fail"].format(img_file=image_path))
 
@@ -275,7 +304,7 @@ def renderer(imgs_path, pdf_convert_confirm):
 with gr.Blocks(theme=theme) as demo:
     # 模型面板 (Model panel)
     with gr.Row(variant="panel", equal_height=True):
-        # 根据配置文件决定模型初始状态显示
+        # 根据配置文件决定模型初始状态显示 (Decide model initial state display based on configuration file)
         if config["load_model_on_start"]:
             model_status = gr.Textbox(local["info_model_already_loaded"], show_label=False)
         else:
@@ -285,7 +314,7 @@ with gr.Blocks(theme=theme) as demo:
 
     # OCR 选项卡 (OCR tab)
     with gr.Tab(local["tab_ocr"]):
-        # 特殊模式设置
+        # 特殊模式设置 (Special mode settings)
         with gr.Row():
             # Fine-grained 设置
             with gr.Column():
@@ -303,15 +332,17 @@ with gr.Blocks(theme=theme) as demo:
                 # 渲染设置 (Rendering settings)
                 gr.Markdown(local["label_render_settings"])
                 img_name = gr.Textbox(label=local["label_img_name"], value="ocr")
-                pdf_convert_confirm = gr.Checkbox(label=local["label_save_as_pdf"])
-        # OCR 相关
+                with gr.Row(equal_height=True):
+                    pdf_convert_confirm = gr.Checkbox(label=local["label_save_as_pdf"])
+                    clean_temp_render = gr.Checkbox(label=local["label_clean_temp"])
+        # OCR 相关 (OCR Settings)
         gr.Markdown(local["label_ocr_settings"])
         with gr.Row():
-            # 上传图片
+            # 上传图片 (Upload Image)
             upload_img = gr.Image(type="filepath", label=local["label_upload_img"])
-            # 其他组件
+            # 其他组件 (Other Components)
             with gr.Column():
-                # 模式
+                # 模式 (Mode)
                 ocr_mode = gr.Dropdown(
                     choices=["ocr", "format", "fine-grained-ocr", "fine-grained-format", "fine-grained-color-ocr", "fine-grained-color-format", "multi-crop-ocr", "multi-crop-format", "render"],
                     label=local["label_ocr_mode"], value="format")
@@ -321,11 +352,10 @@ with gr.Blocks(theme=theme) as demo:
 
     # 渲染器选项卡 (Renderer tab)
     with gr.Tab(local["tab_renderer"]):
-        with gr.Row():
-            # 输入
-            input_folder_path = gr.Textbox(label=local["label_input_folder_path"], value="imgs", interactive=True)
-        with gr.Row():
-            # PDF 转换设置
+    # 输入 (Input folder path)
+        input_folder_path = gr.Textbox(label=local["label_input_folder_path"], value="imgs", interactive=True)
+        with gr.Row(equal_height=True):
+        # PDF 转换设置 (Save as PDF settings)
             batch_pdf_convert_confirm = gr.Checkbox(label=local["label_save_as_pdf"], value=True, interactive=True)
             # 按钮
             batch_render_btn = gr.Button(local["btn_render"], variant="primary")
@@ -333,24 +363,24 @@ with gr.Blocks(theme=theme) as demo:
     # PDF 选项卡 (PDF tab)
     with gr.Tab("PDF"):
         with gr.Row():
-            # PDF 文件
+            # PDF 文件 (PDF file path)
             with gr.Column():
                 pdf_file_name = gr.Textbox(value="input.pdf", interactive=False, label=local["label_pdf_file_name"])
                 pdf_file = gr.File(label=local["label_pdf_file"], file_count="single", file_types=[".pdf"])
-            # OCR 设置
+            # OCR 设置 (set up OCR)
             with gr.Column():
-                # 模式和 DPI
+                # 模式和 DPI (mode and DPI)
                 with gr.Group():
                     pdf_ocr_mode = gr.Dropdown(
                         choices=["split-to-image", "render", "merge"],
                         label=local["label_ocr_mode"], value="split-to-image", interactive=True)
                     dpi = gr.Number(label=local["label_target_dpi"], minimum=72, maximum=300, step=1, value=150)
-                    # PDF 转换设置
+                    # PDF 转换设置 (PDF conversion settings)
                     with gr.Row():
-                        # 渲染结果为 PDF
+                        # 渲染结果为 PDF (Render the result as PDF)
                         pdf_pdf_convert_confirm = gr.Checkbox(label=local["label_save_as_pdf"], interactive=True,
                                                               visible=False)
-                        # 合并每一页
+                        # 合并每一页 (Merge per page)
                         pdf_pdf_merge_confirm = gr.Checkbox(label=local["label_merge_pdf"], interactive=True,
                                                             visible=False)
                 # 按钮
@@ -367,14 +397,14 @@ with gr.Blocks(theme=theme) as demo:
     do_ocr.click(
         fn=ocr,
         inputs=[upload_img, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
-                fine_grained_box_y2, ocr_mode, fine_grained_color, pdf_convert_confirm],
+                fine_grained_box_y2, ocr_mode, fine_grained_color, pdf_convert_confirm, clean_temp_render],
         outputs=result
     )
 
     # 点击渲染 (Click to render)
     batch_render_btn.click(
         fn=renderer,
-        inputs=[input_folder_path, batch_pdf_convert_confirm],
+        inputs=[input_folder_path, batch_pdf_convert_confirm, clean_temp_renderer],
         outputs=None
     )
 
@@ -409,7 +439,7 @@ with gr.Blocks(theme=theme) as demo:
     # 执行PDF OCR (Performing PDF OCR)
     pdf_ocr_btn.click(
         fn=pdf_ocr,
-        inputs=[pdf_ocr_mode, pdf_file, dpi, pdf_pdf_convert_confirm, pdf_pdf_merge_confirm],
+        inputs=[pdf_ocr_mode, pdf_file, dpi, pdf_pdf_convert_confirm, pdf_pdf_merge_confirm, clean_temp],
         outputs=None
     )
 
@@ -433,7 +463,6 @@ with gr.Blocks(theme=theme) as demo:
         inputs=None,
         outputs=model_status
     )
-    # ----------------------------------- #
 
 ##########################
 

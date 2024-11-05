@@ -6,6 +6,7 @@ import base64
 import time
 import re
 
+
 def convert_html_encoding(html_gb2312_path, html_utf8_path):
     """
     将GB2312编码的HTML文件转换为UTF-8编码的HTML文件。
@@ -30,7 +31,6 @@ def convert_html_encoding(html_gb2312_path, html_utf8_path):
         print(f"[Info-HTML2PDF.convert_html_encoding] 正在打开：{html_gb2312_path}")
         with open(html_gb2312_path, 'r', encoding='gb2312') as file:
             content = file.read()
-
         # utf8
         print(f"[Info-HTML2PDF.convert_html_encoding] 正在转码：{html_utf8_path}")
         with open(html_utf8_path, 'w', encoding='utf-8') as file:
@@ -56,16 +56,22 @@ def repalce_html_content(html_utf8_path, html_utf8_local_path):
     """
     try:
         print(f"[Info-HTML2PDF.repalce_html_content] 正在准备替换：{html_utf8_path}")
+        # 替换内容
         pattern = r'https://cdn.jsdelivr.net/npm/mathpix-markdown-it@1.3.6/es5/bundle.js'
         replacement = 'markdown-it.js'
+
+        # 打开文件并读取内容
         print(f"[Info-HTML2PDF.repalce_html_content] 正在打开：{html_utf8_path}")
         with open(html_utf8_path, 'r', encoding='utf-8') as file:
             content = file.read()
+        # 替换
         new_html_content = re.sub(pattern, replacement, content)
+        # 将替换后的内容写入新文件
         print(f"[Info-HTML2PDF.repalce_html_content] 正在写入：{html_utf8_local_path}")
         with open(html_utf8_local_path, 'w', encoding='utf-8') as file:
             file.write(new_html_content)
     except Exception as e:
+        # 打印错误信息
         print(f"[Error-HTML2PDF.repalce_html_content] {e}")
 
 
@@ -116,15 +122,13 @@ def output_pdf(html_path, pdf_path, waiting_time, wait=False):
         # 初始化WebDriver
         driver = webdriver.Edge(service=service, options=edge_options)
 
-        print(f"[Info-HTML2PDF.output_pdf] 正在打开：{html_file_path}")
         # 打开HTML文件
+        print(f"[Info-HTML2PDF.output_pdf] 正在打开：{html_file_path}")
         driver.get(html_file_path)
 
         # 确保页面已加载
         if wait:
             time.sleep(waiting_time)
-        else:
-            pass
 
         # 生成PDF文件
         print(f"[Info-HTML2PDF.output_pdf] 正在生成 PDF：{pdf_file_path}")
