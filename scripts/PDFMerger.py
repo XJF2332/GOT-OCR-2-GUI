@@ -5,16 +5,17 @@ import glob
 pdf_list = []
 
 
-def get_pdf_list(directory, prefix, except_pattern):
+def get_pdf_list(directory:str, prefix:str, except_pattern:str):
     """
     获取指定目录下指定前缀的 PDF 文件列表
 
-    输入:
-    directory: 目录路径
-    prefix: 文件前缀
+    Args:
+        directory (str): 目录路径
+        prefix (str): 文件前缀
+        except_pattern (str): 排除的文件后缀
 
-    输出:
-    pdf_list: PDF 文件列表
+    Returns:
+        list: PDF 文件列表
     """
     try:
         # 查找文件
