@@ -32,7 +32,10 @@ Click a star, please
 - [x] More configuration options
 - [x] Refactored the PDF processing script
 - [x] Pulled an `Alpha` branch, put unfinished tasks into this
-- [x] PDF processing should be able to render a whole PDF, not one PDF per page
+- [x] ⚠️PDF processing should be able to render a whole PDF, not one PDF per page (I ran into some troubles, if you have
+  the solution, you can create a pull request, pull into `Alpha` branch for now; HuggingFace model used
+  is [kaifeise/GOT-gguf](https://huggingface.co/kaifeise/GOT-gguf/tree/main); `GGUF Test.py` used codes
+  from [1694439208/GOT-OCR-Inference](https://github.com/1694439208/GOT-OCR-Inference))
 - [ ] Support for `llama-cpp-python`, hoping to accelerate inference
 - [ ] html to word functionality, preserve formulas for editing
 
@@ -51,6 +54,7 @@ it.
 I am using stable 2.4.1 + cu124, so I suggest you to use this version.
 
 #### FlashAttention
+
 Not a must-have, but if you want to install it, check [#12](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/12)
 
 #### PyMuPDF
