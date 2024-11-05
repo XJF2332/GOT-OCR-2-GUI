@@ -14,18 +14,16 @@ def remove_extension(base_name):
     return os.path.splitext(base_name)[0]
 
 
-def split_pdf(pdf_path, img_path, target_dpi):
+def split_pdf(pdf_path:str, img_path:str, target_dpi:int):
     """
     将PDF文件拆分为单页PDF文件，并保存为PNG图像文件。
 
-    参数:
-    pdf_path -- PDF文件路径
-    img_path -- 保存PNG图像文件的目录路径
-    target_dpi -- 目标DPI
-
-    返回:
-    True -- 成功拆分PDF文件
-    False -- 拆分PDF文件失败
+    Args:
+        pdf_path (str): PDF文件路径
+        img_path (str): 保存PNG图像文件的目录路径
+        target_dpi (int): 目标DPI
+    Returns:
+        bool: 操作是否成功
     """
     try:
         if not os.path.exists(img_path):
@@ -60,16 +58,15 @@ def split_pdf(pdf_path, img_path, target_dpi):
         return False
 
 
-def get_sorted_png_files(directory, prefix):
+def get_sorted_png_files(directory:str, prefix:str):
     """
     获取指定目录下，符合前缀和整数后缀的PNG文件列表，并按整数大小排序。
 
-    参数:
-    directory -- 要搜索的目录路径
-    prefix -- 文件名前缀
-
-    返回:
-    sorted_files -- 按整数大小排序的文件列表
+    Args:
+        directory (str): 目录路径
+        prefix (str): 文件名前缀
+    Returns:
+        list: 排序后的PNG文件列表
     """
     try:
         # 构建匹配模式
@@ -93,22 +90,20 @@ def get_sorted_png_files(directory, prefix):
         print(f"[Error-PDF2ImagePlusRenderer.get_sorted_png_files] 获取 PNG 文件列表失败: {e}")
 
 
-def pdf_renderer(model, tokenizer, pdf_path, target_dpi, pdf_convert, wait, time):
+def pdf_renderer(model:object, tokenizer:object, pdf_path:str, target_dpi:int, pdf_convert:bool, wait:bool, time:int):
     """
     将PDF文件转换为图片，并调用渲染器进行渲染。
 
-    参数:
-    model -- 模型
-    tokenizer -- 分词器
-    pdf_path -- PDF文件路径
-    target_dpi -- 目标DPI
-    pdf_convert -- 是否转换为PDF
-    wait -- 等待时间
-    time -- 时间
-
-    返回:
-    True -- 成功渲染
-    False -- 渲染失败
+    Args:
+        model (object): 模型对象
+        tokenizer (object): 分词器对象
+        pdf_path (str): PDF文件路径
+        target_dpi (int): 目标DPI
+        pdf_convert (bool): 是否将渲染结果转换为PDF
+        wait (bool): 是否等待浏览器渲染
+        time (int): 等待时间
+    Returns:
+        bool: 操作是否成功
     """
     # 创建目录
     if not os.path.exists("pdf"):
