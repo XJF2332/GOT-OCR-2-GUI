@@ -16,3 +16,4 @@
 RUN.bat
 /pdf/
 /gguf/*.gguf
+*.pyc
