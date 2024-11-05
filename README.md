@@ -30,7 +30,9 @@
 - [x] PDF 处理脚本重构
 - [x] 拉一个`Alpha`分支，没做完的都丢进这里面
 - [x] PDF 处理应该能够渲染出一整个 PDF ，而不是一页一个 PDF
-- [ ] 支持`llama-cpp-python`，希望能够加速推理
+- [ ] ⚠️支持`llama-cpp-python`，希望能够加速推理（遇到困难，有能力的可以提交 pr，最好可以提到 `Aplha` 分支；使用的
+  HuggingFace 模型是 [kaifeise/GOT-gguf](https://huggingface.co/kaifeise/GOT-gguf/tree/main)；`GGUF Test.py`
+  使用了来自 [1694439208/GOT-OCR-Inference](https://github.com/1694439208/GOT-OCR-Inference) 的代码 ）
 - [ ] html 转 word 功能，保留公式可以编辑
 
 ## 使用方法
@@ -47,13 +49,15 @@
 我用的是 Stable 2.4.1 + cu124 ，建议你也用这个版本
 
 #### FlashAttention
+
 不是强制要求，不过如果你想安装的话可以看[#12](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/12)
 
 #### PyMuPDF
 
 实测如果直接从`requirements.txt`里安装的话会报`ModuleNotFoundError: No module named 'frontend'`
 ，但单独安装的话就不会这样，具体原因不清楚  
-另外，如果还是报`ModuleNotFoundError`的话就先卸载`fitz`和`PyMuPDF`，再重新安装一次应该能解决，实测`pip install -U PyMuPDF`是没用的
+另外，如果还是报`ModuleNotFoundError`的话就先卸载`fitz`和`PyMuPDF`，再重新安装一次应该能解决，实测`pip install -U PyMuPDF`
+是没用的
 
 ```commandline
 pip install fitz
