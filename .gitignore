@@ -17,3 +17,5 @@ RUN.bat
 /pdf/
 /gguf/*.gguf
 *.pyc
+/__pycache__/
+/scripts/__pycache__/
