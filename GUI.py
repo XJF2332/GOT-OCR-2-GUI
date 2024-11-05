@@ -36,6 +36,7 @@ import scripts.PDFMerger as PDFMerger
 model = None
 tokenizer = None
 
+
 ##########################
 
 # 加载模型函数
@@ -51,6 +52,7 @@ def load_model():
     print("[Info-GUI] " + local["info_model_loaded"])
     return local["info_model_already_loaded"]
 
+
 ##########################
 
 # 卸载模型函数
@@ -59,6 +61,7 @@ def unload_model():
     model = None
     tokenizer = None
     return local["info_model_not_loaded"]
+
 
 ##########################
 
@@ -86,6 +89,7 @@ theme = gr.themes.Ocean(
     button_small_radius='*radius_sm'
 )
 
+
 ##########################
 
 # 更新图片名称
@@ -93,12 +97,14 @@ def update_img_name(image_uploaded):
     image_name_with_extension = os.path.basename(image_uploaded)
     return gr.Textbox(label=local["label_img_name"], value=image_name_with_extension)
 
+
 ##########################
 
 # 更新 PDF 名称
 def update_pdf_name(pdf_uploaded):
     pdf_name_with_extension = os.path.basename(pdf_uploaded)
     return gr.Textbox(label=local["label_pdf_file"], value=pdf_name_with_extension)
+
 
 ##########################
 
@@ -109,6 +115,7 @@ def update_pdf_pdf_convert_confirm_visibility(pdf_ocr_mode):
     else:
         return gr.Checkbox(label=local["label_save_as_pdf"], interactive=True, visible=False, value=False)
 
+
 ##########################
 
 # 更新合并 PDF 勾选框可见性（ PDF 标签页）
@@ -118,6 +125,7 @@ def update_pdf_pdf_merge_confirm_visibility(pdf_convert_confirm):
     else:
         return gr.Checkbox(label=local["label_merge_pdf"], interactive=True, visible=False, value=False)
 
+
 ##########################
 
 # 更新目标 DPI 输入框可见性（ PDF 标签页）
@@ -126,6 +134,7 @@ def update_pdf_pdf_dpi_visibility(pdf_ocr_mode):
         return gr.Number(label=local["label_target_dpi"], minimum=72, maximum=300, step=1, value=150, visible=False)
     else:
         return gr.Number(label=local["label_target_dpi"], minimum=72, maximum=300, step=1, value=150, visible=True)
+
 
 ##########################
 
@@ -144,6 +153,7 @@ def extract_pdf_pattern(filename):
         return parts[0]
     else:
         raise ValueError("[GUI.extract_pdf_pattern] 输入不满足格式：<string>_0.pdf")
+
 
 ##########################
 
@@ -194,6 +204,7 @@ def ocr(image_uploaded, fine_grained_box_x1, fine_grained_box_y1, fine_grained_b
     except Exception as e:
         return str(e)
 
+
 ##########################
 
 # PDF OCR
@@ -223,7 +234,7 @@ def pdf_ocr(mode, pdf_file, target_dpi, pdf_convert, pdf_merge):
             print(f"[Info-GUI] PDF 文件渲染成功：{pdf_name}")
             gr.Info(message=local["info_pdf_render_success"].format(pdf_file=pdf_name))
             # 渲染成功则合并
-            if pdf_merge: # 决定是否要合并
+            if pdf_merge:  # 决定是否要合并
                 print(f"[Info-GUI] 开始合并 PDF 文件：{pdf_name}")
                 gr.Info(message=local["info_pdf_merge_start"].format(pdf_file=pdf_name))
                 success = PDFMerger.merge_pdfs(prefix=pdf_name)
@@ -234,10 +245,10 @@ def pdf_ocr(mode, pdf_file, target_dpi, pdf_convert, pdf_merge):
                 else:
                     print(f"[Error-GUI] PDF 文件合并失败：{pdf_name}")
                     raise gr.Error(duration=0, message=local["error_pdf_merge_fail"].format(pdf_file=pdf_name))
-            else: # 不合并
+            else:  # 不合并
                 gr.Warning(message=local["info_pdf_merge_skip"].format(pdf_file=pdf_name))
                 print(f"[Info-GUI] 跳过合并 PDF 文件：{pdf_name}")
-        else: # 渲染失败
+        else:  # 渲染失败
             print(f"[Error-GUI] PDF 文件渲染失败：{pdf_name}")
             raise gr.Error(duration=0, message=local["error_pdf_render_fail"].format(pdf_file=pdf_name))
     # ---------------------------------- #
@@ -255,6 +266,7 @@ def pdf_ocr(mode, pdf_file, target_dpi, pdf_convert, pdf_merge):
             print(f"[Error-GUI] PDF 文件合并失败：{pdf_name}")
             raise gr.Error(duration=0, message=local["error_pdf_merge_fail"].format(pdf_file=pdf_name))
 
+
 ##########################
 
 # 渲染器
@@ -271,6 +283,7 @@ def renderer(imgs_path, pdf_convert_confirm):
             print(f"[Info-GUI] 成功渲染：{image_path}")
         else:
             raise gr.Error(duration=0, message=local["error_render_fail"].format(img_file=image_path))
+
 
 ##########################
 
@@ -320,9 +333,9 @@ with gr.Blocks(theme=theme) as demo:
                              (local["mode_fine-grained-ocr"], "fine-grained-ocr"),
                              (local["mode_fine-grained-format"], "fine-grained-format"),
                              (local["mode_fine-grained-color-ocr"], "fine-grained-color-ocr"),
-                             (local["mode_fine-grained-color-format"],"fine-grained-color-format"),
-                             (local["mode_multi-crop-ocr"],"multi-crop-ocr"),
-                             (local["mode_multi-crop-format"],"multi-crop-format"), (local["mode_render"],"render")],
+                             (local["mode_fine-grained-color-format"], "fine-grained-color-format"),
+                             (local["mode_multi-crop-ocr"], "multi-crop-ocr"),
+                             (local["mode_multi-crop-format"], "multi-crop-format"), (local["mode_render"], "render")],
                     label=local["label_ocr_mode"], value="ocr")
                 # OCR 按钮和结果
                 do_ocr = gr.Button(local["btn_do_ocr"], variant="primary")

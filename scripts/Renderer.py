@@ -1,9 +1,6 @@
 import re
 import os
 import scripts.HTML2PDF as html2pdf
-# from IPython.display import clear_output
-# from IPython.display import display
-# from IPython.display import Latex
 
 
 def render(model, tokenizer, image_path, wait, time, convert_to_pdf):
@@ -46,10 +43,6 @@ def render(model, tokenizer, image_path, wait, time, convert_to_pdf):
         html_gb2312_path = os.path.join("result", f"{img_name_no_ext}-gb2312.html")
         html_utf8_path = os.path.join("result", f"{img_name_no_ext}-utf8.html")
         html_utf8_local_path = os.path.join("result", f"{img_name_no_ext}-utf8-local.html")
-
-        # 生成Latex格式的结果
-        # res = model.chat_crop(tokenizer, image_path, ocr_type='format')
-        # display(Latex(res))
 
         # 渲染OCR结果
         model.chat(tokenizer, image_path, ocr_type='format', render=True, save_render_file=html_gb2312_path)

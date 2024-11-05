@@ -4,6 +4,7 @@ import glob
 
 pdf_list = []
 
+
 def get_pdf_list(directory, prefix, except_pattern):
     """
     获取指定目录下指定前缀的 PDF 文件列表
@@ -29,16 +30,17 @@ def get_pdf_list(directory, prefix, except_pattern):
 
         # 排序文件列表
         print(f"[Info-PDFMerger.get_pdf_list] 正在排序 PDF 文件")
+
         def extract_integer(filename):
             number_part = os.path.basename(filename).replace(f"{prefix}_", "").replace(".pdf", "")
             return int(number_part)
+
         pdf_list = sorted(pdf_list, key=extract_integer)
-
-
         print(f"[Info-PDFMerger.get_pdf_list] PDF 文件列表：{pdf_list}")
         return pdf_list
     except Exception as e:
         print(f"[Error-PDFMerger.get_pdf_list] 获取 PDF 列表失败：{e}")
+
 
 def merge_pdfs(prefix):
     """
@@ -73,8 +75,10 @@ def merge_pdfs(prefix):
         print(f"[Error-PDFMerger.merge_pdfs] 合并 PDF 文件失败：{e}")
         return False
 
+
 def t():
     merge_pdfs("t")
+
 
 if __name__ == "__main__":
     t()
