@@ -1,9 +1,9 @@
 import torchvision.transforms as transforms
 import torch
-import cv2 as cv
+import PIL.Image as Image
 
-img = cv.imread("imgs\Test.png")
-print(img.shape)
+img = Image.open("imgs/Test.jpg")
+print(img.size)
 
 transform = transforms.ToTensor()
 tensor = transform(img)

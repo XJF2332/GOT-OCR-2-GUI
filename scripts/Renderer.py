@@ -3,7 +3,7 @@ import os
 import scripts.HTML2PDF as html2pdf
 
 
-def render(model:object, tokenizer:object, image_path:str, wait:bool, time:int, convert_to_pdf:bool):
+def render(model: object, tokenizer: object, image_path: str, wait: bool, time: int, convert_to_pdf: bool):
     """
     使用OCR模型渲染图像内容到HTML文件，并可选择性地转换为PDF文件。
 

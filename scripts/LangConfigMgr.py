@@ -1,6 +1,5 @@
 import os
 import json
-import sys
 
 
 def clear():
@@ -12,17 +11,42 @@ def clear():
         os.system('clear')
 
 
-def find_json_files(directory):
+def find_json_files(directory: str):
+    """
+    查找指定目录下的所有json文件
+    Args:
+        directory: 指定目录
+
+    Returns:
+        json文件列表
+    """
     return [f for f in os.listdir(directory) if f.endswith('.json') and f != 'config.json']
 
 
-def read_config_language(config_path):
+def read_config_language(config_path: str):
+    """
+    读取配置文件中的语言设置
+    Args:
+        config_path: 配置文件路径
+
+    Returns:
+        语言设置，如果没有设置则返回None
+    """
     with open(config_path, 'r') as config_file:
         config_data = json.load(config_file)
         return config_data.get('language', None)
 
 
-def write_config_language(config_path, language):
+def write_config_language(config_path: str, language: str):
+    """
+    写入配置文件中的语言设置
+    Args:
+        config_path: 配置文件路径
+        language: 语言设置
+
+    Returns:
+        None
+    """
     with open(config_path, 'r+') as config_file:
         config_data = json.load(config_file)
         config_data['language'] = language

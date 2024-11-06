@@ -5,7 +5,7 @@ import glob
 pdf_list = []
 
 
-def get_pdf_list(directory:str, prefix:str, except_pattern:str):
+def get_pdf_list(directory: str, prefix: str, except_pattern: str):
     """
     获取指定目录下指定前缀的 PDF 文件列表
 
@@ -43,16 +43,15 @@ def get_pdf_list(directory:str, prefix:str, except_pattern:str):
         print(f"[Error-PDFMerger.get_pdf_list] 获取 PDF 列表失败：{e}")
 
 
-def merge_pdfs(prefix):
+def merge_pdfs(prefix: str):
     """
     指定前缀的 PDF 文件
 
-    输入:
-    prefix: 文件前缀
+    Args:
+        prefix (str): 文件前缀
 
-    输出:
-    True: 合并成功
-    False: 合并失败
+    Returns:
+        bool: 是否成功
     """
     try:
         # 创建空文档

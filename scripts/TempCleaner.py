@@ -2,7 +2,8 @@ import os
 import re
 import send2trash
 
-def find_files(directory:str, regex_pattern:str):
+
+def find_files(directory: str, regex_pattern: str):
     """
     查找目录中符合正则表达式的文件
 
@@ -22,7 +23,7 @@ def find_files(directory:str, regex_pattern:str):
     return matching_files
 
 
-def cleaner(directory:str, regex_pattern:str):
+def cleaner(directory: str, regex_pattern: str):
     """
     清理目录中符合正则表达式的文件
     Args:

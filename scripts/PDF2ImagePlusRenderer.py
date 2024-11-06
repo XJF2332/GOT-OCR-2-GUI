@@ -14,7 +14,7 @@ def remove_extension(base_name):
     return os.path.splitext(base_name)[0]
 
 
-def split_pdf(pdf_path:str, img_path:str, target_dpi:int):
+def split_pdf(pdf_path: str, img_path: str, target_dpi: int):
     """
     将PDF文件拆分为单页PDF文件，并保存为PNG图像文件。
 
@@ -58,7 +58,7 @@ def split_pdf(pdf_path:str, img_path:str, target_dpi:int):
         return False
 
 
-def get_sorted_png_files(directory:str, prefix:str):
+def get_sorted_png_files(directory: str, prefix: str):
     """
     获取指定目录下，符合前缀和整数后缀的PNG文件列表，并按整数大小排序。
 
@@ -78,6 +78,7 @@ def get_sorted_png_files(directory:str, prefix:str):
 
         # 定义一个函数，用于从文件名中提取整数部分
         print(f"[Info-PDF2ImagePlusRenderer.get_sorted_png_files] 正在排序 PNG 图片列表")
+
         def extract_integer(filename):
             # 假设文件名格式正确，去掉扩展名 .png 和前缀
             number_part = os.path.basename(filename).replace(f"{prefix}_", "").replace(".png", "")
@@ -90,7 +91,8 @@ def get_sorted_png_files(directory:str, prefix:str):
         print(f"[Error-PDF2ImagePlusRenderer.get_sorted_png_files] 获取 PNG 文件列表失败: {e}")
 
 
-def pdf_renderer(model:object, tokenizer:object, pdf_path:str, target_dpi:int, pdf_convert:bool, wait:bool, time:int):
+def pdf_renderer(model: object, tokenizer: object, pdf_path: str, target_dpi: int, pdf_convert: bool, wait: bool,
+                 time: int):
     """
     将PDF文件转换为图片，并调用渲染器进行渲染。
 
