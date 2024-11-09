@@ -16,3 +16,10 @@
 RUN.bat
 /pdf/
 /gguf/*.gguf
+Locales/
+scripts/__pycache__/__init__.cpython-310.pyc
+scripts/__pycache__/HTML2PDF.cpython-310.pyc
+scripts/__pycache__/LangConfigMgr.cpython-310.pyc
+scripts/__pycache__/PDF2ImagePlusRenderer.cpython-310.pyc
+scripts/__pycache__/PDFMerger.cpython-310.pyc
+scripts/__pycache__/Renderer.cpython-310.pyc
