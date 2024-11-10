@@ -32,7 +32,7 @@
 - [x] PDF 处理应该能够渲染出一整个 PDF ，而不是一页一个 PDF
 - [ ] ⚠️支持`llama-cpp-python`，希望能够加速推理（遇到困难，有能力的可以提交 pr，最好可以提到 `Aplha` 分支；使用的
   HuggingFace 模型是 [kaifeise/GOT-gguf](https://huggingface.co/kaifeise/GOT-gguf/tree/main)；`GGUF Test.py`
-  使用了来自 [1694439208/GOT-OCR-Inference](https://github.com/1694439208/GOT-OCR-Inference) 的代码 ）
+  使用了来自 [1694439208/GOT-OCR-Inference](https://github.com/1694439208/GOT-OCR-Inference) 的代码 。文件都在`gguf`文件夹里了）
 - [ ] html 转 word 功能，保留公式可以编辑
 
 ## 使用方法

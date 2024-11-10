@@ -35,7 +35,7 @@ Click a star, please
 - [x] ⚠️PDF processing should be able to render a whole PDF, not one PDF per page (I ran into some troubles, if you have
   the solution, you can create a pull request, pull into `Alpha` branch for now; HuggingFace model used
   is [kaifeise/GOT-gguf](https://huggingface.co/kaifeise/GOT-gguf/tree/main); `GGUF Test.py` used codes
-  from [1694439208/GOT-OCR-Inference](https://github.com/1694439208/GOT-OCR-Inference))
+  from [1694439208/GOT-OCR-Inference](https://github.com/1694439208/GOT-OCR-Inference). Files are in the `gguf` folder)
 - [ ] Support for `llama-cpp-python`, hoping to accelerate inference
 - [ ] html to word functionality, preserve formulas for editing
 
