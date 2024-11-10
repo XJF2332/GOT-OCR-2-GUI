@@ -1,32 +1,33 @@
 import json
 import os
 
-# Load language configuration
+# 打开配置文件 (Load language configuration)
 print("Loading language config...")
 config_path = os.path.join("Locales", "cli", "config.json")
 with open(config_path, 'r', encoding='utf-8') as file:
     config = json.load(file)
     lang = config['language']
 
-# Load language file
+# 打开语言文件 (Load language file)
 lang_file = os.path.join('Locales', 'cli', f'{lang}.json')
 with open(lang_file, 'r', encoding='utf-8') as file:
     local = json.load(file)
 
-# Import required libraries
+# 导入transformers库 (Import required libraries)
 print(local.get("info_import_libs", "Importing necessary libraries..."))
 from transformers import AutoModel, AutoTokenizer
 import re
 import scripts.HTML2PDF as html2pdf
 
-# Load model
-print(local.get("load_models", "Loading models..."))
+# 加载模型 (Load model)
+print(local.get("load_models"))
 tokenizer = AutoTokenizer.from_pretrained('models', trust_remote_code=True)
 model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_usage=True, device_map='cuda',
                                   use_safetensors=True, pad_token_id=tokenizer.eos_token_id)
 model = model.eval().cuda()
-print(local.get("load_models_success", "Models loaded successfully."))
-# Function to select an image
+print(local.get("load_models_success"))
+
+# 选择图片 (Function to select an image)
 def select_image():
     img_folder = 'imgs'
     img_files = [f for f in os.listdir(img_folder) if
@@ -52,12 +53,12 @@ def select_image():
     return os.path.join(img_folder, img_files[choice])
 
 
-# Function to perform OCR
+# 执行OCR (Function to perform OCR)
 def do_ocr(image):
     if not os.path.exists("result"):
         os.makedirs("result")
 
-    # Main menu
+    # 主菜单 (Main menu)
     print("")
     print(local.get("label_ocr_mode", "Select OCR mode:"))
     print(local.get("plaintext_ocr", "1. Plain text OCR"))
@@ -66,14 +67,14 @@ def do_ocr(image):
     print(local.get("multicrop_ocr", "4. Multi-crop OCR"))
     print(local.get("render", "5. Render OCR with HTML/PDF output"))
     ocr_choice = input(local.get("ocr_mode_select", "Select an option: "))
-    # Perform plaintext OCR
+    # 普通OCR (Perform plaintext OCR)
     if ocr_choice == '1':
         print("")
         res = model.chat(tokenizer, image, ocr_type='ocr')
         print("")
         print(res)
         
-    # Perform format OCR
+    # 格式化OCR (Perform format OCR)
     elif ocr_choice == '2':
         print("")
         res = model.chat(tokenizer, image, ocr_type='format')
@@ -84,9 +85,10 @@ def do_ocr(image):
     elif ocr_choice == '3':
         print("")
         fine_grained_choice = input(local.get("fine_grained_choice", "Select plain text (p) or formatted (f): "))
-        
+        # 普通
         if fine_grained_choice.lower() == 'p' or fine_grained_choice.lower() == 'f':
             fine_grained_mode = input(local.get("fine_grained_mode", "Use bounding box (b) or color (c)? "))
+            # 使用框
             if fine_grained_mode.lower() == 'b':
                 print("")
                 box = eval(input(local.get("fine_grained_box", "Enter the bounding box coordinates: ")))
@@ -100,7 +102,7 @@ def do_ocr(image):
                 res = model.chat(tokenizer, image, ocr_type='ocr')
                 print("")
                 print(res)
-    # Perform multi-crop OCR
+    # 使用颜色 (Perform multi-crop OCR)
     elif ocr_choice == '4':
         print("")
         crop_mode = input(local.get("crop_mode", "Select plain text (p) or formatted (f): "))
@@ -115,8 +117,9 @@ def do_ocr(image):
             print("")
             print(res)
     
-    # Render OCR
+    # 渲染 (Render OCR)
     elif ocr_choice == '5':
+        # 定义输出HTML路径 (Define the output HTML path)
         img_name = os.path.basename(image)
         img_name_no_ext = os.path.splitext(img_name)[0]
         html_gb2312_path = os.path.join("result", f"{img_name_no_ext}-gb2312.html")
@@ -147,12 +150,12 @@ def do_ocr(image):
             print("")
             print(local.get("pdf_convert_error", "Invalid choice. Exiting..."))
 
-    # Quit
+    # 退出 (Quit)
     elif ocr_choice == '---QUIT':
         print("")
         print(local.get("ocr_mode_quit", "Exiting OCR mode..."))
 
-    # Invalid choice
+    # 无效选择 (Invalid choice)
     else:
         print("")
         print(local.get("ocr_mode_error", "Invalid selection. Defaulting to plain text OCR..."))
@@ -160,7 +163,7 @@ def do_ocr(image):
         print(res)
 
 
-# Main function
+# 主函数 (Main function)
 def main():
     print(local.get("quit", "Type ---QUIT at any prompt to exit the program."))
     while True:
