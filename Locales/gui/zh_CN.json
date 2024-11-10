@@ -6,6 +6,7 @@
     "btn_save_as_pdf": "保存为 PDF",
     "btn_submit_img_name": "提交图片名称",
     "btn_unload_model": "卸载模型",
+    "label_clean_temp": "清理临时文件",
     "error_ocr_mode_none": "未选择 OCR 模式",
     "error_pdf_merge_fail": "{pdf_file} 合并失败",
     "error_pdf_render_fail": "{pdf_file} 渲染失败",

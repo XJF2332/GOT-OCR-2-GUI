@@ -357,6 +357,8 @@ with gr.Blocks(theme=theme) as demo:
         with gr.Row(equal_height=True):
         # PDF 转换设置 (Save as PDF settings)
             batch_pdf_convert_confirm = gr.Checkbox(label=local["label_save_as_pdf"], value=True, interactive=True)
+            # 清理临时文件
+            clean_temp_renderer = gr.Checkbox(label=local["label_clean_temp"], value=True, interactive=True)
             # 按钮
             batch_render_btn = gr.Button(local["btn_render"], variant="primary")
 
