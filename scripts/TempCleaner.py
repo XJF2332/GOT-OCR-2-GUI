@@ -20,10 +20,11 @@ def find_files(directory: str, regex_pattern: str):
         for file in files:
             if pattern.search(file):
                 matching_files.append(os.path.join(root, file))
+                print(f"[Info-TempCleaner.find_files] 找到临时文件：{file}")
     return matching_files
 
 
-def cleaner(directory: str, regex_pattern: str):
+def cleaner(directory: list[str], regex_pattern: list[str]):
     """
     清理目录中符合正则表达式的文件
     Args:
@@ -33,6 +34,8 @@ def cleaner(directory: str, regex_pattern: str):
     Returns:
         None
     """
-    files = find_files(directory, regex_pattern)
-    for file in files:
-        send2trash.send2trash(file)
+    for dir in directory:
+        for pattern in regex_pattern:
+            for file in find_files(dir, pattern):
+                send2trash.send2trash(file)
+                print(f"[Info-TempCleaner.cleaner] 已删除：{file}")
