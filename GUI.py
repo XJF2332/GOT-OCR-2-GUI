@@ -129,14 +129,14 @@ def update_pdf_pdf_dpi_visibility(pdf_ocr_mode):
 # 提取prefix (Extracting prefix)
 def extract_pdf_pattern(filename):
     """
-    从文件名中提取前缀，如果文件名不满足格式 <string>_0.pdf, 则抛出 ValueError 异常
-    :param filename: 文件名
-    :return: 前缀
+    从文件名中提取前缀，如果文件名不满足格式 <string>_0.pdf, 则抛出 ValueError 异常 (Extracts the prefix from the filename, if the filename does not meet the format <string>_0.pdf, a ValueError exception is raised)
+    :param filename: 文件名 (Filename)
+    :return: 前缀 (Prefix)
     """
-    # 在最后一个下划线处分割文件名 (Split the filename at the last underscore)
+    # 在最后一个下划线处分割文件名 (Split the filename at the last underscore) 
     parts = filename.rsplit('_', 1)
 
-    # 检查最后一部分是否为 '0.pdf' (Check if the last part is '0.pdf')
+    # 检查最后一部分是否为 '0.pdf' (Check if the last part is '0.pdf') 
     if len(parts) == 2 and parts[1] == '0.pdf':
         return parts[0]
     else:
@@ -148,7 +148,7 @@ def extract_pdf_pattern(filename):
 def ocr(image_uploaded, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
         fine_grained_box_y2, OCR_type, fine_grained_color, pdf_convert_confirm):
     # 构建 OCR 框 (Building OCR box)
-    print("[Info-GUI.ocr] 正在构建框，如未选择 fine-grained 模式可以忽略这个信息")
+    print("[Info-GUI.ocr] 正在构建框，如未选择 fine-grained 模式可以忽略这个信息" + " (Constructing a box. If fine-grained mode is not selected, you can ignore this message.)")
     box = f"[{fine_grained_box_x1}, {fine_grained_box_y1}, {fine_grained_box_x2}, {fine_grained_box_y2}]"
 
     # 默认值 (Default value)
@@ -161,7 +161,7 @@ def ocr(image_uploaded, fine_grained_box_x1, fine_grained_box_y1, fine_grained_b
 
     try:
         # 根据 OCR 类型进行 OCR 识别 (Performing OCR based on OCR type)
-        print("[Info-GUI.ocr] 正在执行 OCR")
+        print("[Info-GUI.ocr] 正在执行 OCR" + " (Performing OCR)")
         if OCR_type == "ocr":
             res = model.chat(tokenizer, image_uploaded, ocr_type='ocr')
         elif OCR_type == "format":
@@ -329,7 +329,6 @@ with gr.Blocks(theme=theme) as demo:
                                                     label=local["label_fine_grained_color"], value="red")
 
             with gr.Column():
-                # 渲染设置 (Rendering settings)
                 gr.Markdown(local["label_render_settings"])
                 img_name = gr.Textbox(label=local["label_img_name"], value="ocr")
                 with gr.Row(equal_height=True):
@@ -357,7 +356,7 @@ with gr.Blocks(theme=theme) as demo:
         with gr.Row(equal_height=True):
         # PDF 转换设置 (Save as PDF settings)
             batch_pdf_convert_confirm = gr.Checkbox(label=local["label_save_as_pdf"], value=True, interactive=True)
-            # 清理临时文件
+        # 清理临时文件 (Clean temporary files)
             clean_temp_renderer = gr.Checkbox(label=local["label_clean_temp"], value=True, interactive=True)
             # 按钮
             batch_render_btn = gr.Button(local["btn_render"], variant="primary")
