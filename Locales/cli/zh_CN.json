@@ -13,6 +13,7 @@
     "img_select_error": "无效选择",
     "img_select_quit": "正在退出......",
     "import_libs": "正在导入库......",
+    "label_ocr_mode": "选择OCR模式：",
     "load_models": "正在加载模型......",
     "load_models_success": "模型加载成功",
     "multicrop_ocr": "4. Multi-Crop OCR",
