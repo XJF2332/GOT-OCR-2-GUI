@@ -26,11 +26,11 @@ while True:
         clear()
 
         # 读配置 (Read configuration)
-        with open('Configs/Config.json', 'r') as config_file:
+        with open(os.path.join("Configs", "Config.json"), 'r', encoding="utf-8") as config_file:
             config_data = json.load(config_file)
 
         # 读注释 (Read comments)
-        with open('Configs/Comments.json', 'r') as comments_file:
+        with open(os.path.join("Configs", "Comments.json"), 'r', encoding="utf-8") as comments_file:
             comments_data = json.load(comments_file)
 
         # 打印键值对和注释 (Print key-value pairs and comments)
@@ -65,7 +65,7 @@ while True:
             config_data[setting_key] = new_value
 
             # 写配置文件 (Write to the configuration file)
-            with open('Configs\Config.json', 'w') as config_file:
+            with open(os.path.join("Configs", "Config.json"), 'w') as config_file:
                 json.dump(config_data, config_file, indent=4)
             print(f"Setting '{setting_key}' has been updated to '{new_value}'.")
             input("Press Any key to continue...")
