@@ -12,7 +12,7 @@ current_time = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 # 文件处理器 (File handler)
 if not os.path.exists("Logs"):
     os.makedirs("Logs")
-log_name = os.path.join("Logs", f"log_{current_time}.log")
+log_name = os.path.join("Logs", f"log_GUI_{current_time}.log")
 file_handler = logging.FileHandler(log_name, encoding='utf-8')
 
 # 格式化器 (Formatter)
@@ -195,7 +195,8 @@ def update_pdf_pdf_dpi_visibility(pdf_ocr_mode):
 # 提取prefix (Extracting prefix)
 def extract_pdf_pattern(filename):
     """
-    从文件名中提取前缀，如果文件名不满足格式 <string>_0.pdf, 则抛出 ValueError 异常 (Extracts the prefix from the filename, if the filename does not meet the format <string>_0.pdf, a ValueError exception is raised)
+    从文件名中提取前缀，如果文件名不满足格式 <string>_0.pdf, 则抛出 ValueError 异常
+    (Extracts the prefix from the filename, if the filename does not meet the format <string>_0.pdf, a ValueError exception is raised)
     :param filename: 文件名 (Filename)
     :return: 前缀 (Prefix)
     """
@@ -283,8 +284,8 @@ def ocr(image_uploaded, fine_grained_box_x1, fine_grained_box_y1, fine_grained_b
         logger.info("[ocr] OCR 已完成 (OCR completed)")
         return res
     except AttributeError:
-        logger.error(f"[ocr] OCR 失败，你看起来没有加载模型 (OCR failed, you seem to have not loaded the model)")
-        return local["error_no_model"]
+        logger.error(f"[ocr] OCR 失败，你看起来没有加载模型，或没有上传图片 (OCR failed, you seem to have not loaded the model or uploaded an image)")
+        return local["error_no_model_or_img"]
     except Exception as e:
         logger.error(f"[ocr] OCR 失败 (OCR failed): {e}")
         return str(e)
@@ -379,25 +380,25 @@ def renderer(imgs_path, pdf_convert_confirm, clean_temp):
 
     # 逐个发送图片给 renderer 的 render 函数 (Sending images one by one to the 'render' function of renderer)
     for image_path in image_files:
-        logger.info(f"[Info-GUI.renderer] 开始渲染：{image_path}")
+        logger.info(f"[renderer] 开始渲染：{image_path}")
         success = Renderer.render(model=model, tokenizer=tokenizer, image_path=image_path,
                                   convert_to_pdf=pdf_convert_confirm, wait=config["pdf_render_wait"],
                                   time=config["pdf_render_wait_time"])
         if success:
-            logger.info(f"[Info-GUI.renderer] 渲染成功：{image_path}")
+            logger.info(f"[renderer] 渲染成功：{image_path}")
             if clean_temp and pdf_convert_confirm:
-                logger.info("[Info-GUI.renderer] 开始清理临时文件 (Starting to clean up temporary files)")
+                logger.info("[renderer] 开始清理临时文件 (Starting to clean up temporary files)")
                 TempCleaner.cleaner(["result"],
                                     [f"{os.path.splitext(os.path.basename(image_path))[0]}-gb2312.html",
                                      f"{os.path.splitext(os.path.basename(image_path))[0]}-utf8.html",
                                      f"{os.path.splitext(os.path.basename(image_path))[0]}-utf8-local.html"])
             if clean_temp and not pdf_convert_confirm:
-                logger.info("[Info-GUI.renderer] 开始清理临时文件 (Starting to clean up temporary files)")
+                logger.info("[renderer] 开始清理临时文件 (Starting to clean up temporary files)")
                 TempCleaner.cleaner(["result"], [f"{os.path.splitext(os.path.basename(image_path))[0]}-gb2312.html"])
             else:
-                logger.info(f"[Info-GUI.renderer] 跳过清理临时文件 (Skipping cleaning up temporary files)")
+                logger.info(f"[renderer] 跳过清理临时文件 (Skipping cleaning up temporary files)")
         else:
-            logger.error(f"[Info-GUI.renderer] 渲染失败：{image_path}")
+            logger.error(f"[renderer] 渲染失败：{image_path}")
             raise gr.Error(duration=0, message=local["error_render_fail"].format(img_file=image_path))
 
 
