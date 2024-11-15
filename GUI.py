@@ -376,7 +376,7 @@ def pdf_ocr(mode, pdf_file, target_dpi, pdf_convert, pdf_merge, clean_temp):
 def renderer(imgs_path, pdf_convert_confirm, clean_temp):
     # 获取图片文件列表 (Get a list of image files)
     image_files = glob.glob(os.path.join(imgs_path, '*.jpg')) + glob.glob(os.path.join(imgs_path, '*.png'))
-    logger.debug(f"获取到图片文件列表 (Got image file list)：{image_files}")
+    logger.debug(f"[renderer] 获取到图片文件列表 (Got image file list)：{image_files}")
 
     # 逐个发送图片给 renderer 的 render 函数 (Sending images one by one to the 'render' function of renderer)
     for image_path in image_files:
@@ -384,7 +384,7 @@ def renderer(imgs_path, pdf_convert_confirm, clean_temp):
         success = Renderer.render(model=model, tokenizer=tokenizer, image_path=image_path,
                                   convert_to_pdf=pdf_convert_confirm, wait=config["pdf_render_wait"],
                                   time=config["pdf_render_wait_time"])
-        if success:
+        if success == 1:
             logger.info(f"[renderer] 渲染成功：{image_path}")
             if clean_temp and pdf_convert_confirm:
                 logger.info("[renderer] 开始清理临时文件 (Starting to clean up temporary files)")
@@ -397,7 +397,10 @@ def renderer(imgs_path, pdf_convert_confirm, clean_temp):
                 TempCleaner.cleaner(["result"], [f"{os.path.splitext(os.path.basename(image_path))[0]}-gb2312.html"])
             else:
                 logger.info(f"[renderer] 跳过清理临时文件 (Skipping cleaning up temporary files)")
-        else:
+        elif success == 2:
+            logger.error(f"[renderer] 你看起来没有加载模型，或没有上传图片 (OCR failed, you seem to have not loaded the model or uploaded an image)")
+            raise gr.Error(duration=0, message=local["error_no_model_or_img"])
+        elif success == 3:
             logger.error(f"[renderer] 渲染失败：{image_path}")
             raise gr.Error(duration=0, message=local["error_render_fail"].format(img_file=image_path))
 
