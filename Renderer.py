@@ -107,7 +107,7 @@ for image_path in image_files:
     logger.info(f"正在渲染图片 (Rendering image): {image_path}")
     success = Render.render(model=model, tokenizer=tokenizer, image_path=image_path, convert_to_pdf=convert_confirm,
                             wait=config["pdf_render_wait"], time=config["pdf_render_wait_time"])
-    if success:
+    if success == 1:
         logger.info(f"图片渲染成功 (Image rendering successful): {image_path}")
         print(local["renderer_success"].format(img_path=image_path))
     else:
