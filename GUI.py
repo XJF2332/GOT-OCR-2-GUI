@@ -75,7 +75,7 @@ tokenizer = None
 
 # 加载模型函数 (Loading model function)
 def load_model():
-    logger.info("正在加载模型 (The model is loading)")
+    logger.info("[load_model] 正在加载模型 (The model is loading)")
     global model, tokenizer
     model = None
     tokenizer = None
@@ -83,7 +83,7 @@ def load_model():
     model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_usage=True, device_map='cuda',
                                       use_safetensors=True, pad_token_id=tokenizer.eos_token_id)
     model = model.eval().cuda()
-    logger.info("模型加载完成 (The model is loaded)")
+    logger.info("[load_model] 模型加载完成 (The model is loaded)")
     return local["info_model_already_loaded"]
 
 
@@ -94,7 +94,7 @@ def unload_model():
     global model, tokenizer
     model = None
     tokenizer = None
-    logger.info("模型已卸载 (The model has been unloaded)")
+    logger.info("[unload_model] 模型已卸载 (The model has been unloaded)")
     return local["info_model_not_loaded"]
 
 
