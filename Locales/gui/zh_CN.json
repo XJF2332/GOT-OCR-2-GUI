@@ -8,6 +8,7 @@
     "btn_unload_model": "卸载模型",
     "error_no_model_or_img": "未加载模型",
     "error_ocr_mode_none": "未选择 OCR 模式",
+    "error_no_pdf": "未上传 PDF 文件",
     "error_pdf_merge_fail": "{pdf_file} 合并失败",
     "error_pdf_render_fail": "{pdf_file} 渲染失败",
     "error_pdf_split_fail": "{pdf_file} 分割失败",

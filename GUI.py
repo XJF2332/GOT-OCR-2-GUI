@@ -296,6 +296,9 @@ def ocr(image_uploaded, fine_grained_box_x1, fine_grained_box_y1, fine_grained_b
 # 执行PDF OCR (Performing PDF OCR)
 def pdf_ocr(mode, pdf_file, target_dpi, pdf_convert, pdf_merge, clean_temp):
     logger.info("[pdf_ocr] 开始执行 PDF OCR (Starting PDF OCR)")
+    if not pdf_file:
+        logger.error("[pdf_ocr] PDF 文件未上传 (PDF file not uploaded)")
+        raise gr.Error(duration=0, message=local["error_no_pdf"])
     pdf_name = os.path.basename(pdf_file)
     logger.debug(f"[pdf_ocr] 获取到 PDF 名称 (Got PDF name): {pdf_name}")
     # ---------------------------------- #
