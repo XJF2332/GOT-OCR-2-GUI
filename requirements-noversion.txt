@@ -17,6 +17,7 @@ contourpy
 cssselect2
 cycler
 decorator
+diskcache
 etelemetry
 executing
 fastapi
@@ -89,7 +90,7 @@ safetensors
 scipy
 selenium
 semantic-version
-send2trash
+Send2Trash
 shellingham
 simplejson
 six
