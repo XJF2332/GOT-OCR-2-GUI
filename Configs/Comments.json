@@ -1,5 +1,6 @@
 {
     "load_model_on_start": "    Load model when you start the program\n    在启动应用时自动加载模型",
     "pdf_render_wait": "    Wait for the browser to make sure the pdf is fully loaded\n    在渲染PDF时等待浏览器加载",
-    "pdf_render_wait_time": "    How long (seconds) to wait for the browser to make sure the pdf is fully loaded\n    渲染PDF时，等待浏览器的时间（秒）"
+    "pdf_render_wait_time": "    How long (seconds) to wait for the browser to make sure the pdf is fully loaded\n    渲染PDF时，等待浏览器的时间（秒）",
+    "logger_level": "    Set the log level, only logs of this level and above will be recorded\n    设置日志级别，只有此级别及以上的日志才会被记录"
 }
