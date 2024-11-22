@@ -3,18 +3,55 @@ import os
 import glob
 import scripts.Renderer as Renderer
 import logging
+import json
+from time import sleep
+
+#################################
 
 PDF2ImagePlusRenderer_logger = logging.getLogger(__name__)
-PDF2ImagePlusRenderer_logger.info("日志记录器已初始化 (The logger has been initialized)")
 
+config_path = os.path.join("Configs", "Config.json")
+try:
+    with open(config_path, 'r', encoding='utf-8') as file:
+        config = json.load(file)
+except FileNotFoundError:
+    print("配置文件未找到 (The configuration file was not found)")
+    print("程序将在3秒后退出")
+    sleep(3)
+    exit(1)
+
+try:
+    lvl = config['logger_level']
+    if lvl.lower() == 'debug':
+        PDF2ImagePlusRenderer_logger.setLevel(logging.DEBUG)
+    elif lvl.lower() == 'info':
+        PDF2ImagePlusRenderer_logger.setLevel(logging.INFO)
+    elif lvl.lower() == 'warning':
+        PDF2ImagePlusRenderer_logger.setLevel(logging.WARNING)
+    elif lvl.lower() == 'error':
+        PDF2ImagePlusRenderer_logger.setLevel(logging.ERROR)
+    elif lvl.lower() == 'critical':
+        PDF2ImagePlusRenderer_logger.setLevel(logging.CRITICAL)
+    else:
+        PDF2ImagePlusRenderer_logger.warning("无效的日志级别，回滚到 INFO 级别 (Invalid log level, rolling back to INFO level)")
+        PDF2ImagePlusRenderer_logger.warning("请检查配置文件 (Please check the configuration file)")
+        PDF2ImagePlusRenderer_logger.setLevel(logging.INFO)
+except KeyError:
+    PDF2ImagePlusRenderer_logger.warning("配置文件中未找到日志级别，回滚到 INFO 级别 (The log level was not found in the configuration file, rolling back to INFO level)")
+    PDF2ImagePlusRenderer_logger.warning("请检查配置文件 (Please check the configuration file)")
+    PDF2ImagePlusRenderer_logger.setLevel(logging.INFO)
+
+#################################
 
 def get_base_name(path):
     return os.path.basename(path)
 
+#################################
 
 def remove_extension(base_name):
     return os.path.splitext(base_name)[0]
 
+#################################
 
 def split_pdf(pdf_path: str, img_path: str, target_dpi: int):
     """
@@ -60,6 +97,7 @@ def split_pdf(pdf_path: str, img_path: str, target_dpi: int):
         PDF2ImagePlusRenderer_logger.error(f"[split_pdf] 转换失败 (Conversion failed): {e}")
         return False
 
+#################################
 
 def get_sorted_png_files(directory: str, prefix: str):
     """
@@ -93,6 +131,7 @@ def get_sorted_png_files(directory: str, prefix: str):
     except Exception as e:
         PDF2ImagePlusRenderer_logger.error(f"[get_sorted_png_files] 获取文件列表失败 (Failed to get file list): {e}")
 
+#################################
 
 def pdf_renderer(model: object, tokenizer: object, pdf_path: str, target_dpi: int, pdf_convert: bool, wait: bool,
                  time: int):
@@ -137,12 +176,14 @@ def pdf_renderer(model: object, tokenizer: object, pdf_path: str, target_dpi: in
                                       convert_to_pdf=pdf_convert)
             if success == 1:
                 PDF2ImagePlusRenderer_logger.info("[pdf_renderer] 渲染成功 (Rendering succeeded)")
+                return True
             elif success == 2:
                 PDF2ImagePlusRenderer_logger.error(
                     "[pdf_renderer] 你看起来没有加载模型或上传图片 (You seem to have not loaded the model or uploaded an image)")
+                return False
             elif success == 3:
                 PDF2ImagePlusRenderer_logger.error("[pdf_renderer] 渲染失败 (Rendering failed)")
-        return True
+                return False
     except Exception as e:
         PDF2ImagePlusRenderer_logger.error(f"[pdf_renderer] 渲染失败 (Rendering failed): {e}")
         return False

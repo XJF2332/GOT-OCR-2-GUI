@@ -1,6 +1,5 @@
 print("正在加载 (Loading...)")
 
-import os
 import logging
 from datetime import datetime
 import scripts.Renderer as Renderer
@@ -12,7 +11,7 @@ import gradio as gr
 import os
 import glob
 import json
-import time
+from time import sleep
 
 ##########################
 
@@ -24,7 +23,7 @@ try:
 except FileNotFoundError:
     print("配置文件未找到 (The configuration file was not found)")
     print("程序将在3秒后退出")
-    time.sleep(3)
+    sleep(3)
     exit(1)
 
 ##########################
@@ -33,28 +32,33 @@ except FileNotFoundError:
 current_time = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 logger = logging.getLogger(__name__)
 
-lvl = config['logger_level']
-if lvl.lower() == 'debug':
-    logger.setLevel(logging.DEBUG)
-elif lvl.lower() == 'info':
-    logger.setLevel(logging.INFO)
-elif lvl.lower() == 'warning':
-    logger.setLevel(logging.WARNING)
-elif lvl.lower() == 'error':
-    logger.setLevel(logging.ERROR)
-elif lvl.lower() == 'critical':
-    logger.setLevel(logging.CRITICAL)
-else:
-    print("无效的日志级别，请检查配置文件 (Invalid log level, please check the configuration file)")
-    print("回滚到 INFO 级别 (The log level will be rolled back to INFO level)")
-    logger.setLevel(logging.INFO)
-
 logging.basicConfig(
     filename=os.path.join("Logs", f"{current_time}.log"),
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S',
     encoding='utf-8',
 )
+
+try:
+    lvl = config['logger_level']
+    if lvl.lower() == 'debug':
+        logger.setLevel(logging.DEBUG)
+    elif lvl.lower() == 'info':
+        logger.setLevel(logging.INFO)
+    elif lvl.lower() == 'warning':
+        logger.setLevel(logging.WARNING)
+    elif lvl.lower() == 'error':
+        logger.setLevel(logging.ERROR)
+    elif lvl.lower() == 'critical':
+        logger.setLevel(logging.CRITICAL)
+    else:
+        logger.warning("无效的日志级别，回滚到 INFO 级别 (Invalid log level, rolling back to INFO level)")
+        logger.warning("请检查配置文件 (Please check the configuration file)")
+        logger.setLevel(logging.INFO)
+except KeyError:
+    logger.warning("配置文件中未找到日志级别，回滚到 INFO 级别 (The log level was not found in the configuration file, rolling back to INFO level)")
+    logger.warning("请检查配置文件 (Please check the configuration file)")
+    logger.setLevel(logging.INFO)
 
 console = logging.StreamHandler()
 console.setLevel(logging.WARNING)
@@ -84,7 +88,7 @@ try:
 except FileNotFoundError:
     logger.critical(f"语言文件未找到 (The language file was not found): {lang}")
     print("程序将在3秒后退出")
-    time.sleep(3)
+    sleep(3)
     exit(1)
 
 ##########################

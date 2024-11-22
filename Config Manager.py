@@ -4,16 +4,28 @@ import os
 
 
 def clear():
-    # 如果是Windows系统 (If it is a Windows system)
     if os.name == 'nt':
         os.system('cls')
     else:
-        # 对于mac和linux（os.name是'posix'） (For mac and linux (os.name is 'posix'))
         os.system('clear')
 
 
+def get_available_choices(key):
+    with open(os.path.join("Configs", "Available Choices.json"), 'r', encoding="utf-8") as choices_file:
+        choices_data = json.load(choices_file)
+    return choices_data.get(key, {})
+
+
+def get_choice_from_user(key, choices):
+    print(f"Choose a value for '{key}':")
+    for index, value in choices.items():
+        print(f"{index}. {value}")
+    choice = input("Enter your choice (number): ")
+    return choices.get(choice, None)
+
+
 while True:
-    clear()  # 在循环开始时清屏 (Clear the screen at the beginning of the loop)
+    clear()
     mgr_choice = int(input(
         "What do you want to do?\n1. Configure language\n2. Configure other settings\n3. Exit\nEnter your choice (1~3): "))
 
@@ -21,7 +33,7 @@ while True:
         clear()
         LangConfigMgr.lang_manager()
         input("Press Any key to continue...")
-        clear()  # 在语言配置后清屏 (Clear the screen after language configuration)
+
     elif mgr_choice == 2:
         clear()
 
@@ -41,25 +53,25 @@ while True:
 
         setting_index = int(input("Enter the index of the setting you want to modify: "))
 
-        # 检测输入是否合法 (Check if input is valid)
         if 1 <= setting_index <= len(settings_list):
-            # Adjust the index to 0-based for list access
             adjusted_index = setting_index - 1
-            # 获取键 (Get key)
             setting_key = settings_list[adjusted_index][0]
-            # 获取当前值和类型 (Get current value and type)
             current_value = config_data[setting_key]
             value_type = type(current_value).__name__
 
-            new_value = input(f"Enter the new value for '{setting_key}' (current type is {value_type}): ")
+            choices = get_available_choices(setting_key)
+            if choices:
+                new_value = get_choice_from_user(setting_key, choices)
+            else:
+                new_value = input(f"Enter the new value for '{setting_key}' (current type is {value_type}): ")
 
-            # 转换类型 (Convert type)
-            if value_type == 'int':
-                new_value = int(new_value)
-            elif value_type == 'float':
-                new_value = float(new_value)
-            elif value_type == 'bool':
-                new_value = new_value.lower() in ['true', '1', 't', 'y', 'yes']
+                # 转换类型 (Convert type)
+                if value_type == 'int':
+                    new_value = int(new_value)
+                elif value_type == 'float':
+                    new_value = float(new_value)
+                elif value_type == 'bool':
+                    new_value = new_value.lower() in ['true', '1', 't', 'y', 'yes']
 
             # 写配置 (Write configuration)
             config_data[setting_key] = new_value
@@ -69,9 +81,9 @@ while True:
                 json.dump(config_data, config_file, indent=4)
             print(f"Setting '{setting_key}' has been updated to '{new_value}'.")
             input("Press Any key to continue...")
-            clear()  # 在配置更新后清屏 (Clear the screen after configuration update)
+            clear()
         else:
             print("Invalid index. No changes made.")
-            clear()  # 在无效输入后清屏 (Clear the screen after invalid input)
+            clear()
     elif mgr_choice == 3:
         break

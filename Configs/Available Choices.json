@@ -1,0 +1,17 @@
+{
+    "load_model_on_start": {
+        "1": true,
+        "2": false
+    },
+    "pdf_render_wait": {
+        "1": true,
+        "2": false
+    },
+    "logger_level": {
+        "1": "DEBUG",
+        "2": "INFO",
+        "3": "WARNING",
+        "4": "ERROR",
+        "5": "CRITICAL"
+    }
+}

@@ -6,10 +6,45 @@ from selenium.webdriver.edge.options import Options
 import base64
 import time
 import re
+from time import sleep
+import json
+
+#################################
 
 HTML2PDF_logger = logging.getLogger(__name__)
-HTML2PDF_logger.info("日志记录器已初始化 (The logger has been initialized)")
 
+config_path = os.path.join("Configs", "Config.json")
+try:
+    with open(config_path, 'r', encoding='utf-8') as file:
+        config = json.load(file)
+except FileNotFoundError:
+    print("配置文件未找到 (The configuration file was not found)")
+    print("程序将在3秒后退出")
+    sleep(3)
+    exit(1)
+
+try:
+    lvl = config['logger_level']
+    if lvl.lower() == 'debug':
+        HTML2PDF_logger.setLevel(logging.DEBUG)
+    elif lvl.lower() == 'info':
+        HTML2PDF_logger.setLevel(logging.INFO)
+    elif lvl.lower() == 'warning':
+        HTML2PDF_logger.setLevel(logging.WARNING)
+    elif lvl.lower() == 'error':
+        HTML2PDF_logger.setLevel(logging.ERROR)
+    elif lvl.lower() == 'critical':
+        HTML2PDF_logger.setLevel(logging.CRITICAL)
+    else:
+        HTML2PDF_logger.warning("无效的日志级别，回滚到 INFO 级别 (Invalid log level, rolling back to INFO level)")
+        HTML2PDF_logger.warning("请检查配置文件 (Please check the configuration file)")
+        HTML2PDF_logger.setLevel(logging.INFO)
+except KeyError:
+    HTML2PDF_logger.warning("配置文件中未找到日志级别，回滚到 INFO 级别 (The log level was not found in the configuration file, rolling back to INFO level)")
+    HTML2PDF_logger.warning("请检查配置文件 (Please check the configuration file)")
+    HTML2PDF_logger.setLevel(logging.INFO)
+
+#################################
 
 def convert_html_encoding(html_gb2312_path: str, html_utf8_path: str):
     """
@@ -33,6 +68,7 @@ def convert_html_encoding(html_gb2312_path: str, html_utf8_path: str):
     except Exception as e:
         HTML2PDF_logger.error(f"[convert_html_encoding] {e}")
 
+#################################
 
 def repalce_html_content(html_utf8_path: str, html_utf8_local_path: str):
     """
@@ -51,13 +87,11 @@ def repalce_html_content(html_utf8_path: str, html_utf8_local_path: str):
         pattern = r'https://cdn.jsdelivr.net/npm/mathpix-markdown-it@1.3.6/es5/bundle.js'
         replacement = 'markdown-it.js'
 
-        # 打开文件并读取内容
         HTML2PDF_logger.info(f"[repalce_html_content] 正在读取 (Reading)：{html_utf8_path}")
         with open(html_utf8_path, 'r', encoding='utf-8') as file:
             content = file.read()
         # 替换
         new_html_content = re.sub(pattern, replacement, content)
-        # 将替换后的内容写入新文件
         HTML2PDF_logger.info(f"[repalce_html_content] 正在写入 (Writing)：{html_utf8_local_path}")
         with open(html_utf8_local_path, 'w', encoding='utf-8') as file:
             file.write(new_html_content)
@@ -65,6 +99,7 @@ def repalce_html_content(html_utf8_path: str, html_utf8_local_path: str):
         # 打印错误信息
         HTML2PDF_logger.error(f"[repalce_html_content] {e}")
 
+#################################
 
 def output_pdf(html_path: str, pdf_path: str, waiting_time: int, wait: bool = False):
     """
@@ -132,6 +167,7 @@ def output_pdf(html_path: str, pdf_path: str, waiting_time: int, wait: bool = Fa
         HTML2PDF_logger.error(f"[output_pdf] {e}")
         return 3
 
+#################################
 
 def all_in_one(html_gb2312_path: str, html_utf8_path: str, html_utf8_local_path: str, pdf_path: str, wait: bool,
                waiting_time: int):

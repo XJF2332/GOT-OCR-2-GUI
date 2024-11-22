@@ -2,12 +2,49 @@ import os
 import fitz
 import glob
 import logging
+import json
+from time import sleep
+
+#################################
 
 PDFMerger_logger = logging.getLogger(__name__)
-PDFMerger_logger.info("日志记录器已初始化 (The logger has been initialized)")
+
+config_path = os.path.join("Configs", "Config.json")
+try:
+    with open(config_path, 'r', encoding='utf-8') as file:
+        config = json.load(file)
+except FileNotFoundError:
+    print("配置文件未找到 (The configuration file was not found)")
+    print("程序将在3秒后退出")
+    sleep(3)
+    exit(1)
+
+try:
+    lvl = config['logger_level']
+    if lvl.lower() == 'debug':
+        PDFMerger_logger.setLevel(logging.DEBUG)
+    elif lvl.lower() == 'info':
+        PDFMerger_logger.setLevel(logging.INFO)
+    elif lvl.lower() == 'warning':
+        PDFMerger_logger.setLevel(logging.WARNING)
+    elif lvl.lower() == 'error':
+        PDFMerger_logger.setLevel(logging.ERROR)
+    elif lvl.lower() == 'critical':
+        PDFMerger_logger.setLevel(logging.CRITICAL)
+    else:
+        PDFMerger_logger.warning("无效的日志级别，回滚到 INFO 级别 (Invalid log level, rolling back to INFO level)")
+        PDFMerger_logger.warning("请检查配置文件 (Please check the configuration file)")
+        PDFMerger_logger.setLevel(logging.INFO)
+except KeyError:
+    PDFMerger_logger.warning("配置文件中未找到日志级别，回滚到 INFO 级别 (The log level was not found in the configuration file, rolling back to INFO level)")
+    PDFMerger_logger.warning("请检查配置文件 (Please check the configuration file)")
+    PDFMerger_logger.setLevel(logging.INFO)
+
+#################################
 
 pdf_list = []
 
+#################################
 
 def get_pdf_list(directory: str, prefix: str, except_pattern: str):
     """
@@ -46,6 +83,7 @@ def get_pdf_list(directory: str, prefix: str, except_pattern: str):
     except Exception as e:
         PDFMerger_logger.error(f"[get_pdf_list] 获取 PDF 文件列表失败 (Failed to get PDF file list)：{e}")
 
+#################################
 
 def merge_pdfs(prefix: str):
     """
@@ -80,10 +118,12 @@ def merge_pdfs(prefix: str):
         PDFMerger_logger.error(f"[merge_pdfs] 合并 PDF 文件失败 (Failed to merge PDF files)：{e}")
         return False
 
+#################################
 
 def t():
     merge_pdfs("t")
 
+#################################
 
 if __name__ == "__main__":
     t()
