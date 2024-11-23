@@ -227,7 +227,7 @@ def extract_pdf_pattern(filename):
     :return: 前缀 (Prefix)
     """
     # 在最后一个下划线处分割文件名 (Split the filename at the last underscore) 
-    parts = filename.rsplit('_', 1)
+    parts = filename.rsplit('_')
     logger.debug(f"[extract_pdf_pattern] 文件名分割结果 (The result of splitting the filename): {parts}")
 
     # 检查最后一部分是否为 '0.pdf' (Check if the last part is '0.pdf') 
@@ -360,7 +360,7 @@ def pdf_ocr(mode, pdf_file, target_dpi, pdf_convert, pdf_merge, clean_temp):
             if pdf_merge:  # 决定是否要合并 (Deciding whether to merge or not)
                 logger.debug(f"[pdf_ocr] 开始合并 PDF 文件 (Starting to merge PDF file)：{pdf_name}")
                 gr.Info(message=local["info_pdf_merge_start"].format(pdf_file=pdf_name))
-                success = PDFMerger.merge_pdfs(prefix=pdf_name)
+                success = PDFMerger.merge_pdfs(prefix=extract_pdf_pattern(pdf_name))
                 # 合并成功判定 (Merging success determination)
                 if success:
                     logger.info(f"[pdf_ocr] PDF 文件合并成功 (PDF file merged successfully)：{pdf_name}")
