@@ -176,14 +176,16 @@ def pdf_renderer(model: object, tokenizer: object, pdf_path: str, target_dpi: in
                                       convert_to_pdf=pdf_convert)
             if success == 1:
                 PDF2ImagePlusRenderer_logger.info("[pdf_renderer] 渲染成功 (Rendering succeeded)")
-                return True
+                re = True
             elif success == 2:
                 PDF2ImagePlusRenderer_logger.error(
                     "[pdf_renderer] 你看起来没有加载模型或上传图片 (You seem to have not loaded the model or uploaded an image)")
-                return False
+                re = False
             elif success == 3:
                 PDF2ImagePlusRenderer_logger.error("[pdf_renderer] 渲染失败 (Rendering failed)")
-                return False
+                re = False
+
+        return re
     except Exception as e:
         PDF2ImagePlusRenderer_logger.error(f"[pdf_renderer] 渲染失败 (Rendering failed): {e}")
         return False
