@@ -81,12 +81,12 @@ def split_pdf(pdf_path: str, img_path: str, target_dpi: int):
             matrix = fitz.Matrix(zoom, zoom)
 
             # 将PDF页面转换为图像
-            PDF2ImagePlusRenderer_logger.info(f"[split_pdf] 正在转换第 {page_number + 1} 页 (Converting page {page_number + 1})")
+            PDF2ImagePlusRenderer_logger.debug(f"[split_pdf] 正在转换第 {page_number + 1} 页 (Converting page {page_number + 1})")
             page = doc[page_number]
             pix = page.get_pixmap(matrix=matrix)
 
             # 保存图像
-            PDF2ImagePlusRenderer_logger.info(f"[split_pdf] 正在保存第 {page_number + 1} 页 (Saving page {page_number + 1})")
+            PDF2ImagePlusRenderer_logger.debug(f"[split_pdf] 正在保存第 {page_number + 1} 页 (Saving page {page_number + 1})")
             output_path = os.path.join(f"{img_path}", f"{pdf_path_base}_{page_number}.png")
             pix.save(output_path)
 
