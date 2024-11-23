@@ -15,7 +15,7 @@
     "import_libs": "Importing libraries......",
     "label_ocr_mode": "Select OCR mode:",
     "load_models": "Loading models......",
-    "load_models_success": "Model loading successful",
+    "info_load_models_success": "Model loading successful",
     "multicrop_ocr": "4. Multi-Crop OCR",
     "ocr_mode": "Enter the number to select OCR mode:",
     "ocr_mode_error": "Invalid selection, reverting to default mode (Plain Text OCR)......",
@@ -31,5 +31,7 @@
     "render_mode_rendering": "Rendering......",
     "render_mode_success": "Render result saved to {html_gb2312_path} and {html_utf8_path}",
     "renderer_fail": "Rendering failed for {img_path}",
-    "renderer_success": "Successfully rendered {img_path}"
+    "renderer_success": "Successfully rendered {img_path}",
+    "critical_config_notfound": "Config file not found, please check the config file path",
+    "critical_load_models_fail": "Model loading failed, please check the model path"
 }

@@ -15,7 +15,7 @@
     "import_libs": "正在导入库......",
     "label_ocr_mode": "选择OCR模式：",
     "load_models": "正在加载模型......",
-    "load_models_success": "模型加载成功",
+    "info_load_models_success": "模型加载成功",
     "multicrop_ocr": "4. Multi-Crop OCR",
     "ocr_mode": "输入序号来选择OCR模式：",
     "ocr_mode_error": "无效选择，退回到默认模式（纯文本OCR）......",
@@ -31,5 +31,7 @@
     "render_mode_rendering": "正在渲染......",
     "render_mode_success": "渲染结果已保存到 {html_gb2312_path} 和 {html_utf8_path}",
     "renderer_fail": "{img_path} 渲染失败",
-    "renderer_success": "{img_path} 渲染成功"
+    "renderer_success": "{img_path} 渲染成功",
+    "critical_config_notfound": "未找到配置文件，请检查配置文件路径",
+    "critical_load_models_fail": "模型加载失败，请检查模型文件路径"
 }

@@ -2,5 +2,5 @@
     "load_model_on_start": false,
     "pdf_render_wait": false,
     "pdf_render_wait_time": 2,
-    "clean_temp": true
+    "logger_level": "INFO"
 }

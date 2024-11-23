@@ -2,17 +2,56 @@ import fitz
 import os
 import glob
 import scripts.Renderer as Renderer
+import logging
+import json
+from time import sleep
 
-pdf_path_base = ''
+#################################
 
+PDF2ImagePlusRenderer_logger = logging.getLogger(__name__)
+
+config_path = os.path.join("Configs", "Config.json")
+try:
+    with open(config_path, 'r', encoding='utf-8') as file:
+        config = json.load(file)
+except FileNotFoundError:
+    print("配置文件未找到 (The configuration file was not found)")
+    print("程序将在3秒后退出")
+    sleep(3)
+    exit(1)
+
+try:
+    lvl = config['logger_level']
+    if lvl.lower() == 'debug':
+        PDF2ImagePlusRenderer_logger.setLevel(logging.DEBUG)
+    elif lvl.lower() == 'info':
+        PDF2ImagePlusRenderer_logger.setLevel(logging.INFO)
+    elif lvl.lower() == 'warning':
+        PDF2ImagePlusRenderer_logger.setLevel(logging.WARNING)
+    elif lvl.lower() == 'error':
+        PDF2ImagePlusRenderer_logger.setLevel(logging.ERROR)
+    elif lvl.lower() == 'critical':
+        PDF2ImagePlusRenderer_logger.setLevel(logging.CRITICAL)
+    else:
+        PDF2ImagePlusRenderer_logger.warning("无效的日志级别，回滚到 INFO 级别 (Invalid log level, rolling back to INFO level)")
+        PDF2ImagePlusRenderer_logger.warning("请检查配置文件 (Please check the configuration file)")
+        PDF2ImagePlusRenderer_logger.setLevel(logging.INFO)
+except KeyError:
+    PDF2ImagePlusRenderer_logger.warning("配置文件中未找到日志级别，回滚到 INFO 级别 (The log level was not found in the configuration file, rolling back to INFO level)")
+    PDF2ImagePlusRenderer_logger.warning("请检查配置文件 (Please check the configuration file)")
+    PDF2ImagePlusRenderer_logger.setLevel(logging.INFO)
+
+#################################
 
 def get_base_name(path):
     return os.path.basename(path)
 
+#################################
 
 def remove_extension(base_name):
     return os.path.splitext(base_name)[0]
 
+#################################
 
 def split_pdf(pdf_path: str, img_path: str, target_dpi: int):
     """
@@ -27,36 +66,38 @@ def split_pdf(pdf_path: str, img_path: str, target_dpi: int):
     """
     try:
         if not os.path.exists(img_path):
-            print(f"[Debug-PDF2ImagePlusRenderer.split_pdf] 图片目录不存在，正在创建：{img_path}")
             os.makedirs(img_path)
-        print(f"[Info-PDF2ImagePlusRenderer.split_pdf] 正在拆分PDF文件：{pdf_path}")
-        print(f"[Info-PDF2ImagePlusRenderer.split_pdf] 正在打开：{pdf_path}")
+
+        PDF2ImagePlusRenderer_logger.info(f"[split_pdf] 正在打开 (Opening)：{pdf_path}")
         doc = fitz.open(pdf_path)
 
         pdf_path_base = get_base_name(path=pdf_path)
+        PDF2ImagePlusRenderer_logger.debug(f"[split_pdf] PDF 文件名 (Got PDF file name)：{pdf_path_base}")
         pdf_path_base = remove_extension(pdf_path_base)
+        PDF2ImagePlusRenderer_logger.debug(f"[split_pdf] PDF 文件名去掉扩展名 (Got PDF file name without extension)：{pdf_path_base}")
 
         for page_number in range(len(doc)):
             zoom = target_dpi / 72.0
             matrix = fitz.Matrix(zoom, zoom)
 
             # 将PDF页面转换为图像
-            print(f"[Info-PDF2ImagePlusRenderer.split_pdf] 正在处理第 {page_number} 页")
+            PDF2ImagePlusRenderer_logger.debug(f"[split_pdf] 正在转换第 {page_number + 1} 页 (Converting page {page_number + 1})")
             page = doc[page_number]
             pix = page.get_pixmap(matrix=matrix)
 
             # 保存图像
+            PDF2ImagePlusRenderer_logger.debug(f"[split_pdf] 正在保存第 {page_number + 1} 页 (Saving page {page_number + 1})")
             output_path = os.path.join(f"{img_path}", f"{pdf_path_base}_{page_number}.png")
             pix.save(output_path)
-            print(f"[Info-PDF2ImagePlusRenderer.split_pdf] 已保存 {output_path}")
 
-        print(f"[Info-PDF2ImagePlusRenderer.split_pdf] 拆分PDF文件完成")
+        PDF2ImagePlusRenderer_logger.info("[split_pdf] 转换完成 (Conversion completed)")
         doc.close()
         return True
     except Exception as e:
-        print(f"[Error-PDF2ImagePlusRenderer.split_pdf] 拆分PDF文件失败: {e}")
+        PDF2ImagePlusRenderer_logger.error(f"[split_pdf] 转换失败 (Conversion failed): {e}")
         return False
 
+#################################
 
 def get_sorted_png_files(directory: str, prefix: str):
     """
@@ -71,14 +112,13 @@ def get_sorted_png_files(directory: str, prefix: str):
     try:
         # 构建匹配模式
         pattern = os.path.join(directory, f"{prefix}_*.png")
+        PDF2ImagePlusRenderer_logger.debug(f"[get_sorted_png_files] 匹配模式 (Pattern)：{pattern}")
 
         # 获取所有匹配的文件
-        print(f"[Info-PDF2ImagePlusRenderer.get_sorted_png_files] 正在获取 PNG 文件列表")
         files = glob.glob(pattern)
+        PDF2ImagePlusRenderer_logger.debug(f"[get_sorted_png_files] 所有匹配的文件 (All matched files)：{files}")
 
         # 定义一个函数，用于从文件名中提取整数部分
-        print(f"[Info-PDF2ImagePlusRenderer.get_sorted_png_files] 正在排序 PNG 图片列表")
-
         def extract_integer(filename):
             # 假设文件名格式正确，去掉扩展名 .png 和前缀
             number_part = os.path.basename(filename).replace(f"{prefix}_", "").replace(".png", "")
@@ -86,10 +126,12 @@ def get_sorted_png_files(directory: str, prefix: str):
 
         # 按整数大小排序文件列表
         sorted_files = sorted(files, key=extract_integer)
+        PDF2ImagePlusRenderer_logger.debug(f"[get_sorted_png_files] 排序后的文件列表 (Sorted file list)：{sorted_files}")
         return sorted_files
     except Exception as e:
-        print(f"[Error-PDF2ImagePlusRenderer.get_sorted_png_files] 获取 PNG 文件列表失败: {e}")
+        PDF2ImagePlusRenderer_logger.error(f"[get_sorted_png_files] 获取文件列表失败 (Failed to get file list): {e}")
 
+#################################
 
 def pdf_renderer(model: object, tokenizer: object, pdf_path: str, target_dpi: int, pdf_convert: bool, wait: bool,
                  time: int):
@@ -115,27 +157,33 @@ def pdf_renderer(model: object, tokenizer: object, pdf_path: str, target_dpi: in
 
     try:
         # 将 pdf 文件转换为图片
-        print(f"[Info-PDF2ImagePlusRenderer.pdf_renderer] 正在将PDF文件转换为图片：{pdf_path}")
+        PDF2ImagePlusRenderer_logger.info(f"[pdf_renderer] 正在渲染 (Rendering)：{pdf_path}")
         split_pdf(pdf_path=pdf_path, img_path="imgs", target_dpi=target_dpi)
         # pdf 文件名
         pdf_name = get_base_name(path=pdf_path)
         pdf_name = remove_extension(pdf_name)
+        PDF2ImagePlusRenderer_logger.debug(f"[pdf_renderer] PDF 文件名 (Got PDF file name)：{pdf_name}")
         # 获取图片列表
-        print(f"[Info-PDF2ImagePlusRenderer.pdf_renderer] 正在获取图片列表")
         img_list = get_sorted_png_files(directory="imgs", prefix=pdf_name)
+        PDF2ImagePlusRenderer_logger.debug(f"[pdf_renderer] 图片列表 (Got image list)：{img_list}")
         if len(img_list) == 0:
-            print(f"[Error-PDF2ImagePlusRenderer.pdf_renderer] 未找到图片文件")
+            PDF2ImagePlusRenderer_logger.error("[pdf_renderer] 图片列表为空 (Image list is empty)")
             return False
-        else:
-            pass
         # 调用渲染器
         for img in img_list:
-            print(f"[Info-PDF2ImagePlusRenderer.pdf_renderer] 正在渲染图片：{img}")
+            PDF2ImagePlusRenderer_logger.info(f"[pdf_renderer] 正在渲染图片 (Rendering image)：{img}")
             success = Renderer.render(model=model, tokenizer=tokenizer, image_path=img, wait=wait, time=time,
                                       convert_to_pdf=pdf_convert)
-            if not success:
+            if success == 1:
+                PDF2ImagePlusRenderer_logger.info("[pdf_renderer] 渲染成功 (Rendering succeeded)")
+                return True
+            elif success == 2:
+                PDF2ImagePlusRenderer_logger.error(
+                    "[pdf_renderer] 你看起来没有加载模型或上传图片 (You seem to have not loaded the model or uploaded an image)")
                 return False
-        return True
+            elif success == 3:
+                PDF2ImagePlusRenderer_logger.error("[pdf_renderer] 渲染失败 (Rendering failed)")
+                return False
     except Exception as e:
-        print(f"[Error-PDF2ImagePlusRenderer.pdf_renderer] 渲染失败: {e}")
+        PDF2ImagePlusRenderer_logger.error(f"[pdf_renderer] 渲染失败 (Rendering failed): {e}")
         return False

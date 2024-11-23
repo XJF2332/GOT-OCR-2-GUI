@@ -1,11 +1,50 @@
+import logging
+import os
 from selenium import webdriver
 from selenium.webdriver.edge.service import Service
 from selenium.webdriver.edge.options import Options
-import os
 import base64
 import time
 import re
+from time import sleep
+import json
 
+#################################
+
+HTML2PDF_logger = logging.getLogger(__name__)
+
+config_path = os.path.join("Configs", "Config.json")
+try:
+    with open(config_path, 'r', encoding='utf-8') as file:
+        config = json.load(file)
+except FileNotFoundError:
+    print("配置文件未找到 (The configuration file was not found)")
+    print("程序将在3秒后退出")
+    sleep(3)
+    exit(1)
+
+try:
+    lvl = config['logger_level']
+    if lvl.lower() == 'debug':
+        HTML2PDF_logger.setLevel(logging.DEBUG)
+    elif lvl.lower() == 'info':
+        HTML2PDF_logger.setLevel(logging.INFO)
+    elif lvl.lower() == 'warning':
+        HTML2PDF_logger.setLevel(logging.WARNING)
+    elif lvl.lower() == 'error':
+        HTML2PDF_logger.setLevel(logging.ERROR)
+    elif lvl.lower() == 'critical':
+        HTML2PDF_logger.setLevel(logging.CRITICAL)
+    else:
+        HTML2PDF_logger.warning("无效的日志级别，回滚到 INFO 级别 (Invalid log level, rolling back to INFO level)")
+        HTML2PDF_logger.warning("请检查配置文件 (Please check the configuration file)")
+        HTML2PDF_logger.setLevel(logging.INFO)
+except KeyError:
+    HTML2PDF_logger.warning("配置文件中未找到日志级别，回滚到 INFO 级别 (The log level was not found in the configuration file, rolling back to INFO level)")
+    HTML2PDF_logger.warning("请检查配置文件 (Please check the configuration file)")
+    HTML2PDF_logger.setLevel(logging.INFO)
+
+#################################
 
 def convert_html_encoding(html_gb2312_path: str, html_utf8_path: str):
     """
@@ -19,16 +58,17 @@ def convert_html_encoding(html_gb2312_path: str, html_utf8_path: str):
     """
     try:
         # gb2312
-        print(f"[Info-HTML2PDF.convert_html_encoding] 正在打开：{html_gb2312_path}")
+        HTML2PDF_logger.info(f"[convert_html_encoding] 正在读取 (Reading)：{html_gb2312_path}")
         with open(html_gb2312_path, 'r', encoding='gb2312') as file:
             content = file.read()
         # utf8
-        print(f"[Info-HTML2PDF.convert_html_encoding] 正在转码：{html_utf8_path}")
+        HTML2PDF_logger.info(f"[convert_html_encoding] 正在转换 (Converting)：{html_utf8_path}")
         with open(html_utf8_path, 'w', encoding='utf-8') as file:
             file.write(content)
     except Exception as e:
-        print(f"[Error-HTML2PDF.convert_html_encoding] {e}")
+        HTML2PDF_logger.error(f"[convert_html_encoding] {e}")
 
+#################################
 
 def repalce_html_content(html_utf8_path: str, html_utf8_local_path: str):
     """
@@ -41,25 +81,25 @@ def repalce_html_content(html_utf8_path: str, html_utf8_local_path: str):
         None
     """
     try:
-        print(f"[Info-HTML2PDF.repalce_html_content] 正在准备替换：{html_utf8_path}")
+        HTML2PDF_logger.info(f"[repalce_html_content] 正在替换 (Replacing)：{html_utf8_path}")
+
         # 替换内容
         pattern = r'https://cdn.jsdelivr.net/npm/mathpix-markdown-it@1.3.6/es5/bundle.js'
         replacement = 'markdown-it.js'
 
-        # 打开文件并读取内容
-        print(f"[Info-HTML2PDF.repalce_html_content] 正在打开：{html_utf8_path}")
+        HTML2PDF_logger.info(f"[repalce_html_content] 正在读取 (Reading)：{html_utf8_path}")
         with open(html_utf8_path, 'r', encoding='utf-8') as file:
             content = file.read()
         # 替换
         new_html_content = re.sub(pattern, replacement, content)
-        # 将替换后的内容写入新文件
-        print(f"[Info-HTML2PDF.repalce_html_content] 正在写入：{html_utf8_local_path}")
+        HTML2PDF_logger.info(f"[repalce_html_content] 正在写入 (Writing)：{html_utf8_local_path}")
         with open(html_utf8_local_path, 'w', encoding='utf-8') as file:
             file.write(new_html_content)
     except Exception as e:
         # 打印错误信息
-        print(f"[Error-HTML2PDF.repalce_html_content] {e}")
+        HTML2PDF_logger.error(f"[repalce_html_content] {e}")
 
+#################################
 
 def output_pdf(html_path: str, pdf_path: str, waiting_time: int, wait: bool = False):
     """
@@ -71,18 +111,20 @@ def output_pdf(html_path: str, pdf_path: str, waiting_time: int, wait: bool = Fa
         wait: 是否等待。
 
     Returns:
-        None
+        1: 未找到WebDriver。
+        2: 转换成功。
+        3: 转换失败。
     """
     try:
-        print(f"[Info-HTML2PDF.output_pdf] 正在转换 PDF ：{html_path}")
-        print(f"[Info-HTML2PDF.output_pdf] 正在初始化 WebDriver")
+        HTML2PDF_logger.info(f"[output_pdf] 正在转换 (Converting)：{html_path}")
 
         # 设置EdgeDriver的路径
         edge_driver_path = os.path.abspath('./edge_driver/msedgedriver.exe')
-
+        if not os.path.exists(edge_driver_path):
+            HTML2PDF_logger.critical(f"[output_pdf] EdgeDriver 不存在 (EdgeDriver does not exist): {edge_driver_path}")
+            return 1
         # 设置本地HTML文件的路径
         html_file_path = 'file://' + os.path.abspath(html_path)
-
         # 设置输出的PDF文件路径
         pdf_file_path = pdf_path
 
@@ -98,7 +140,7 @@ def output_pdf(html_path: str, pdf_path: str, waiting_time: int, wait: bool = Fa
         driver = webdriver.Edge(service=service, options=edge_options)
 
         # 打开HTML文件
-        print(f"[Info-HTML2PDF.output_pdf] 正在打开：{html_file_path}")
+        HTML2PDF_logger.info(f"[output_pdf] 正在打开 (Opening)：{html_file_path}")
         driver.get(html_file_path)
 
         # 确保页面已加载
@@ -106,23 +148,26 @@ def output_pdf(html_path: str, pdf_path: str, waiting_time: int, wait: bool = Fa
             time.sleep(waiting_time)
 
         # 生成PDF文件
-        print(f"[Info-HTML2PDF.output_pdf] 正在生成 PDF：{pdf_file_path}")
+        HTML2PDF_logger.info(f"[output_pdf] 正在生成 (Generating)：{pdf_file_path}")
         pdf_data = driver.execute_cdp_cmd('Page.printToPDF', {
             'landscape': False,
             'displayHeaderFooter': False
         })['data']
 
         # 写入PDF文件
-        print(f"[Info-HTML2PDF.output_pdf] 正在写入：{pdf_file_path}")
+        HTML2PDF_logger.info(f"[output_pdf] 正在写入 (Writing)：{pdf_file_path}")
         with open(pdf_file_path, 'wb') as file:
             file.write(base64.b64decode(pdf_data))
 
         # 关闭WebDriver
-        print(f"[Info-HTML2PDF.output_pdf] 正在关闭 WebDriver")
+        HTML2PDF_logger.info(f"[output_pdf] 正在关闭 (Closing)：{html_path}")
         driver.quit()
+        return 2
     except Exception as e:
-        print(f"[Error-HTML2PDF.output_pdf] {e}")
+        HTML2PDF_logger.error(f"[output_pdf] {e}")
+        return 3
 
+#################################
 
 def all_in_one(html_gb2312_path: str, html_utf8_path: str, html_utf8_local_path: str, pdf_path: str, wait: bool,
                waiting_time: int):
@@ -140,9 +185,15 @@ def all_in_one(html_gb2312_path: str, html_utf8_path: str, html_utf8_local_path:
         None
     """
     try:
-        print(f"[Info-HTML2PDF.all_in_one] 正在转换：{html_gb2312_path}")
+        HTML2PDF_logger.info(f"[all_in_one] 正在转换 (Converting)：{html_gb2312_path}")
         convert_html_encoding(html_gb2312_path, html_utf8_path)
         repalce_html_content(html_utf8_path, html_utf8_local_path)
-        output_pdf(html_utf8_local_path, pdf_path, waiting_time, wait)
+        success = output_pdf(html_utf8_local_path, pdf_path, waiting_time, wait)
+        if success == 1:
+            HTML2PDF_logger.critical(f"[all_in_one] 未找到WebDriver (WebDriver not found)")
+        elif success == 2:
+            HTML2PDF_logger.info(f"[all_in_one] 转换成功 (Conversion successful)：{pdf_path}")
+        elif success == 3:
+            HTML2PDF_logger.critical(f"[all_in_one] 转换失败 (Conversion failed)：{pdf_path}")
     except Exception as e:
-        print(f"[Error-HTML2PDF.all_in_one] {e}")
+        HTML2PDF_logger.error(f"[all_in_one] {e}")

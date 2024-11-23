@@ -25,7 +25,7 @@ tokenizer = AutoTokenizer.from_pretrained('models', trust_remote_code=True)
 model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_usage=True, device_map='cuda',
                                   use_safetensors=True, pad_token_id=tokenizer.eos_token_id)
 model = model.eval().cuda()
-print(local.get("load_models_success"))
+print(local.get("info_load_models_success"))
 
 # 选择图片 (Function to select an image)
 def select_image():
