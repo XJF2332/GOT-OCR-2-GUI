@@ -4,7 +4,7 @@
 
 ![img.png](img.png)
 
-**⚠️CLI 版本暂时停止更新，在 GUI 做好后，我需要将其重做成能够从命令行接受参数的形式，以便适应自动化操作⚠️**  
+**⚠️CLI 版本暂时停止更新，在 GUI 做好后，我需要将其重做成能够从命令行接受参数的形式，以便适应自动化操作⚠️**    
 **⚠️这两周我要做课设，更新得停一下了⚠️**
 
 ## 关于此项目
@@ -30,10 +30,14 @@
 - [x] PDF 处理脚本重构
 - [x] 拉一个`Alpha`分支，没做完的都丢进这里面
 - [x] PDF 处理应该能够渲染出一整个 PDF ，而不是一页一个 PDF
-- [ ] ⚠️支持`llama-cpp-python`，希望能够加速推理（遇到困难，有能力的可以提交 pr，最好可以提到 `Aplha` 分支；使用的
-  HuggingFace 模型是 [kaifeise/GOT-gguf](https://huggingface.co/kaifeise/GOT-gguf/tree/main)；`GGUF Test.py`
-  使用了来自 [1694439208/GOT-OCR-Inference](https://github.com/1694439208/GOT-OCR-Inference) 的代码 。文件都在`gguf`文件夹里了）
+- [ ] ⚠️支持`llama-cpp-python`，希望能够加速推理
+- 遇到困难，有能力的可以提交 pr，最好可以提到 `Aplha` 分支；使用的 HuggingFace
+  模型是 [kaifeise/GOT-gguf](https://huggingface.co/kaifeise/GOT-gguf/tree/main)；`GGUF Test.py`
+  使用了来自 [1694439208/GOT-OCR-Inference](https://github.com/1694439208/GOT-OCR-Inference) 的代码 。文件都在`gguf`
+  文件夹里了）
 - [ ] html 转 word 功能，保留公式可以编辑
+- 目前想到两个方法，一个是先转 PDF 然后 PDF 转 Word，但这样太慢，因为要用 selenium 打开浏览器去渲染 PDF；另一个是`pdflatex`
+  ，但是这样就要再装一个 TeX 发行版，我看了一下 TexLive ，又是好几个 GB。感觉这两个方法都不太行。不知道有没有人有更好的方法？
 
 ## 使用方法
 

@@ -74,7 +74,7 @@ def render(model: object, tokenizer: object, image_path: str, wait: bool, time: 
         model.chat(tokenizer, image_path, ocr_type='format', render=True, save_render_file=html_gb2312_path)
 
         # 转换为UTF-8编码
-        Renderer_logger.info(f"正在转换为 UTF-8 编码 (Switching Encoding to utf-8)：'{html_gb2312_path}'")
+        Renderer_logger.debug(f"正在转换为 UTF-8 编码 (Switching Encoding to utf-8)：'{html_gb2312_path}'")
         html2pdf.convert_html_encoding(html_gb2312_path, html_utf8_path)
 
         # 定义要替换的字符串和替换后的字符串
@@ -83,7 +83,7 @@ def render(model: object, tokenizer: object, image_path: str, wait: bool, time: 
 
         # 读取文件内容
         try:
-            Renderer_logger.info(f"正在读取文件 (Reading file)：'{html_utf8_path}'")
+            Renderer_logger.debug(f"正在读取文件 (Reading file)：'{html_utf8_path}'")
             with open(html_utf8_path, 'r', encoding='utf-8') as file:
                 content = file.read()
             content1 = content
@@ -93,7 +93,7 @@ def render(model: object, tokenizer: object, image_path: str, wait: bool, time: 
             content1.replace(search_string, replace_string)
 
             # 将替换后的内容写回文件
-            Renderer_logger.info(f"正在将替换后的内容写回文件 (Writing back to file)：'{html_utf8_path}'")
+            Renderer_logger.debug(f"正在将替换后的内容写回文件 (Writing back to file)：'{html_utf8_path}'")
             with open(html_utf8_path, 'w', encoding='utf-8') as file:
                 file.write(content)
         except FileNotFoundError:
