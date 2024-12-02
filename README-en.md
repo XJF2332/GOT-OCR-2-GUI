@@ -32,12 +32,16 @@ Click a star, please
 - [x] More configuration options
 - [x] Refactored the PDF processing script
 - [x] Pulled an `Alpha` branch, put unfinished tasks into this
-- [x] ⚠️PDF processing should be able to render a whole PDF, not one PDF per page (I ran into some troubles, if you have
-  the solution, you can create a pull request, pull into `Alpha` branch for now; HuggingFace model used
-  is [kaifeise/GOT-gguf](https://huggingface.co/kaifeise/GOT-gguf/tree/main); `GGUF Test.py` used codes
-  from [1694439208/GOT-OCR-Inference](https://github.com/1694439208/GOT-OCR-Inference). Files are in the `gguf` folder)
+- [x] ⚠️PDF processing should be able to render a whole PDF, not one PDF per page
 - [ ] Support for `llama-cpp-python`, hoping to accelerate inference
+- I ran into some troubles, if you have the solution, you can create a pull request, pull into `Alpha` branch for now;
+  HuggingFace model used is [kaifeise/GOT-gguf](https://huggingface.co/kaifeise/GOT-gguf/tree/main); `GGUF Test.py` used
+  codes from [1694439208/GOT-OCR-Inference](https://github.com/1694439208/GOT-OCR-Inference). Files are in the `gguf`
+  folder
 - [ ] html to word functionality, preserve formulas for editing
+- I got two ideas for now. One is creating docx from PDF files, but it's too slow since you need selenium to open your
+  browser and output PDFs. The other is `pdflatex`, but you have to have latex installed. I checked TexLive, but it's
+  too big, so I'm not sure if it's worth it. Is anyone interested in this?
 
 ## How to use
 
