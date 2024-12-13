@@ -26,8 +26,8 @@ filelock==3.16.1
 fonttools==4.53.1
 fsspec==2024.9.0
 gobject==0.1.0
-gradio==5.6.0
-gradio_client==1.4.3
+gradio==5.8.0
+gradio_client==1.5.1
 h11==0.14.0
 html5lib==1.1
 httpcore==1.0.5
@@ -76,7 +76,7 @@ pyparsing==3.1.4
 pyphen==0.16.0
 PySocks==1.7.1
 python-dateutil==2.9.0.post0
-python-multipart==0.0.12
+python-multipart==0.0.19
 pytz==2024.2
 pyxnat==1.6.2
 PyYAML==6.0.2
@@ -85,7 +85,7 @@ regex==2024.9.11
 requests==2.32.3
 rich==13.8.1
 ruff==0.6.6
-safehttpx==0.1.1
+safehttpx==0.1.6
 safetensors==0.4.5
 scipy==1.14.1
 selenium==4.25.0
