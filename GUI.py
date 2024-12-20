@@ -242,8 +242,8 @@ def extract_pdf_pattern(filename):
 ##########################
 
 # 进行 OCR 识别 (Performing OCR recognition)
-def ocr(image_uploaded, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
-        fine_grained_box_y2, OCR_type, fine_grained_color, pdf_convert_confirm, clean_temp):
+def ocr(image_path, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
+        fine_grained_box_y2, ocr_mode, fine_grained_color, pdf_convert_confirm, clean_temp):
     # 默认值 (Default value)
     res = local["error_ocr_mode_none"]
 
@@ -257,42 +257,42 @@ def ocr(image_uploaded, fine_grained_box_x1, fine_grained_box_y1, fine_grained_b
     try:
         # 根据 OCR 类型进行 OCR 识别 (Performing OCR based on OCR type)
         logger.info("[ocr] 正在执行 OCR (Performing OCR)")
-        if OCR_type == "ocr":
+        if ocr_mode == "ocr":
             logger.debug("[ocr] 当前 OCR 模式：ocr (Current ocr mode: ocr)")
-            res = model.chat(tokenizer, image_uploaded, ocr_type='ocr')
-        elif OCR_type == "format":
+            res = model.chat(tokenizer, image_path, ocr_type='ocr')
+        elif ocr_mode == "format":
             logger.debug("[ocr] 当前 OCR 模式：format (Current ocr mode: format)")
-            res = model.chat(tokenizer, image_uploaded, ocr_type='format')
-        elif OCR_type == "fine-grained-ocr":
+            res = model.chat(tokenizer, image_path, ocr_type='format')
+        elif ocr_mode == "fine-grained-ocr":
             logger.debug("[ocr] 当前 OCR 模式：fine-grained-ocr (Current ocr mode: fine-grained-ocr)")
             # 构建 OCR 框 (Building OCR box)
             box = f"[{fine_grained_box_x1}, {fine_grained_box_y1}, {fine_grained_box_x2}, {fine_grained_box_y2}]"
             logger.debug(f"[ocr] 当前 OCR 框 (Current ocr box): {box}")
-            res = model.chat(tokenizer, image_uploaded, ocr_type='ocr', ocr_box=box)
-        elif OCR_type == "fine-grained-format":
+            res = model.chat(tokenizer, image_path, ocr_type='ocr', ocr_box=box)
+        elif ocr_mode == "fine-grained-format":
             logger.debug("[ocr] 当前 OCR 模式：fine-grained-format (Current ocr mode: fine-grained-format)")
             # 构建 OCR 框 (Building OCR box)
             box = f"[{fine_grained_box_x1}, {fine_grained_box_y1}, {fine_grained_box_x2}, {fine_grained_box_y2}]"
             logger.debug(f"[ocr] 当前 OCR 框 (Current ocr box): {box}")
-            res = model.chat(tokenizer, image_uploaded, ocr_type='format', ocr_box=box)
-        elif OCR_type == "fine-grained-color-ocr":
+            res = model.chat(tokenizer, image_path, ocr_type='format', ocr_box=box)
+        elif ocr_mode == "fine-grained-color-ocr":
             logger.debug("[ocr] 当前 OCR 模式：fine-grained-color-ocr (Current ocr mode: fine-grained-color-ocr)")
-            res = model.chat(tokenizer, image_uploaded, ocr_type='ocr', ocr_color=fine_grained_color)
-        elif OCR_type == "fine-grained-color-format":
+            res = model.chat(tokenizer, image_path, ocr_type='ocr', ocr_color=fine_grained_color)
+        elif ocr_mode == "fine-grained-color-format":
             logger.debug("[ocr] 当前 OCR 模式：fine-grained-color-format (Current ocr mode: fine-grained-color-format)")
-            res = model.chat(tokenizer, image_uploaded, ocr_type='format', ocr_color=fine_grained_color)
-        elif OCR_type == "multi-crop-ocr":
+            res = model.chat(tokenizer, image_path, ocr_type='format', ocr_color=fine_grained_color)
+        elif ocr_mode == "multi-crop-ocr":
             logger.debug("[ocr] 当前 OCR 模式：multi-crop-ocr (Current ocr mode: multi-crop-ocr)")
-            res = model.chat_crop(tokenizer, image_uploaded, ocr_type='ocr')
-        elif OCR_type == "multi-crop-format":
+            res = model.chat_crop(tokenizer, image_path, ocr_type='ocr')
+        elif ocr_mode == "multi-crop-format":
             logger.debug("[ocr] 当前 OCR 模式：multi-crop-format (Current ocr mode: multi-crop-format)")
-            res = model.chat_crop(tokenizer, image_uploaded, ocr_type='format')
-        elif OCR_type == "render":
+            res = model.chat_crop(tokenizer, image_path, ocr_type='format')
+        elif ocr_mode == "render":
             logger.debug("[ocr] 当前 OCR 模式：render (Current ocr mode: render)")
-            success = Renderer.render(model=model, tokenizer=tokenizer, image_path=image_uploaded,
+            success = Renderer.render(model=model, tokenizer=tokenizer, image_path=image_path,
                                       convert_to_pdf=pdf_convert_confirm, wait=config["pdf_render_wait"],
                                       time=config["pdf_render_wait_time"])
-            image_name_with_extension = os.path.basename(image_uploaded)
+            image_name_with_extension = os.path.basename(image_path)
             logger.debug(f"[ocr] 获取到图像名称 (Got image name): {image_name_with_extension}")
             if success:
                 res = local["info_render_success"].format(img_file=image_name_with_extension)
