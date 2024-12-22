@@ -1,4 +1,9 @@
 {
+    "error": {
+        "ocr_mode_none": "未指定OCR模式",
+        "render_fail": "渲染失败",
+        "no_model_or_img": "没有加载模型或上传图片"
+    },
     "help": {
         "object": "指定要处理的文件类型，是图片（img）还是PDF（pdf）",
         "image_path": "指定要处理的图片的路径",
@@ -9,8 +14,6 @@
         "fg_box_y2": "fine-grained模式中框的y2坐标"
     },
     "info": {
-    },
-    "error": {
-        "ocr_mode_none": "未指定OCR模式，请使用 -h 查看帮助"
+        "render_success": "渲染成功"
     }
 }

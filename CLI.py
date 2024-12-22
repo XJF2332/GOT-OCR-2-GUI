@@ -90,6 +90,7 @@ except FileNotFoundError:
 
 ##########################
 
+# 参数定义
 parser = argparse.ArgumentParser(description=instructions)
 parser.add_argument('--object', '-O', help=local["help"]["object"], type=str, choices=['img', 'pdf'], default='img', required=False)
 parser.add_argument('--image-path', '-I', help=local["help"]["image_path"], type=str, required=False)
@@ -97,12 +98,16 @@ parser.add_argument('--image-ocr-mode', '-IM', help=local["help"]["image_ocr_mod
                     choices=['ocr', 'format', 'fine-grained-ocr', 'fine-grained-format', 'fine-grained-color-ocr',
                              'fine-grained-color-format', 'multi-crop-ocr', 'multi-crop-format', 'render'],
                     default='ocr', required=False)
-parser.add_argument('--fg-box-x1', '-FGX1', help=local["help"]["fg_box_x1"], type=int, required=False)
-parser.add_argument('--fg-box-y1', '-FGY1', help=local["help"]["fg_box_y1"], type=int, required=False)
-parser.add_argument('--fg-box-x2', '-FGX2', help=local["help"]["fg_box_x2"], type=int, required=False)
-parser.add_argument('--fg-box-y2', '-FGY2', help=local["help"]["fg_box_y2"], type=int, required=False)
+parser.add_argument('--fg-box-x1', '-X1', help=local["help"]["fg_box_x1"], type=int, required=False)
+parser.add_argument('--fg-box-y1', '-Y1', help=local["help"]["fg_box_y1"], type=int, required=False)
+parser.add_argument('--fg-box-x2', '-X2', help=local["help"]["fg_box_x2"], type=int, required=False)
+parser.add_argument('--fg-box-y2', '-Y2', help=local["help"]["fg_box_y2"], type=int, required=False)
 
 args = parser.parse_args()
+
+##########################
+
+# 参数处理
 
 ##########################
 
@@ -201,7 +206,7 @@ def ocr(image_path, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x
             image_name_with_extension = os.path.basename(image_path)
             logger.debug(f"[ocr] 获取到图像名称 (Got image name): {image_name_with_extension}")
             if success:
-                res = local["info_render_success"].format(img_file=image_name_with_extension)
+                res = local["info"]["render_success"].format(img_file=image_name_with_extension)
                 logger.info("[ocr] 渲染已完成 (Render completed)")
                 if clean_temp and pdf_convert_confirm:
                     logger.info("[ocr] 正在清理临时文件 (Cleaning temporary files)")
@@ -215,13 +220,13 @@ def ocr(image_path, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x
                 else:
                     logger.info("[ocr] 跳过临时文件清理 (Skip cleaning temporary files)")
             else:
-                res = local["error_render_fail"].format(img_file=image_name_with_extension)
+                res = local["error"]["render_fail"].format(img_file=image_name_with_extension)
         logger.info("[ocr] OCR 已完成 (OCR completed)")
         return res
     except AttributeError:
         logger.error(
             f"[ocr] 你看起来没有加载模型，或没有上传图片 (You seem to have not loaded the model or uploaded an image)")
-        return local["error_no_model_or_img"]
+        return local["error"]["no_model_or_img"]
     except Exception as e:
         logger.error(f"[ocr] OCR 失败 (OCR failed): {e}")
         return str(e)
