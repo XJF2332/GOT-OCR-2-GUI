@@ -1,19 +1,60 @@
 {
     "error": {
+        "filename_format_error": "文件名不满足格式：{format}",
         "ocr_mode_none": "未指定OCR模式",
-        "render_fail": "渲染失败",
+        "render_fail": "渲染失败：{file}",
         "no_model_or_img": "没有加载模型或上传图片"
+    },
+    "feedbacks": {
+        "loading": "正在加载(Loading)"
     },
     "help": {
         "object": "指定要处理的文件类型，是图片（img）还是PDF（pdf）",
-        "image_path": "指定要处理的图片的路径",
-        "image_ocr_mode": "指定图片OCR模式，可选项：\"ocr\"、\"format\"、\"fine-grained-ocr\"、\"fine-grained-format\"、\"fine-grained-color-ocr\"、\"fine-grained-color-format\"、\"multi-crop-ocr\"、\"multi-crop-format\"、\"render\"",
+        "path": "指定要处理的图片或pdf的路径",
+        "image_ocr_mode": "指定图片OCR模式，有关各模式的信息请使用 --detailed-help",
         "fg_box_x1": "fine-grained模式中框的x1坐标",
         "fg_box_y1": "fine-grained模式中框的y1坐标",
         "fg_box_x2": "fine-grained模式中框的x2坐标",
-        "fg_box_y2": "fine-grained模式中框的y2坐标"
+        "fg_box_y2": "fine-grained模式中框的y2坐标",
+        "fg_color": "fine-grained模式中框的颜色",
+        "detailed_help": "一个更加详细的教程，告诉你该怎么用CLI",
+        "save_as_pdf": "将渲染结果保存为PDF文件，只在render模式下有效",
+        "clean_temp": "在程序结束后清理临时文件"
     },
-    "info": {
-        "render_success": "渲染成功"
+    "instructions": {
+        "quit": "按回车键来退出",
+        "timed_quit": "将在3秒后退出"
+    },
+    "log": {
+        "debug": {
+            "filename_split_res": "文件名分割结果：{res}",
+            "ocr_mode": "OCR模式：{mode}",
+            "fg_box": "fine-grained模式中的框：{box}",
+            "got_image_name": "获取到图片名：{name}"
+        },
+        "info": {
+            "cleaning_temp": "正在清理临时文件",
+            "temp_clean_skipped": "跳过临时文件清理",
+            "pdf_detected": "检测到PDF文件：{path}",
+            "image_detected": "检测到图片文件：{path}",
+            "model_loading": "正在加载模型",
+            "model_loaded": "模型加载完成",
+            "performing_ocr": "正在执行OCR",
+            "render_completed": "渲染完成：{file}",
+            "ocr_completed": "OCR已完成"
+        },
+        "warning": {
+            "folder_created": "{folder} 文件夹不存在，已创建"
+        },
+        "error": {
+            "render_fail": "渲染失败",
+            "no_model_or_img": "没有加载模型或上传图片",
+            "filename_format_error": "文件名不满足格式：{format}",
+            "ocr_failed": "OCR失败"
+        },
+        "critical": {
+            "unsupported_file_type": "不支持的文件类型",
+            "dir_not_supported": "目录不受支持，请使用Renderer.py"
+        }
     }
 }

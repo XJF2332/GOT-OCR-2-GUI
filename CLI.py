@@ -3,6 +3,7 @@ print("正在初始化(Initializing)")
 import logging
 from datetime import datetime
 import os
+import sys
 import json
 import argparse
 from time import sleep
@@ -16,7 +17,7 @@ try:
         config = json.load(file)
 except FileNotFoundError:
     print("配置文件未找到 (The configuration file was not found)")
-    print("程序将在3秒后退出")
+    print("程序将在3秒后退出 (Program will exit in 3 seconds)")
     sleep(3)
     exit(1)
 
@@ -52,7 +53,6 @@ try:
 except KeyError:
     logger.warning(
         "配置文件中未找到日志级别，回滚到 INFO 级别 (The log level was not found in the configuration file, rolling back to INFO level)")
-    logger.warning("请检查配置文件 (Please check the configuration file)")
     logger.setLevel(logging.INFO)
 
 console = logging.StreamHandler()
@@ -84,34 +84,64 @@ try:
     logger.info(f"语言文件已加载 (The language file has been loaded): {lang}")
 except FileNotFoundError:
     logger.critical(f"语言文件未找到 (The language file was not found): {lang}")
-    print("程序将在3秒后退出")
+    print("程序将在3秒后退出 (Program will exit in 3 seconds)")
     sleep(3)
     exit(1)
 
 ##########################
 
+# def ocr(image_path, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
+#         fine_grained_box_y2, ocr_mode, fine_grained_color, pdf_convert_confirm, clean_temp):
 # 参数定义
-parser = argparse.ArgumentParser(description=instructions)
-parser.add_argument('--object', '-O', help=local["help"]["object"], type=str, choices=['img', 'pdf'], default='img', required=False)
-parser.add_argument('--image-path', '-I', help=local["help"]["image_path"], type=str, required=False)
+parser = argparse.ArgumentParser(description="CLI application of GOT-OCR-2")
+parser.add_argument('--detailed-help', '-DH', help=local["help"]["detailed_help"], required=False, action='store_true')
+parser.add_argument('--path', '-P', help=local["help"]["path"], type=str, required=True)
 parser.add_argument('--image-ocr-mode', '-IM', help=local["help"]["image_ocr_mode"], type=str,
                     choices=['ocr', 'format', 'fine-grained-ocr', 'fine-grained-format', 'fine-grained-color-ocr',
                              'fine-grained-color-format', 'multi-crop-ocr', 'multi-crop-format', 'render'],
                     default='ocr', required=False)
-parser.add_argument('--fg-box-x1', '-X1', help=local["help"]["fg_box_x1"], type=int, required=False)
-parser.add_argument('--fg-box-y1', '-Y1', help=local["help"]["fg_box_y1"], type=int, required=False)
-parser.add_argument('--fg-box-x2', '-X2', help=local["help"]["fg_box_x2"], type=int, required=False)
-parser.add_argument('--fg-box-y2', '-Y2', help=local["help"]["fg_box_y2"], type=int, required=False)
+parser.add_argument('--fg-box-x1', '-X1', help=local["help"]["fg_box_x1"], type=int, default=0, required=False)
+parser.add_argument('--fg-box-y1', '-Y1', help=local["help"]["fg_box_y1"], type=int, default=0, required=False)
+parser.add_argument('--fg-box-x2', '-X2', help=local["help"]["fg_box_x2"], type=int, default=0, required=False)
+parser.add_argument('--fg-box-y2', '-Y2', help=local["help"]["fg_box_y2"], type=int, default=0, required=False)
+parser.add_argument('--fg-color', '-C', help=local["help"]["fg_color"], type=str,
+                    choices=["red", "green", "blue"], default="red", required=False)
+parser.add_argument('--save-as-pdf', '-PDF', help=local["help"]["save_as_pdf"], type=bool, default=True, required=False)
+parser.add_argument('--clean-temp', '-CT', help=local["help"]["clean_temp"], type=bool, default=True, required=False)
+
+# 帮助的特殊行为
+if '--detailed-help' in sys.argv and len(sys.argv) == 2:
+    print(instructions)
+    input(local["instructions"]["quit"])
+    exit(0)
 
 args = parser.parse_args()
 
 ##########################
 
 # 参数处理
+# OCR对象
+path = args.path
+if path.endswith('.pdf'):
+    ocr_object = "pdf"
+    logger.info(local["log"]["info"]["pdf_detected"].format(path=path))
+elif path.endswith('.png') or path.endswith('.jpg') or path.endswith('.jpeg'):
+    ocr_object = "image"
+    logger.info(local["log"]["info"]["image_detected"].format(path=path))
+elif os.path.isdir(path):
+    logger.critical(local["log"]["critical"]["dir_not_supported"].format(path=path))
+    logger.critical(local["instructions"]["timed_quit"])
+    sleep(3)
+    exit(1)
+else:
+    logger.critical(local["log"]["critical"]["unsupported_file_type"].format(path=path))
+    logger.critical(local["instructions"]["timed_quit"])
+    sleep(3)
+    exit(1)
 
 ##########################
 
-print("正在加载(Loading)")
+print(local["feedbacks"]["loading"])
 
 import glob
 import scripts.Renderer as Renderer
@@ -122,12 +152,12 @@ from transformers import AutoModel, AutoTokenizer
 
 ##########################
 
-logger.info("[load_model] 正在加载模型 (Loading model)")
+logger.info(local["log"]["info"]["model_loading"])
 tokenizer = AutoTokenizer.from_pretrained('models', trust_remote_code=True)
 model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_usage=True, device_map='cuda',
                                   use_safetensors=True, pad_token_id=tokenizer.eos_token_id)
 model = model.eval().cuda()
-logger.info("[load_model] 模型加载完成 (Model loading completed)")
+logger.info(local["log"]["info"]["model_loaded"])
 
 
 ##########################
@@ -142,15 +172,15 @@ def extract_pdf_pattern(filename):
     """
     # 在最后一个下划线处分割文件名 (Split the filename at the last underscore)
     parts = filename.rsplit('_')
-    logger.debug(f"[extract_pdf_pattern] 文件名分割结果 (The result of splitting the filename): {parts}")
+    logger.debug(f"[extract_pdf_pattern] {local['log']['debug']['filename_split_res'].format(res=parts)}")
 
     # 检查最后一部分是否为 '0.pdf' (Check if the last part is '0.pdf')
     if len(parts) == 2 and parts[1] == '0.pdf':
         return parts[0]
     else:
         logger.error(
-            "[extract_pdf_pattern] 文件名不满足格式 <string>_0.pdf (Filename does not meet the format <string>_0.pdf)")
-        raise ValueError("输入不满足格式：<string>_0.pdf (Input does not meet the format: <string>_0.pdf)")
+            f"[extract_pdf_pattern] {local['log']['error']['filename_format_error'].format(format='<string>_0.pdf')}")
+        raise ValueError(local["error"]["filename_format_error"].format(format='<string>_0.pdf'))
 
 
 ##########################
@@ -159,80 +189,88 @@ def extract_pdf_pattern(filename):
 def ocr(image_path, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
         fine_grained_box_y2, ocr_mode, fine_grained_color, pdf_convert_confirm, clean_temp):
     # 默认值 (Default value)
-    res = local["error"]["ocr_mode_none"]
+    ocr_res = local["error"]["ocr_mode_none"]
 
     if not os.path.exists("result"):
         os.makedirs("result")
-        logger.info("[ocr] result 文件夹不存在，已创建 (Result folder doesn't exists, created)")
+        logger.info(f"[ocr] {local['log']['warning']['folder_created'].format(folder='result')}")
 
     try:
         # 根据 OCR 类型进行 OCR 识别 (Performing OCR based on OCR type)
-        logger.info("[ocr] 正在执行 OCR (Performing OCR)")
+        logger.info(f"[ocr] {local['log']['info']['performing_ocr']}")
         if ocr_mode == "ocr":
-            logger.debug("[ocr] 当前 OCR 模式：ocr (Current ocr mode: ocr)")
-            res = model.chat(tokenizer, image_path, ocr_type='ocr')
+            logger.debug(f"[ocr] {local['log']['debug']['ocr_mode'].format(mode='ocr')}")
+            ocr_res = model.chat(tokenizer, image_path, ocr_type='ocr')
         elif ocr_mode == "format":
-            logger.debug("[ocr] 当前 OCR 模式：format (Current ocr mode: format)")
-            res = model.chat(tokenizer, image_path, ocr_type='format')
+            logger.debug(f"[ocr] {local['log']['debug']['ocr_mode'].format(mode='format')}")
+            ocr_res = model.chat(tokenizer, image_path, ocr_type='format')
         elif ocr_mode == "fine-grained-ocr":
-            logger.debug("[ocr] 当前 OCR 模式：fine-grained-ocr (Current ocr mode: fine-grained-ocr)")
+            logger.debug(f"[ocr] {local['log']['debug']['ocr_mode'].format(mode='fine-grained-ocr')}")
             # 构建 OCR 框 (Building OCR box)
             box = f"[{fine_grained_box_x1}, {fine_grained_box_y1}, {fine_grained_box_x2}, {fine_grained_box_y2}]"
-            logger.debug(f"[ocr] 当前 OCR 框 (Current ocr box): {box}")
-            res = model.chat(tokenizer, image_path, ocr_type='ocr', ocr_box=box)
+            logger.debug(f"[ocr] {local['log']['debug']['fg_box'].format(box=box)}")
+            ocr_res = model.chat(tokenizer, image_path, ocr_type='ocr', ocr_box=box)
         elif ocr_mode == "fine-grained-format":
-            logger.debug("[ocr] 当前 OCR 模式：fine-grained-format (Current ocr mode: fine-grained-format)")
+            logger.debug(f"[ocr] {local['log']['debug']['ocr_mode'].format(mode='fine-grained-format')}")
             # 构建 OCR 框 (Building OCR box)
             box = f"[{fine_grained_box_x1}, {fine_grained_box_y1}, {fine_grained_box_x2}, {fine_grained_box_y2}]"
-            logger.debug(f"[ocr] 当前 OCR 框 (Current ocr box): {box}")
-            res = model.chat(tokenizer, image_path, ocr_type='format', ocr_box=box)
+            logger.debug(f"[ocr] {local['log']['debug']['fg_box'].format(box=box)}")
+            ocr_res = model.chat(tokenizer, image_path, ocr_type='format', ocr_box=box)
         elif ocr_mode == "fine-grained-color-ocr":
-            logger.debug("[ocr] 当前 OCR 模式：fine-grained-color-ocr (Current ocr mode: fine-grained-color-ocr)")
-            res = model.chat(tokenizer, image_path, ocr_type='ocr', ocr_color=fine_grained_color)
+            logger.debug(f"[ocr] {local['log']['debug']['ocr_mode'].format(mode='fine-grained-color-ocr')}")
+            ocr_res = model.chat(tokenizer, image_path, ocr_type='ocr', ocr_color=fine_grained_color)
         elif ocr_mode == "fine-grained-color-format":
-            logger.debug("[ocr] 当前 OCR 模式：fine-grained-color-format (Current ocr mode: fine-grained-color-format)")
-            res = model.chat(tokenizer, image_path, ocr_type='format', ocr_color=fine_grained_color)
+            logger.debug(f"[ocr] {local['log']['debug']['ocr_mode'].format(mode='fine-grained-color-format')}")
+            ocr_res = model.chat(tokenizer, image_path, ocr_type='format', ocr_color=fine_grained_color)
         elif ocr_mode == "multi-crop-ocr":
-            logger.debug("[ocr] 当前 OCR 模式：multi-crop-ocr (Current ocr mode: multi-crop-ocr)")
-            res = model.chat_crop(tokenizer, image_path, ocr_type='ocr')
+            logger.debug(f"[ocr] {local['log']['debug']['ocr_mode'].format(mode='multi-crop-ocr')}")
+            ocr_res = model.chat_crop(tokenizer, image_path, ocr_type='ocr')
         elif ocr_mode == "multi-crop-format":
-            logger.debug("[ocr] 当前 OCR 模式：multi-crop-format (Current ocr mode: multi-crop-format)")
-            res = model.chat_crop(tokenizer, image_path, ocr_type='format')
+            logger.debug(f"[ocr] {local['log']['debug']['ocr_mode'].format(mode='multi-crop-format')}")
+            ocr_res = model.chat_crop(tokenizer, image_path, ocr_type='format')
         elif ocr_mode == "render":
-            logger.debug("[ocr] 当前 OCR 模式：render (Current ocr mode: render)")
+            logger.debug(f"[ocr] {local['log']['debug']['ocr_mode'].format(mode='render')}")
             success = Renderer.render(model=model, tokenizer=tokenizer, image_path=image_path,
                                       convert_to_pdf=pdf_convert_confirm, wait=config["pdf_render_wait"],
                                       time=config["pdf_render_wait_time"])
             image_name_with_extension = os.path.basename(image_path)
-            logger.debug(f"[ocr] 获取到图像名称 (Got image name): {image_name_with_extension}")
+            logger.debug(f"[ocr] {local['log']['debug']['got_image_name'].format(name=image_name_with_extension)}")
             if success:
-                res = local["info"]["render_success"].format(img_file=image_name_with_extension)
-                logger.info("[ocr] 渲染已完成 (Render completed)")
+                ocr_res = local["log"]["info"]["render_success"].format(img_file=image_name_with_extension)
+                logger.info(f"[ocr] {local['log']['info']['render_completed'].format(file=image_name_with_extension)}")
                 if clean_temp and pdf_convert_confirm:
-                    logger.info("[ocr] 正在清理临时文件 (Cleaning temporary files)")
+                    logger.info(f"[ocr] {local['log']['info']['cleaning_temp']}")
                     TempCleaner.cleaner(["result"],
                                         [f"{os.path.splitext(image_name_with_extension)[0]}-gb2312.html",
                                          f"{os.path.splitext(image_name_with_extension)[0]}-utf8.html",
                                          f"{os.path.splitext(image_name_with_extension)[0]}-utf8-local.html"])
                 if clean_temp and not pdf_convert_confirm:
-                    logger.info("[ocr] 正在清理临时文件 (Cleaning temporary files)")
+                    logger.info(f"[ocr] {local['log']['info']['cleaning_temp']}")
                     TempCleaner.cleaner(["result"], [f"{os.path.splitext(image_name_with_extension)[0]}-gb2312.html"])
                 else:
-                    logger.info("[ocr] 跳过临时文件清理 (Skip cleaning temporary files)")
+                    logger.info(f"[ocr] {local['log']['info']['temp_clean_skipped']}")
             else:
-                res = local["error"]["render_fail"].format(img_file=image_name_with_extension)
-        logger.info("[ocr] OCR 已完成 (OCR completed)")
-        return res
+                ocr_res = local["error"]["render_fail"].format(file=image_name_with_extension)
+        logger.info(local['log']['info']['ocr_completed'])
+        return ocr_res
     except AttributeError:
-        logger.error(
-            f"[ocr] 你看起来没有加载模型，或没有上传图片 (You seem to have not loaded the model or uploaded an image)")
+        logger.error(f"[ocr] {local['log']['error']['no_model_or_img']}")
         return local["error"]["no_model_or_img"]
     except Exception as e:
-        logger.error(f"[ocr] OCR 失败 (OCR failed): {e}")
+        logger.error(f"[ocr] {local['log']['error']['ocr_failed']}: {e}")
         return str(e)
 
 
 ##########################
+
 # test
-test_res = ocr(args.image_path, 0,0,0,0, args.image_ocr_mode, 'red', False, False)
-print(test_res)
+# test_res = ocr(args.path, 0, 0, 0, 0, args.image_ocr_mode, 'red', False, False)
+# print(test_res)
+
+##########################
+
+if ocr_object == "image":
+    res = ocr(image_path=args.path, fine_grained_box_x1=args.fg_box_x1, fine_grained_box_y1=args.fg_box_y1,
+              fine_grained_box_x2=args.fg_box_x2, fine_grained_box_y2=args.fg_box_y2, fine_grained_color=args.fg_color,
+              ocr_mode=args.image_ocr_mode, pdf_convert_confirm=args.save_as_pdf, clean_temp=args.clean_temp)
+    print(res)
