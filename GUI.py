@@ -21,8 +21,8 @@ try:
     with open(config_path, 'r', encoding='utf-8') as file:
         config = json.load(file)
 except FileNotFoundError:
-    print("配置文件未找到 (The configuration file was not found)")
-    print("程序将在3秒后退出")
+    print("配置文件未找到 / Configuration file not found")
+    print("程序将在3秒后退出 / Exit in 3 seconds")
     sleep(3)
     exit(1)
 
@@ -52,12 +52,12 @@ try:
     elif lvl.lower() == 'critical':
         logger.setLevel(logging.CRITICAL)
     else:
-        logger.warning("无效的日志级别，回滚到 INFO 级别 (Invalid log level, rolling back to INFO level)")
-        logger.warning("请检查配置文件 (Please check the configuration file)")
+        logger.warning("无效的日志级别，回滚到 INFO 级别 / Invalid log level, rolling back to INFO level")
+        logger.warning("请检查配置文件 / Go check the configuration file")
         logger.setLevel(logging.INFO)
 except KeyError:
-    logger.warning("配置文件中未找到日志级别，回滚到 INFO 级别 (The log level was not found in the configuration file, rolling back to INFO level)")
-    logger.warning("请检查配置文件 (Please check the configuration file)")
+    logger.warning("未找到日志级别，回滚到 INFO 级别 / Log level configuration not found, rolling back to INFO level")
+    logger.warning("请检查配置文件 / Go check the configuration file")
     logger.setLevel(logging.INFO)
 
 console = logging.StreamHandler()
@@ -66,7 +66,7 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 console.setFormatter(formatter)
 logger.addHandler(console)
 
-logger.info("日志记录器已初始化 (The logger has been initialized)")
+logger.info("日志记录器已初始化 / Logger initialized")
 
 ##########################
 
@@ -78,16 +78,16 @@ try:
         lang = lang_config['language']
 except FileNotFoundError:
     logger.warning(
-        "语言配置文件未找到，回滚到简体中文 (The language configuration file was not found, rolling back to Simplified Chinese)")
+        "语言配置文件未找到，回滚到简体中文 / Language configuration file not found, rolling back to Simplified Chinese")
     lang = 'zh_CN'
 
 try:
     with open(os.path.join("Locales", "gui", f"{lang}.json"), 'r', encoding='utf-8') as file:
         local = json.load(file)
-        logger.info(f"语言文件已加载 (The language file has been loaded): {lang}")
+        logger.info(local['log']['info']['lang_file_loaded'].format(lang=lang))
 except FileNotFoundError:
-    logger.critical(f"语言文件未找到 (The language file was not found): {lang}")
-    print("程序将在3秒后退出")
+    logger.critical(f"语言文件未找到 / Language file not found): {lang}")
+    print("程序将在3秒后退出 / Exit in 3 seconds")
     sleep(3)
     exit(1)
 
@@ -101,7 +101,7 @@ tokenizer = None
 
 # 加载模型函数 (Loading model function)
 def load_model():
-    logger.info("[load_model] 正在加载模型 (Loading model)")
+    logger.info(f"[load_model] {local['log']['info']['model_loading']}")
     global model, tokenizer
     model = None
     tokenizer = None
@@ -109,7 +109,7 @@ def load_model():
     model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_usage=True, device_map='cuda',
                                       use_safetensors=True, pad_token_id=tokenizer.eos_token_id)
     model = model.eval().cuda()
-    logger.info("[load_model] 模型加载完成 (Model loading completed)")
+    logger.info(f"[load_model] {local['log']['info']['model_loaded']}")
     return local["info"]["model_already_loaded"]
 
 
@@ -120,7 +120,7 @@ def unload_model():
     global model, tokenizer
     model = None
     tokenizer = None
-    logger.info("[unload_model] 模型已卸载 (The model has been unloaded)")
+    logger.info(f"[unload_model] {local['log']['info']['model_unloaded']}")
     return local["info"]["model_not_loaded"]
 
 
@@ -130,7 +130,7 @@ def unload_model():
 if config["load_model_on_start"]:
     load_model()
 else:
-    logger.warning("由于你的设置，模型加载已跳过 (The model loading has been skipped due to your settings)")
+    logger.warning(local['log']['warning']['model_loading_skipped'])
 
 ##########################
 
@@ -150,69 +150,69 @@ try:
         button_large_radius='*radius_sm',
         button_small_radius='*radius_sm'
     )
-    logger.info("主题加载成功 (Successfully loaded theme)")
+    logger.info(local['log']['info']['theme_loaded'])
 except AttributeError:
-    logger.warning("主题加载失败，回滚到默认主题 (Theme loading failed, rolling back to default theme")
+    logger.warning(local['log']['warning']['theme_loading_failed'])
     theme = gr.themes.Default()
 
 
 ##########################
 
-# 更新图片名称 (Updating image name)
+# 更新图片名称 / Update image name
 def update_img_name(image_uploaded):
     image_name_with_extension = os.path.basename(image_uploaded)
-    logger.debug(f"[update_img_name] 图片名称已更新 (The image name has been updated): {image_name_with_extension}")
+    logger.debug(f"[update_img_name] {local['log']['info']['img_name_updated'].format(name=image_name_with_extension)}")
     return gr.Textbox(label=local["label"]["img_name"], value=image_name_with_extension)
 
 
 ##########################
 
-# 更新 PDF 名称 (Updating PDF name)
+# 更新 PDF 名称 / Update PDF name
 def update_pdf_name(pdf_uploaded):
     pdf_name_with_extension = os.path.basename(pdf_uploaded)
-    logger.debug(f"[update_pdf_name] PDF 名称已更新 (The PDF name has been updated): {pdf_name_with_extension}")
+    logger.debug(f"[update_pdf_name] {local['log']['info']['pdf_name_updated'].format(name=pdf_name_with_extension)}")
     return gr.Textbox(label=local["label"]["pdf_file"], value=pdf_name_with_extension)
 
 
 ##########################
 
-# 更新保存 PDF 勾选框可见性（PDF 标签页）/ Updating visibility of save as PDF checkbox (PDF tab)
-def update_pdf_pdf_convert_confirm_visibility(pdf_ocr_mode):
-    if pdf_ocr_mode == "render":
+# 更新保存 PDF 勾选框可见性（PDF 标签页）/ Update visibility of save as PDF checkbox (PDF tab)
+def update_pdf_conv_conf_visibility(pdf_ocr_mode_update):
+    if pdf_ocr_mode_update == "render":
         logger.debug(
-            "[update_pdf_pdf_convert_confirm_visibility] PDF 标签页的保存 PDF 勾选框已启用 (The save PDF checkbox on the PDF tab has been enabled)")
+            f"[update_pdf_conv_conf_visibility] {local['log']['debug']['save_pdf_checkbox_enabled']}")
         return gr.Checkbox(label=local["label"]["save_as_pdf"], interactive=True, visible=True)
     else:
         logger.debug(
-            "[update_pdf_pdf_convert_confirm_visibility] PDF 标签页的保存 PDF 勾选框已禁用 (The save PDF checkbox on the PDF tab has been disabled)")
+            f"[update_pdf_conv_conf_visibility] {local['log']['debug']['save_pdf_checkbox_disabled']}")
         return gr.Checkbox(label=local["label"]["save_as_pdf"], interactive=True, visible=False, value=False)
 
 
 ##########################
 
-# 更新合并 PDF 勾选框可见性（PDF 标签页） (Updating visibility of merge PDF checkbox (PDF tab))
-def update_pdf_pdf_merge_confirm_visibility(pdf_convert_confirm):
-    if pdf_convert_confirm:
+# 更新合并 PDF 勾选框可见性（PDF 标签页）/ Updating visibility of merge PDF checkbox (PDF tab)
+def update_pdf_merge_conf_visibility(pdf_convert_confirm_update):
+    if pdf_convert_confirm_update:
         logger.debug(
-            "[update_pdf_pdf_merge_confirm_visibility] PDF 标签页的合并 PDF 勾选框已启用 (The merge PDF checkbox on the PDF tab has been enabled)")
+            f"[update_pdf_merge_conf_visibility] {local['log']['debug']['merge_pdf_checkbox_enabled']}")
         return gr.Checkbox(label=local["label"]["merge_pdf"], interactive=True, visible=True)
     else:
         logger.debug(
-            "[update_pdf_pdf_merge_confirm_visibility] PDF 标签页的合并 PDF 勾选框已禁用 (The merge PDF checkbox on the PDF tab has been disabled)")
+            f"[update_pdf_merge_conf_visibility] {local['log']['debug']['merge_pdf_checkbox_disabled']}")
         return gr.Checkbox(label=local["label"]["merge_pdf"], interactive=True, visible=False, value=False)
 
 
 ##########################
 
-# 更新目标 DPI 输入框可见性（PDF 标签页） (Updating visibility of target DPI input box (PDF tab))
-def update_pdf_pdf_dpi_visibility(pdf_ocr_mode):
-    if pdf_ocr_mode == "merge":
+# 更新目标 DPI 输入框可见性（PDF 标签页）/ Update visibility of target DPI input box (PDF tab)
+def update_pdf_dpi_visibility(pdf_ocr_mode_update):
+    if pdf_ocr_mode_update == "merge":
         logger.debug(
-            "[update_pdf_pdf_dpi_visibility] PDF 标签页的目标 DPI 输入框已禁用 (The target DPI input box on the PDF tab has been disabled)")
+            f"[update_pdf_dpi_visibility] {local['log']['debug']['dpi_input_box_disabled']}")
         return gr.Number(label=local["label"]["target_dpi"], minimum=72, maximum=300, step=1, value=150, visible=False)
     else:
         logger.debug(
-            "[update_pdf_pdf_dpi_visibility] PDF 标签页的目标 DPI 输入框已启用 (The target DPI input box on the PDF tab has been enabled)")
+            f"[update_pdf_dpi_visibility] {local['log']['debug']['dpi_input_box_enabled']}")
         return gr.Number(label=local["label"]["target_dpi"], minimum=72, maximum=300, step=1, value=150, visible=True)
 
 
@@ -228,22 +228,21 @@ def extract_pdf_pattern(filename):
     """
     # 在最后一个下划线处分割文件名 (Split the filename at the last underscore) 
     parts = filename.rsplit('_')
-    logger.debug(f"[extract_pdf_pattern] 文件名分割结果 (The result of splitting the filename): {parts}")
+    logger.debug(f"[extract_pdf_pattern]：{local['log']['debug']['filename_split_res'].format(res=parts)} ")
 
     # 检查最后一部分是否为 '0.pdf' (Check if the last part is '0.pdf') 
     if len(parts) == 2 and parts[1] == '0.pdf':
         return parts[0]
     else:
         logger.error(
-            "[extract_pdf_pattern] 文件名不满足格式 <string>_0.pdf (Filename does not meet the format <string>_0.pdf)")
-        raise ValueError("输入不满足格式：<string>_0.pdf (Input does not meet the format: <string>_0.pdf)")
+            f"[extract_pdf_pattern] {local['log']['error']['filename_format_error']}")
+        raise ValueError(local["error"]["filename_format_error"])
 
 
 ##########################
 
 # 进行 OCR 识别 (Performing OCR recognition)
-def ocr(image_path, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
-        fine_grained_box_y2, ocr_mode, fine_grained_color, pdf_convert_confirm, clean_temp):
+def ocr(image_path, fg_box_x1, fg_box_y1, fg_box_x2, fg_box_y2, mode, fg_color, pdf_conv_conf, temp_clean):
     # 默认值 (Default value)
     res = local["error"]["ocr_mode_none"]
 
@@ -252,58 +251,58 @@ def ocr(image_path, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x
     # 如果 result 文件夹不存在，则创建 (Creating the 'result' folder if it does not exist)
     if not os.path.exists("result"):
         os.makedirs("result")
-        logger.info("[ocr] result 文件夹不存在，已创建 (Result folder doesn't exists, created)")
+        logger.info(f"[ocr] {local['log']['info']['res_folder_created']}")
 
     try:
         # 根据 OCR 类型进行 OCR 识别 (Performing OCR based on OCR type)
-        logger.info("[ocr] 正在执行 OCR (Performing OCR)")
-        if ocr_mode == "ocr":
+        logger.info(f"[ocr] {local['log']['info']['ocr_started']}")
+        if mode == "ocr":
             logger.debug("[ocr] 当前 OCR 模式：ocr (Current ocr mode: ocr)")
             res = model.chat(tokenizer, image_path, ocr_type='ocr')
-        elif ocr_mode == "format":
+        elif mode == "format":
             logger.debug("[ocr] 当前 OCR 模式：format (Current ocr mode: format)")
             res = model.chat(tokenizer, image_path, ocr_type='format')
-        elif ocr_mode == "fine-grained-ocr":
+        elif mode == "fine-grained-ocr":
             logger.debug("[ocr] 当前 OCR 模式：fine-grained-ocr (Current ocr mode: fine-grained-ocr)")
             # 构建 OCR 框 (Building OCR box)
-            box = f"[{fine_grained_box_x1}, {fine_grained_box_y1}, {fine_grained_box_x2}, {fine_grained_box_y2}]"
+            box = f"[{fg_box_x1}, {fg_box_y1}, {fg_box_x2}, {fg_box_y2}]"
             logger.debug(f"[ocr] 当前 OCR 框 (Current ocr box): {box}")
             res = model.chat(tokenizer, image_path, ocr_type='ocr', ocr_box=box)
-        elif ocr_mode == "fine-grained-format":
+        elif mode == "fine-grained-format":
             logger.debug("[ocr] 当前 OCR 模式：fine-grained-format (Current ocr mode: fine-grained-format)")
             # 构建 OCR 框 (Building OCR box)
-            box = f"[{fine_grained_box_x1}, {fine_grained_box_y1}, {fine_grained_box_x2}, {fine_grained_box_y2}]"
+            box = f"[{fg_box_x1}, {fg_box_y1}, {fg_box_x2}, {fg_box_y2}]"
             logger.debug(f"[ocr] 当前 OCR 框 (Current ocr box): {box}")
             res = model.chat(tokenizer, image_path, ocr_type='format', ocr_box=box)
-        elif ocr_mode == "fine-grained-color-ocr":
+        elif mode == "fine-grained-color-ocr":
             logger.debug("[ocr] 当前 OCR 模式：fine-grained-color-ocr (Current ocr mode: fine-grained-color-ocr)")
-            res = model.chat(tokenizer, image_path, ocr_type='ocr', ocr_color=fine_grained_color)
-        elif ocr_mode == "fine-grained-color-format":
+            res = model.chat(tokenizer, image_path, ocr_type='ocr', ocr_color=fg_color)
+        elif mode == "fine-grained-color-format":
             logger.debug("[ocr] 当前 OCR 模式：fine-grained-color-format (Current ocr mode: fine-grained-color-format)")
-            res = model.chat(tokenizer, image_path, ocr_type='format', ocr_color=fine_grained_color)
-        elif ocr_mode == "multi-crop-ocr":
+            res = model.chat(tokenizer, image_path, ocr_type='format', ocr_color=fg_color)
+        elif mode == "multi-crop-ocr":
             logger.debug("[ocr] 当前 OCR 模式：multi-crop-ocr (Current ocr mode: multi-crop-ocr)")
             res = model.chat_crop(tokenizer, image_path, ocr_type='ocr')
-        elif ocr_mode == "multi-crop-format":
+        elif mode == "multi-crop-format":
             logger.debug("[ocr] 当前 OCR 模式：multi-crop-format (Current ocr mode: multi-crop-format)")
             res = model.chat_crop(tokenizer, image_path, ocr_type='format')
-        elif ocr_mode == "render":
+        elif mode == "render":
             logger.debug("[ocr] 当前 OCR 模式：render (Current ocr mode: render)")
             success = Renderer.render(model=model, tokenizer=tokenizer, image_path=image_path,
-                                      convert_to_pdf=pdf_convert_confirm, wait=config["pdf_render_wait"],
+                                      convert_to_pdf=pdf_conv_conf, wait=config["pdf_render_wait"],
                                       time=config["pdf_render_wait_time"])
             image_name_with_extension = os.path.basename(image_path)
             logger.debug(f"[ocr] 获取到图像名称 (Got image name): {image_name_with_extension}")
             if success:
                 res = local["info"]["render_success"].format(img_file=image_name_with_extension)
                 logger.info("[ocr] 渲染已完成 (Render completed)")
-                if clean_temp and pdf_convert_confirm:
+                if temp_clean and pdf_conv_conf:
                     logger.info("[ocr] 正在清理临时文件 (Cleaning temporary files)")
                     TempCleaner.cleaner(["result"],
                                         [f"{os.path.splitext(image_name_with_extension)[0]}-gb2312.html",
                                          f"{os.path.splitext(image_name_with_extension)[0]}-utf8.html",
                                          f"{os.path.splitext(image_name_with_extension)[0]}-utf8-local.html"])
-                if clean_temp and not pdf_convert_confirm:
+                if temp_clean and not pdf_conv_conf:
                     logger.info("[ocr] 正在清理临时文件 (Cleaning temporary files)")
                     TempCleaner.cleaner(["result"], [f"{os.path.splitext(image_name_with_extension)[0]}-gb2312.html"])
                 else:
@@ -324,19 +323,19 @@ def ocr(image_path, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x
 ##########################
 
 # 执行PDF OCR (Performing PDF OCR)
-def pdf_ocr(mode, pdf_file, target_dpi, pdf_convert, pdf_merge, clean_temp):
+def pdf_ocr(mode, pdf, target_dpi, pdf_convert, pdf_merge, temp_clean):
     logger.info("[pdf_ocr] 开始执行 PDF OCR (Starting PDF OCR)")
-    if not pdf_file:
+    if not pdf:
         logger.error("[pdf_ocr] PDF 文件未上传 (PDF file not uploaded)")
         raise gr.Error(duration=0, message=local["error"]["no_pdf"])
-    pdf_name = os.path.basename(pdf_file)
+    pdf_name = os.path.basename(pdf)
     logger.debug(f"[pdf_ocr] 获取到 PDF 名称 (Got PDF name): {pdf_name}")
     # ---------------------------------- #
     # 分割模式 (Split mode)
     if mode == "split-to-image":
         logger.debug("[pdf_ocr] 当前模式：split-to-image (Current mode: split-to-image)")
         logger.info("[pdf_ocr] 开始分割 PDF 文件 (Starting to split PDF file)")
-        success = PDFHandler.split_pdf(pdf_path=pdf_file, img_path="imgs", target_dpi=target_dpi)
+        success = PDFHandler.split_pdf(pdf_path=pdf, img_path="imgs", target_dpi=target_dpi)
         if success:
             logger.info("[pdf_ocr] PDF 文件分割成功 (PDF file split successfully)")
             gr.Info(message=local["info"]["pdf_split_success"].format(pdf_file=pdf_name))
@@ -349,7 +348,7 @@ def pdf_ocr(mode, pdf_file, target_dpi, pdf_convert, pdf_merge, clean_temp):
         logger.debug("[pdf_ocr] 当前模式：render (Current mode: render)")
         logger.debug(f"[pdf_ocr] 开始渲染 PDF 文件 (Starting to render PDF file)：{pdf_name}")
         gr.Info(message=local["info"]["pdf_render_start"].format(pdf_file=pdf_name))
-        success = PDFHandler.pdf_renderer(model=model, tokenizer=tokenizer, pdf_path=pdf_file, target_dpi=target_dpi,
+        success = PDFHandler.pdf_renderer(model=model, tokenizer=tokenizer, pdf_path=pdf, target_dpi=target_dpi,
                                           pdf_convert=pdf_convert, wait=config["pdf_render_wait"],
                                           time=config["pdf_render_wait_time"])
         # 渲染成功判定 (Rendering success determination)
@@ -366,7 +365,7 @@ def pdf_ocr(mode, pdf_file, target_dpi, pdf_convert, pdf_merge, clean_temp):
                     logger.info(f"[pdf_ocr] PDF 文件合并成功 (PDF file merged successfully)：{pdf_name}")
                     gr.Info(message=local["info"]["pdf_merge_success"].format(pdf_file=pdf_name))
                     # 合并成功，清理临时文件 (Merged successfully, cleaning up temporary files)
-                    if clean_temp:
+                    if temp_clean:
                         logger.info("[pdf_ocr] 开始清理临时文件 (Starting to clean up temporary files)")
                         logger.debug(
                             f"获取到临时文件特征 (Got temp file pattern)：{extract_pdf_pattern(pdf_name)}_\d+.pdf")
@@ -391,7 +390,7 @@ def pdf_ocr(mode, pdf_file, target_dpi, pdf_convert, pdf_merge, clean_temp):
         if success:
             logger.info(f"[pdf_ocr] PDF 文件合并成功 (PDF file merged successfully)：{pdf_name}")
             gr.Info(message=local["info"]["pdf_merge_success"].format(pdf_file=pdf_name))
-            if clean_temp:
+            if temp_clean:
                 # 合并成功，清理临时文件 (Merged successfully, cleaning up temporary files)
                 logger.info("[pdf_ocr] 开始清理临时文件 (Starting to clean up temporary files)")
                 TempCleaner.cleaner(["result"], [f"{extract_pdf_pattern(pdf_name)}_\d+.pdf"])
@@ -567,21 +566,21 @@ with gr.Blocks(theme=theme) as demo:
     # ---------------------------------- #
     # 更新 PDF OCR 保存 PDF 选项 (Updating save as PDF option for PDF OCR)
     pdf_ocr_mode.change(
-        fn=update_pdf_pdf_convert_confirm_visibility,
+        fn=update_pdf_conv_conf_visibility,
         inputs=pdf_ocr_mode,
         outputs=pdf_pdf_convert_confirm
     )
     # ----------------------------------- #
     # 更新 PDF OCR DPI 输入框 (Updating target DPI input box for PDF OCR)
     pdf_ocr_mode.change(
-        fn=update_pdf_pdf_dpi_visibility,
+        fn=update_pdf_dpi_visibility,
         inputs=pdf_ocr_mode,
         outputs=dpi
     )
     # ----------------------------------- #
     # 更新 PDF OCR 合并 PDF 选项 (Updating merge PDF option for PDF OCR)
     pdf_pdf_convert_confirm.change(
-        fn=update_pdf_pdf_merge_confirm_visibility,
+        fn=update_pdf_merge_conf_visibility,
         inputs=pdf_pdf_convert_confirm,
         outputs=pdf_pdf_merge_confirm
     )

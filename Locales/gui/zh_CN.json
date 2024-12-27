@@ -12,7 +12,8 @@
         "no_pdf": "未上传 PDF 文件",
         "pdf_merge_fail": "{pdf_file} 合并失败",
         "pdf_render_fail": "{pdf_file} 渲染失败",
-        "pdf_split_fail": "{pdf_file} 分割失败"
+        "pdf_split_fail": "{pdf_file} 分割失败",
+        "filename_format_error": "文件名不满足格式 <string>_0.pdf"
     },
     "info": {
         "developing": "正在施工",
@@ -49,6 +50,36 @@
         "save_as_pdf": "保存为 PDF",
         "target_dpi": "目标 DPI",
         "upload_img": "上传图片"
+    },
+    "log": {
+        "debug": {
+            "save_pdf_checkbox_enabled": "保存 PDF 勾选框已启用（ PDF 标签页）",
+            "save_pdf_checkbox_disabled": "保存 PDF 勾选框已禁用（ PDF 标签页）",
+            "merge_pdf_checkbox_enabled": "合并 PDF 勾选框已启用（ PDF 标签页）",
+            "merge_pdf_checkbox_disabled": "合并 PDF 勾选框已禁用（ PDF 标签页）",
+            "dpi_input_box_enabled": "目标 DPI 输入框已启用（ PDF 标签页）",
+            "dpi_input_box_disabled": "目标 DPI 输入框已禁用（ PDF 标签页）",
+            "filename_split_res": "文件名分割结果：{res}"
+        },
+        "info": {
+            "lang_file_loaded": "语言文件已加载：{lang}",
+            "model_loading": "正在加载模型",
+            "model_loaded": "模型已加载",
+            "model_unloaded": "模型已卸载",
+            "theme_loaded": "主题已加载",
+            "img_name_updated": "图片名称已更新：{name}",
+            "pdf_name_updated": "PDF 名称已更新：{name}",
+            "res_folder_created": "result 文件夹不存在，已创建",
+            "ocr_started": "OCR 开始"
+        },
+        "warning": {
+            "model_loading_skipped": "由于你的设置，模型加载已跳过",
+            "theme_loading_failed": "主题加载失败，回滚到默认主题"
+        },
+        "error": {
+            "filename_format_error": "文件名不满足格式 <string>_0.pdf"
+        },
+        "critical": {}
     },
     "mode": {
         "fine-grained-color-format": "fine-grained 格式化 OCR （使用颜色画框）",

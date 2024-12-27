@@ -263,9 +263,7 @@ def ocr(image_path, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x
 
 ##########################
 
-# test
-# test_res = ocr(args.path, 0, 0, 0, 0, args.image_ocr_mode, 'red', False, False)
-# print(test_res)
+
 
 ##########################
 

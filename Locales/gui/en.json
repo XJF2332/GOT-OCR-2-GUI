@@ -12,7 +12,8 @@
         "no_pdf": "No PDF file uploaded",
         "pdf_merge_fail": "{pdf_file} merge failed",
         "pdf_render_fail": "{pdf_file} render failed",
-        "pdf_split_fail": "{pdf_file} split failed"
+        "pdf_split_fail": "{pdf_file} split failed",
+        "filename_format_error": "Filename doesn't match the format <string>_0.pdf"
     },
     "info": {
         "developing": "Under construction",
@@ -49,6 +50,36 @@
         "save_as_pdf": "Save as PDF",
         "target_dpi": "Target DPI",
         "upload_img": "Upload Image"
+    },
+    "log": {
+        "debug": {
+            "save_pdf_checkbox_enabled": "Save PDF checkbox enabled (PDF tab)",
+            "save_pdf_checkbox_disabled": "Save PDF checkbox disabled (PDF tab)",
+            "merge_pdf_checkbox_enabled": "Merge PDF checkbox enabled (PDF tab)",
+            "merge_pdf_checkbox_disabled": "Merge PDF checkbox disabled (PDF tab)",
+            "dpi_input_box_enabled": "Target DPI input box enabled (PDF tab)",
+            "dpi_input_box_disabled": "Target DPI input box disabled (PDF tab)",
+            "filename_split_res": "Filename split result: {res}"
+        },
+        "info": {
+            "lang_file_loaded": "Language file loaded: {lang}",
+            "model_loading": "Loading model",
+            "model_loaded": "Model loaded",
+            "model_unloaded": "Model unloaded",
+            "theme_loaded": "Theme loaded",
+            "img_name_updated": "Image name updated: {name}",
+            "pdf_name_updated": "PDF name updated: {name}",
+            "res_folder_created": "Result folder does not exist, created",
+            "ocr_started": "OCR started"
+        },
+        "warning": {
+            "model_loading_skipped": "Model loading skipped due to your settings",
+            "theme_loading_failed": "Theme loading failed, rolled back to default theme"
+        },
+        "error": {
+            "filename_format_error": "Filename does not meet the format <string>_0.pdf"
+        },
+        "critical": {}
     },
     "mode": {
         "fine-grained-color-format": "Fine-Grained Format OCR (Using Color Boxes)",
