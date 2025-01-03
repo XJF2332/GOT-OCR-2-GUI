@@ -10,6 +10,7 @@
         "no_model_or_img": "未加载模型或未上传图片",
         "ocr_mode_none": "未选择 OCR 模式",
         "no_pdf": "未上传 PDF 文件",
+        "ocr_failed": "OCR 失败，意料之外的错误：{error}",
         "pdf_merge_fail": "{pdf_file} 合并失败",
         "pdf_render_fail": "{pdf_file} 渲染失败",
         "pdf_split_fail": "{pdf_file} 分割失败",
@@ -21,6 +22,7 @@
         "model_load_skipped": "模型加载已跳过",
         "model_not_loaded": "模型未加载",
         "ocr_started": "OCR 开始",
+        "pdf_ocr_started": "开始对 PDF 文件执行 OCR",
         "pdf_merge_start": "开始合并 {pdf_file}",
         "pdf_merge_success": "{pdf_file} 合并成功",
         "pdf_render_start": "开始渲染 {pdf_file}",
@@ -59,7 +61,12 @@
             "merge_pdf_checkbox_disabled": "合并 PDF 勾选框已禁用（ PDF 标签页）",
             "dpi_input_box_enabled": "目标 DPI 输入框已启用（ PDF 标签页）",
             "dpi_input_box_disabled": "目标 DPI 输入框已禁用（ PDF 标签页）",
-            "filename_split_res": "文件名分割结果：{res}"
+            "filename_split_res": "文件名分割结果：{res}",
+            "current_ocr_mode": "当前 OCR 模式：{ocr_mode}",
+            "current_ocr_box": "当前 OCR 框：{ocr_box}",
+            "got_img_name": "获取图片名称：{img_name}",
+            "pdf_mode_split": "[pdf_ocr] 当前 PDF OCR 模式：split-to-image",
+            "pdf_mode_render": "[pdf_ocr] 当前 PDF OCR 模式：render"
         },
         "info": {
             "lang_file_loaded": "语言文件已加载：{lang}",
@@ -68,17 +75,40 @@
             "model_unloaded": "模型已卸载",
             "theme_loaded": "主题已加载",
             "img_name_updated": "图片名称已更新：{name}",
+            "pdf_ocr_start": "[pdf_ocr] 开始执行 PDF OCR",
             "pdf_name_updated": "PDF 名称已更新：{name}",
+            "pdf_splitting_started": "[pdf_ocr] 开始分割 PDF",
+            "pdf_render_started": "[pdf_ocr] 开始渲染 PDF：{pdf}",
+            "pdf_render_success": "[pdf_ocr] PDF 渲染完成：{pdf}",
+            "pdf_merge_started": "[pdf_ocr] 开始合并 PDF：{pdf}",
+            "pdf_merge_success": "[pdf_ocr] PDF 合并成功：{pdf}",
+            "pdf_split_success": "[pdf_ocr] PDF 分割成功",
             "res_folder_created": "result 文件夹不存在，已创建",
-            "ocr_started": "OCR 开始"
+            "ocr_started": "OCR 开始",
+            "got_pdf_name": "[pdf_ocr] 获取到 PDF 名称：{name}",
+            "render_completed": "渲染完成",
+            "temp_cleaning": "清理临时文件",
+            "temp_cleaning_skipped": "临时文件清理工作已跳过",
+            "ocr_completed": "OCR 完成"
         },
         "warning": {
             "model_loading_skipped": "由于你的设置，模型加载已跳过",
             "theme_loading_failed": "主题加载失败，回滚到默认主题"
         },
         "error": {
-            "filename_format_error": "文件名不满足格式 <string>_0.pdf"
+            "filename_format_error": "文件名不满足格式 <string>_0.pdf",
+            "no_model_or_img": "没有加载模型或上传图片",
+            "ocr_failed": "OCR 失败：{error}",
+            "pdf_split_fail": "[pdf_ocr] PDF 分割失败",
+            "no_pdf_uploaded": "[pdf_ocr] 未上传 PDF 文件"
         },
+        "critical": {}
+    },
+    "log_cli": {
+        "debug": {},
+        "info": {},
+        "warning": {},
+        "error": {},
         "critical": {}
     },
     "mode": {

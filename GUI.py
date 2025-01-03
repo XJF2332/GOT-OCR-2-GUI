@@ -1,4 +1,4 @@
-print("正在加载 (Loading...)")
+print("正在加载 / Loading...")
 
 import logging
 from datetime import datetime
@@ -15,7 +15,7 @@ from time import sleep
 
 ##########################
 
-# 加载配置文件 (Load configuration file)
+# 加载配置文件 / Load configuration file
 config_path = os.path.join("Configs", "Config.json")
 try:
     with open(config_path, 'r', encoding='utf-8') as file:
@@ -28,7 +28,7 @@ except FileNotFoundError:
 
 ##########################
 
-# 日志记录器 (Logger)
+# 日志记录器 / Logger
 current_time = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 logger = logging.getLogger(__name__)
 
@@ -71,7 +71,7 @@ logger.info("日志记录器已初始化 / Logger initialized")
 ##########################
 
 
-# 加载语言设置 (Load language settings)
+# 加载语言设置 / Load language settings
 try:
     with open(os.path.join("Locales", "gui", "config.json"), 'r', encoding='utf-8') as file:
         lang_config = json.load(file)
@@ -99,7 +99,7 @@ tokenizer = None
 
 ##########################
 
-# 加载模型函数 (Loading model function)
+# 加载模型函数 / Loading model function
 def load_model():
     logger.info(f"[load_model] {local['log']['info']['model_loading']}")
     global model, tokenizer
@@ -115,7 +115,7 @@ def load_model():
 
 ##########################
 
-# 卸载模型函数 (Unloading model function)
+# 卸载模型函数 / Unloading model function
 def unload_model():
     global model, tokenizer
     model = None
@@ -126,7 +126,7 @@ def unload_model():
 
 ##########################
 
-# 决定是否加载模型 (Deciding whether to load the model)
+# 决定是否加载模型 / Deciding whether to load the model
 if config["load_model_on_start"]:
     load_model()
 else:
@@ -218,7 +218,7 @@ def update_pdf_dpi_visibility(pdf_ocr_mode_update):
 
 ##########################
 
-# 提取prefix (Extracting prefix)
+# 提取prefix / Extracting prefix
 def extract_pdf_pattern(filename):
     """
     从文件名中提取前缀，如果文件名不满足格式 <string>_0.pdf, 则抛出 ValueError 异常
@@ -241,7 +241,7 @@ def extract_pdf_pattern(filename):
 
 ##########################
 
-# 进行 OCR 识别 (Performing OCR recognition)
+# 进行 OCR 识别 / Performing OCR recognition
 def ocr(image_path, fg_box_x1, fg_box_y1, fg_box_x2, fg_box_y2, mode, fg_color, pdf_conv_conf, temp_clean):
     # 默认值 (Default value)
     res = local["error"]["ocr_mode_none"]
@@ -257,116 +257,115 @@ def ocr(image_path, fg_box_x1, fg_box_y1, fg_box_x2, fg_box_y2, mode, fg_color, 
         # 根据 OCR 类型进行 OCR 识别 (Performing OCR based on OCR type)
         logger.info(f"[ocr] {local['log']['info']['ocr_started']}")
         if mode == "ocr":
-            logger.debug("[ocr] 当前 OCR 模式：ocr (Current ocr mode: ocr)")
+            logger.debug(f"[ocr] {local['log']['debug']['current_ocr_mode'].format(ocr_mode=mode)}")
             res = model.chat(tokenizer, image_path, ocr_type='ocr')
         elif mode == "format":
-            logger.debug("[ocr] 当前 OCR 模式：format (Current ocr mode: format)")
+            logger.debug(f"[ocr] {local['log']['debug']['current_ocr_mode'].format(ocr_mode=mode)}")
             res = model.chat(tokenizer, image_path, ocr_type='format')
         elif mode == "fine-grained-ocr":
-            logger.debug("[ocr] 当前 OCR 模式：fine-grained-ocr (Current ocr mode: fine-grained-ocr)")
+            logger.debug(f"[ocr] {local['log']['debug']['current_ocr_mode'].format(ocr_mode=mode)}")
             # 构建 OCR 框 (Building OCR box)
             box = f"[{fg_box_x1}, {fg_box_y1}, {fg_box_x2}, {fg_box_y2}]"
-            logger.debug(f"[ocr] 当前 OCR 框 (Current ocr box): {box}")
+            logger.debug(f"[ocr] {local['log']['debug']['current_ocr_box'].format(ocr_box=box)}")
             res = model.chat(tokenizer, image_path, ocr_type='ocr', ocr_box=box)
         elif mode == "fine-grained-format":
-            logger.debug("[ocr] 当前 OCR 模式：fine-grained-format (Current ocr mode: fine-grained-format)")
+            logger.debug(f"[ocr] {local['log']['debug']['current_ocr_mode'].format(ocr_mode=mode)}")
             # 构建 OCR 框 (Building OCR box)
             box = f"[{fg_box_x1}, {fg_box_y1}, {fg_box_x2}, {fg_box_y2}]"
-            logger.debug(f"[ocr] 当前 OCR 框 (Current ocr box): {box}")
+            logger.debug(f"[ocr] {local['log']['debug']['current_ocr_box'].format(ocr_box=box)}")
             res = model.chat(tokenizer, image_path, ocr_type='format', ocr_box=box)
         elif mode == "fine-grained-color-ocr":
-            logger.debug("[ocr] 当前 OCR 模式：fine-grained-color-ocr (Current ocr mode: fine-grained-color-ocr)")
+            logger.debug(f"[ocr] {local['log']['debug']['current_ocr_mode'].format(ocr_mode=mode)}")
             res = model.chat(tokenizer, image_path, ocr_type='ocr', ocr_color=fg_color)
         elif mode == "fine-grained-color-format":
-            logger.debug("[ocr] 当前 OCR 模式：fine-grained-color-format (Current ocr mode: fine-grained-color-format)")
+            logger.debug(f"[ocr] {local['log']['debug']['current_ocr_mode'].format(ocr_mode=mode)}")
             res = model.chat(tokenizer, image_path, ocr_type='format', ocr_color=fg_color)
         elif mode == "multi-crop-ocr":
-            logger.debug("[ocr] 当前 OCR 模式：multi-crop-ocr (Current ocr mode: multi-crop-ocr)")
+            logger.debug(f"[ocr] {local['log']['debug']['current_ocr_mode'].format(ocr_mode=mode)}")
             res = model.chat_crop(tokenizer, image_path, ocr_type='ocr')
         elif mode == "multi-crop-format":
-            logger.debug("[ocr] 当前 OCR 模式：multi-crop-format (Current ocr mode: multi-crop-format)")
+            logger.debug(f"[ocr] {local['log']['debug']['current_ocr_mode'].format(ocr_mode=mode)}")
             res = model.chat_crop(tokenizer, image_path, ocr_type='format')
         elif mode == "render":
-            logger.debug("[ocr] 当前 OCR 模式：render (Current ocr mode: render)")
+            logger.debug(f"[ocr] {local['log']['debug']['current_ocr_mode'].format(ocr_mode=mode)}")
             success = Renderer.render(model=model, tokenizer=tokenizer, image_path=image_path,
                                       convert_to_pdf=pdf_conv_conf, wait=config["pdf_render_wait"],
                                       time=config["pdf_render_wait_time"])
-            image_name_with_extension = os.path.basename(image_path)
-            logger.debug(f"[ocr] 获取到图像名称 (Got image name): {image_name_with_extension}")
+            image_name_with_ext = os.path.basename(image_path)
+            logger.debug(f"[ocr] {local['log']['debug']['got_img_name'].format(img_name=image_name_with_ext)}")
             if success:
-                res = local["info"]["render_success"].format(img_file=image_name_with_extension)
-                logger.info("[ocr] 渲染已完成 (Render completed)")
+                res = local["info"]["render_success"].format(img_file=image_name_with_ext)
+                logger.info(f"[ocr] {local['log']['info']['render_completed']}")
                 if temp_clean and pdf_conv_conf:
-                    logger.info("[ocr] 正在清理临时文件 (Cleaning temporary files)")
+                    logger.info(f"[ocr] {local['log']['info']['temp_cleaning']}")
                     TempCleaner.cleaner(["result"],
-                                        [f"{os.path.splitext(image_name_with_extension)[0]}-gb2312.html",
-                                         f"{os.path.splitext(image_name_with_extension)[0]}-utf8.html",
-                                         f"{os.path.splitext(image_name_with_extension)[0]}-utf8-local.html"])
+                                        [f"{os.path.splitext(image_name_with_ext)[0]}-gb2312.html",
+                                         f"{os.path.splitext(image_name_with_ext)[0]}-utf8.html",
+                                         f"{os.path.splitext(image_name_with_ext)[0]}-utf8-local.html"])
                 if temp_clean and not pdf_conv_conf:
-                    logger.info("[ocr] 正在清理临时文件 (Cleaning temporary files)")
-                    TempCleaner.cleaner(["result"], [f"{os.path.splitext(image_name_with_extension)[0]}-gb2312.html"])
+                    logger.info(f"[ocr] {local['log']['info']['temp_cleaning']}")
+                    TempCleaner.cleaner(["result"], [f"{os.path.splitext(image_name_with_ext)[0]}-gb2312.html"])
                 else:
-                    logger.info("[ocr] 跳过临时文件清理 (Skip cleaning temporary files)")
+                    logger.info(f"[ocr] {local['log']['info']['temp_cleaning_skipped']}")
             else:
-                res = local["error"]["render_fail"].format(img_file=image_name_with_extension)
-        logger.info("[ocr] OCR 已完成 (OCR completed)")
+                res = local["error"]["render_fail"].format(img_file=image_name_with_ext)
+        logger.info(f"[ocr] {local['log']['info']['ocr_completed']}")
         return res
     except AttributeError:
-        logger.error(
-            f"[ocr] 你看起来没有加载模型，或没有上传图片 (You seem to have not loaded the model or uploaded an image)")
+        logger.error(f"[ocr] {local['log']['error']['no_model_or_img']}")
         return local["error"]["no_model_or_img"]
     except Exception as e:
-        logger.error(f"[ocr] OCR 失败 (OCR failed): {e}")
-        return str(e)
+        logger.error(f"[ocr] {local['log']['error']['ocr_failed'].format(error=e)}")
+        return local["error"]["ocr_failed"].format(error=e)
 
 
 ##########################
 
-# 执行PDF OCR (Performing PDF OCR)
+# 执行PDF OCR / Performing PDF OCR
 def pdf_ocr(mode, pdf, target_dpi, pdf_convert, pdf_merge, temp_clean):
-    logger.info("[pdf_ocr] 开始执行 PDF OCR (Starting PDF OCR)")
+    logger.info(local['log']['info']['pdf_ocr_start'])
     if not pdf:
-        logger.error("[pdf_ocr] PDF 文件未上传 (PDF file not uploaded)")
+        logger.error(local['log']['info']['no_pdf_uploaded'])
         raise gr.Error(duration=0, message=local["error"]["no_pdf"])
     pdf_name = os.path.basename(pdf)
-    logger.debug(f"[pdf_ocr] 获取到 PDF 名称 (Got PDF name): {pdf_name}")
+    logger.debug(local["log"]["debug"]["got_pdf_name"].format(name=pdf_name))
     # ---------------------------------- #
-    # 分割模式 (Split mode)
+    # 分割模式 / Split mode
     if mode == "split-to-image":
-        logger.debug("[pdf_ocr] 当前模式：split-to-image (Current mode: split-to-image)")
-        logger.info("[pdf_ocr] 开始分割 PDF 文件 (Starting to split PDF file)")
+        logger.debug(local['log']['debug']['pdf_mode_split'])
+        logger.info(local['log']['info']['pdf_splitting_started'])
         success = PDFHandler.split_pdf(pdf_path=pdf, img_path="imgs", target_dpi=target_dpi)
         if success:
-            logger.info("[pdf_ocr] PDF 文件分割成功 (PDF file split successfully)")
+            logger.info(local['log']['info']['pdf_split_success'])
             gr.Info(message=local["info"]["pdf_split_success"].format(pdf_file=pdf_name))
         else:
-            logger.error("[pdf_ocr] PDF 文件分割失败 (PDF file split failed)")
+            logger.error(local["log"]["error"]["pdf_split_fail"])
             raise gr.Error(duration=0, message=local["error"]["pdf_split_fail"].format(pdf_file=pdf_name))
     # ---------------------------------- #
-    # 渲染模式 (Rendering mode)
+    # 渲染模式 / Render mode
     elif mode == "render":
-        logger.debug("[pdf_ocr] 当前模式：render (Current mode: render)")
-        logger.debug(f"[pdf_ocr] 开始渲染 PDF 文件 (Starting to render PDF file)：{pdf_name}")
+        logger.debug(local['log']['debug']['pdf_mode_render'])
+        logger.info(local["log"]["info"]["pdf_render_started"].format(pdf=pdf_name))
         gr.Info(message=local["info"]["pdf_render_start"].format(pdf_file=pdf_name))
         success = PDFHandler.pdf_renderer(model=model, tokenizer=tokenizer, pdf_path=pdf, target_dpi=target_dpi,
                                           pdf_convert=pdf_convert, wait=config["pdf_render_wait"],
                                           time=config["pdf_render_wait_time"])
-        # 渲染成功判定 (Rendering success determination)
+        # 渲染成功判定 / Rendering success determination
         if success:
-            logger.info(f"[pdf_ocr] PDF 文件渲染成功 (PDF file rendered successfully)：{pdf_name}")
+            logger.info(local["log"]["info"]["pdf_render_success"].format(pdf=pdf_name))
             gr.Info(message=local["info"]["pdf_render_success"].format(pdf_file=pdf_name))
-            # 渲染成功则合并 (Render successfully and then merge)
-            if pdf_merge:  # 决定是否要合并 (Deciding whether to merge or not)
-                logger.debug(f"[pdf_ocr] 开始合并 PDF 文件 (Starting to merge PDF file)：{pdf_name}")
+            # 自动合并 / Auto merge
+            if pdf_merge:  # 决定是否要合并 / Deciding whether to merge or not
+                logger.info(local["log"]["info"]["pdf_merge_started"].format(pdf=pdf_name))
                 gr.Info(message=local["info"]["pdf_merge_start"].format(pdf_file=pdf_name))
                 success = PDFMerger.merge_pdfs(prefix=extract_pdf_pattern(pdf_name))
-                # 合并成功判定 (Merging success determination)
+                # 合并成功判定 / Merging success determination
                 if success:
-                    logger.info(f"[pdf_ocr] PDF 文件合并成功 (PDF file merged successfully)：{pdf_name}")
+                    logger.info(local["log"]["info"]["pdf_merge_success"].format(pdf=pdf_name))
                     gr.Info(message=local["info"]["pdf_merge_success"].format(pdf_file=pdf_name))
-                    # 合并成功，清理临时文件 (Merged successfully, cleaning up temporary files)
+                    # 合并成功，清理临时文件 / Merged successfully, cleaning up temporary files
                     if temp_clean:
-                        logger.info("[pdf_ocr] 开始清理临时文件 (Starting to clean up temporary files)")
+                        logger.info(f"[pdf_ocr] {local['log']['info']['temp_cleaning']}")
                         logger.debug(
                             f"获取到临时文件特征 (Got temp file pattern)：{extract_pdf_pattern(pdf_name)}_\d+.pdf")
                         TempCleaner.cleaner(["result"], [f"{extract_pdf_pattern(pdf_name)}_\d+.pdf"])
