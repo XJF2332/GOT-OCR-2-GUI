@@ -104,7 +104,7 @@ def render(model: object, tokenizer: object, image_path: str, wait: bool, time: 
         # 根据参数决定是否转换为PDF
         if convert_to_pdf:
             Renderer_logger.info(f"正在转换为PDF (Converting to PDF)：'{html_utf8_path}'")
-            html2pdf.repalce_html_content(html_utf8_path, html_utf8_local_path)
+            html2pdf.replace_html_content(html_utf8_path, html_utf8_local_path)
             pdf_path = os.path.join("result", f"{img_name_no_ext}.pdf")
             html2pdf.output_pdf(html_utf8_local_path, pdf_path, wait=wait, waiting_time=time)
         return 1

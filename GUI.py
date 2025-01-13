@@ -314,7 +314,7 @@ def ocr(image_path, fg_box_x1, fg_box_y1, fg_box_x2, fg_box_y2, mode, fg_color, 
 def pdf_ocr(mode, pdf, target_dpi, pdf_convert, pdf_merge, temp_clean):
     logger.info(local['log']['info']['pdf_ocr_start'])
     if not pdf:
-        logger.error(local['log']['info']['no_pdf_uploaded'])
+        logger.error(local['log']['error']['no_pdf_uploaded'])
         raise gr.Error(duration=0, message=local["error"]["no_pdf"])
     pdf_name = os.path.basename(pdf)
     logger.debug(local["log"]["debug"]["got_pdf_name"].format(name=pdf_name))
@@ -336,18 +336,25 @@ def pdf_ocr(mode, pdf, target_dpi, pdf_convert, pdf_merge, temp_clean):
         logger.debug(local['log']['debug']['pdf_mode_render'])
         logger.info(local["log"]["info"]["pdf_render_started"].format(pdf=pdf_name))
         gr.Info(message=local["info"]["pdf_render_start"].format(pdf_file=pdf_name))
-        success = PDFHandler.pdf_renderer(model=model, tokenizer=tokenizer, pdf_path=pdf, target_dpi=target_dpi,
-                                          pdf_convert=pdf_convert, wait=config["pdf_render_wait"],
+        success = PDFHandler.pdf_renderer(model=model,
+                                          tokenizer=tokenizer,
+                                          pdf_path=pdf,
+                                          target_dpi=target_dpi,
+                                          pdf_convert=pdf_convert,
+                                          wait=config["pdf_render_wait"],
                                           time=config["pdf_render_wait_time"])
         # 渲染成功判定 / Rendering success determination
         if success:
             logger.info(local["log"]["info"]["pdf_render_success"].format(pdf=pdf_name))
             gr.Info(message=local["info"]["pdf_render_success"].format(pdf_file=pdf_name))
             # 自动合并 / Auto merge
+            pattern_pdf = f"{os.path.splitext(pdf_name)[0]}_0.pdf"
+            pattern_html = f"{os.path.splitext(pdf_name)[0]}_\d+-.*\.html"
+            pattern_pdf_temp = f"{os.path.splitext(pdf_name)[0]}_\d+-.*\.html"
             if pdf_merge:  # 决定是否要合并 / Deciding whether to merge or not
                 logger.info(local["log"]["info"]["pdf_merge_started"].format(pdf=pdf_name))
                 gr.Info(message=local["info"]["pdf_merge_start"].format(pdf_file=pdf_name))
-                success = PDFMerger.merge_pdfs(prefix=extract_pdf_pattern(pdf_name))
+                success = PDFMerger.merge_pdfs(prefix=extract_pdf_pattern(pattern_pdf))
                 # 合并成功判定 / Merging success determination
                 if success:
                     logger.info(local["log"]["info"]["pdf_merge_success"].format(pdf=pdf_name))
@@ -356,8 +363,8 @@ def pdf_ocr(mode, pdf, target_dpi, pdf_convert, pdf_merge, temp_clean):
                     if temp_clean:
                         logger.info(local['log']['info']['pdf_temp_cleaning'])
                         logger.debug(local['log']['debug']['got_temp_file_pattern'].format(
-                            pattern=f'{extract_pdf_pattern(pdf_name)}_\d+.pdf'))
-                        TempCleaner.cleaner(["result"], [f"{extract_pdf_pattern(pdf_name)}_\d+.pdf"])
+                            pattern=[pattern_pdf_temp, pattern_html]))
+                        TempCleaner.cleaner(["result"], [pattern_pdf_temp, pattern_html])
                 else:
                     logger.error(local['log']['error']['pdf_merge_failed'].format(name=pdf_name))
                     raise gr.Error(duration=0, message=local["error"]["pdf_merge_fail"].format(pdf_file=pdf_name))

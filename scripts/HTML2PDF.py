@@ -59,7 +59,7 @@ def convert_html_encoding(html_gb2312_path: str, html_utf8_path: str):
     try:
         # gb2312
         HTML2PDF_logger.debug(f"[convert_html_encoding] 正在读取 (Reading)：{html_gb2312_path}")
-        with open(html_gb2312_path, 'r', encoding='gb2312') as file:
+        with open(html_gb2312_path, 'r', encoding='utf-8') as file:
             content = file.read()
         # utf8
         HTML2PDF_logger.debug(f"[convert_html_encoding] 正在转换 (Converting)：{html_utf8_path}")
@@ -70,7 +70,7 @@ def convert_html_encoding(html_gb2312_path: str, html_utf8_path: str):
 
 #################################
 
-def repalce_html_content(html_utf8_path: str, html_utf8_local_path: str):
+def replace_html_content(html_utf8_path: str, html_utf8_local_path: str):
     """
     替换HTML内容
     Args:
@@ -81,23 +81,23 @@ def repalce_html_content(html_utf8_path: str, html_utf8_local_path: str):
         None
     """
     try:
-        HTML2PDF_logger.info(f"[repalce_html_content] 正在替换 (Replacing)：{html_utf8_path}")
+        HTML2PDF_logger.info(f"[replace_html_content] 正在替换 (Replacing)：{html_utf8_path}")
 
         # 替换内容
         pattern = r'https://cdn.jsdelivr.net/npm/mathpix-markdown-it@1.3.6/es5/bundle.js'
         replacement = 'markdown-it.js'
 
-        HTML2PDF_logger.debug(f"[repalce_html_content] 正在读取 (Reading)：{html_utf8_path}")
+        HTML2PDF_logger.debug(f"[replace_html_content] 正在读取 (Reading)：{html_utf8_path}")
         with open(html_utf8_path, 'r', encoding='utf-8') as file:
             content = file.read()
         # 替换
         new_html_content = re.sub(pattern, replacement, content)
-        HTML2PDF_logger.debug(f"[repalce_html_content] 正在写入 (Writing)：{html_utf8_local_path}")
+        HTML2PDF_logger.debug(f"[replace_html_content] 正在写入 (Writing)：{html_utf8_local_path}")
         with open(html_utf8_local_path, 'w', encoding='utf-8') as file:
             file.write(new_html_content)
     except Exception as e:
         # 打印错误信息
-        HTML2PDF_logger.error(f"[repalce_html_content] {e}")
+        HTML2PDF_logger.error(f"[replace_html_content] {e}")
 
 #################################
 
@@ -187,7 +187,7 @@ def all_in_one(html_gb2312_path: str, html_utf8_path: str, html_utf8_local_path:
     try:
         HTML2PDF_logger.info(f"[all_in_one] 正在转换 (Converting)：{html_gb2312_path}")
         convert_html_encoding(html_gb2312_path, html_utf8_path)
-        repalce_html_content(html_utf8_path, html_utf8_local_path)
+        replace_html_content(html_utf8_path, html_utf8_local_path)
         success = output_pdf(html_utf8_local_path, pdf_path, waiting_time, wait)
         if success == 1:
             HTML2PDF_logger.critical(f"[all_in_one] 未找到WebDriver (WebDriver not found)")

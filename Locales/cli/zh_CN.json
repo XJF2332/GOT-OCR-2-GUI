@@ -1,60 +1,96 @@
 {
     "error": {
         "filename_format_error": "文件名不满足格式：{format}",
+        "no_model_or_img": "没有加载模型或上传图片",
+        "no_pdf": "没有检测到PDF文件",
         "ocr_mode_none": "未指定OCR模式",
-        "render_fail": "渲染失败：{file}",
-        "no_model_or_img": "没有加载模型或上传图片"
+        "pdf_render_fail": "PDF渲染失败：{pdf}",
+        "pdf_merge_fail": "PDF合并失败：{pdf}",
+        "render_fail": "渲染失败：{file}"
     },
     "feedbacks": {
-        "loading": "正在加载(Loading)"
+        "loading": "正在加载",
+        "ocr_object_pdf": "当前 OCR 对象：PDF",
+        "pdf_ocr_start": "PDF OCR 开始",
+        "ocr_object_image": "当前 OCR 对象：图片",
+        "pdf_splitting_started": "PDF 分割开始",
+        "pdf_merge_start": "PDF 合并开始：{pdf}",
+        "pdf_render_started": "PDF 渲染开始：{pdf}",
+        "pdf_render_success": "PDF 渲染成功：{pdf}",
+        "pdf_merge_success": "PDF 合并成功：{pdf}",
+        "pdf_split_success": "PDF 分割成功"
     },
     "help": {
-        "object": "指定要处理的文件类型，是图片（img）还是PDF（pdf）",
-        "path": "指定要处理的图片或pdf的路径",
-        "image_ocr_mode": "指定图片OCR模式，有关各模式的信息请使用 --detailed-help",
+        "clean_temp": "在程序结束后清理临时文件",
+        "detailed_help": "一个更加详细的教程，告诉你该怎么用CLI",
         "fg_box_x1": "fine-grained模式中框的x1坐标",
-        "fg_box_y1": "fine-grained模式中框的y1坐标",
         "fg_box_x2": "fine-grained模式中框的x2坐标",
+        "fg_box_y1": "fine-grained模式中框的y1坐标",
         "fg_box_y2": "fine-grained模式中框的y2坐标",
         "fg_color": "fine-grained模式中框的颜色",
-        "detailed_help": "一个更加详细的教程，告诉你该怎么用CLI",
-        "save_as_pdf": "将渲染结果保存为PDF文件，只在render模式下有效",
-        "clean_temp": "在程序结束后清理临时文件"
+        "pdf_ocr_mode": "指定PDF OCR模式，有关各模式的信息请使用 --detailed-help",
+        "image_ocr_mode": "指定图片OCR模式，有关各模式的信息请使用 --detailed-help",
+        "object": "指定要处理的文件类型，是图片（img）还是PDF（pdf）",
+        "path": "指定要处理的图片或pdf的路径",
+        "save_as_pdf": "将渲染结果保存为PDF文件，只在render模式下有效"
     },
     "instructions": {
         "quit": "按回车键来退出",
         "timed_quit": "将在3秒后退出"
     },
     "log": {
+        "critical": {
+            "dir_not_supported": "目录不受支持，请使用Renderer.py",
+            "unsupported_file_type": "不支持的文件类型",
+            "file_not_found": "文件不存在：{path}"
+        },
         "debug": {
-            "filename_split_res": "文件名分割结果：{res}",
-            "ocr_mode": "OCR模式：{mode}",
             "fg_box": "fine-grained模式中的框：{box}",
-            "got_image_name": "获取到图片名：{name}"
+            "filename_split_res": "文件名分割结果：{res}",
+            "image_detected": "检测到图片文件：{path}",
+            "got_image_name": "获取到图片名：{name}",
+            "pdf_detected": "检测到PDF文件：{path}",
+            "got_temp_file_pattern": "获取到临时文件模式：{pattern}",
+            "got_pdf_name": "获取到PDF名：{name}",
+            "pdf_merge_fail": "PDF合并失败：{pdf}",
+            "ocr_mode": "OCR模式：{mode}",
+            "pdf_mode_split": "当前 PDF OCR 模式：split-to-image",
+            "pdf_mode_merge": "当前 PDF OCR 模式：merge",
+            "pdf_mode_render": "当前 PDF OCR 模式：render"
+        },
+        "error": {
+            "filename_format_error": "文件名不满足格式：{format}",
+            "no_model_or_img": "没有加载模型或上传图片",
+            "ocr_failed": "OCR失败",
+            "render_fail": "渲染失败",
+            "pdf_merge_failed": "PDF合并失败：{pdf}",
+            "pdf_render_fail": "PDF渲染失败：{pdf}",
+            "pdf_split_fail": "PDF分割失败"
         },
         "info": {
             "cleaning_temp": "正在清理临时文件",
-            "temp_clean_skipped": "跳过临时文件清理",
-            "pdf_detected": "检测到PDF文件：{path}",
-            "image_detected": "检测到图片文件：{path}",
-            "model_loading": "正在加载模型",
+            "lang_file_loaded": "语言文件加载完成",
             "model_loaded": "模型加载完成",
+            "model_loading": "正在加载模型",
+            "ocr_completed": "OCR已完成",
+            "ocr_object_pdf": "当前 OCR 对象：PDF",
+            "merge_skipped": "跳过合并：{pdf}",
+            "ocr_object_image": "当前 OCR 对象：图片",
+            "pdf_ocr_start": "PDF OCR 开始",
+            "pdf_temp_cleaning": "PDF 临时文件清理开始",
+            "pdf_split_start": "PDF 分割开始：{pdf}",
+            "pdf_split_success": "PDF 分割成功：{pdf}",
+            "pdf_merge_started": "PDF 合并开始：{pdf}",
+            "pdf_merge_success": "PDF 合并成功：{pdf}",
+            "pdf_temp_cleaning_skipped": "跳过 PDF 临时文件清理",
             "performing_ocr": "正在执行OCR",
+            "pdf_render_started": "PDF 渲染开始：{pdf}",
+            "pdf_render_success": "PDF 渲染成功：{pdf}",
             "render_completed": "渲染完成：{file}",
-            "ocr_completed": "OCR已完成"
+            "temp_clean_skipped": "跳过临时文件清理"
         },
         "warning": {
             "folder_created": "{folder} 文件夹不存在，已创建"
-        },
-        "error": {
-            "render_fail": "渲染失败",
-            "no_model_or_img": "没有加载模型或上传图片",
-            "filename_format_error": "文件名不满足格式：{format}",
-            "ocr_failed": "OCR失败"
-        },
-        "critical": {
-            "unsupported_file_type": "不支持的文件类型",
-            "dir_not_supported": "目录不受支持，请使用Renderer.py"
         }
     }
 }

@@ -70,6 +70,7 @@
             "pdf_mode_merge": "[pdf_ocr] 当前 PDF OCR 模式：merge",
             "pdf_mode_render": "[pdf_ocr] 当前 PDF OCR 模式：render",
             "pdf_mode_split": "[pdf_ocr] 当前 PDF OCR 模式：split-to-image",
+            "got_pdf_name": "[pdf_ocr] 获取到 PDF 名称：{name}",
             "save_pdf_checkbox_disabled": "[update_pdf_conv_conf_visibility] 保存 PDF 勾选框已禁用（ PDF 标签页）",
             "save_pdf_checkbox_enabled": "[update_pdf_conv_conf_visibility] 保存 PDF 勾选框已启用（ PDF 标签页）"
         },
