@@ -150,6 +150,17 @@ GOT-OCR-2-GUI
   existing file as a starting point). For the GUI, you will also need the corresponding `language.md` file.
 - You can run `Config Manager.py` to manage the language and other configuration files.
 
+## Error Codes
+
+| Error Code | Message                                     |
+|------------|---------------------------------------------|
+| 1          | Config file not found                       |
+| 2          | Language file not found                     |
+| 3          | CLI do not have support for folder          |
+| 4          | Input file not found                        |
+| 5          | Unsupported file type                       |
+| 6          | Failed to detect encoding of rendered HTMLs |
+
 ## Tips
 
 - DO NOT DELETE `markdown-it.js` inside `result` folder, or pdf outputting may fail
