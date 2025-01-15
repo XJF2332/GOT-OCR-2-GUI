@@ -8,6 +8,7 @@ import json
 import argparse
 from time import sleep
 import subprocess
+import shutil
 
 ##########################
 
@@ -27,6 +28,9 @@ except FileNotFoundError:
 # 日志记录器 (Logger)
 current_time = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 logger = logging.getLogger(__name__)
+
+if not os.path.exists("Logs"):
+    os.makedirs("Logs")
 
 logging.basicConfig(
     filename=os.path.join("Logs", f"{current_time}.log"),
@@ -80,8 +84,6 @@ except FileNotFoundError:
 try:
     with open(os.path.join("Locales", "cli", f"{lang}.json"), 'r', encoding='utf-8') as file:
         local = json.load(file)
-    with open(os.path.join("Locales", "cli", "instructions", f"{lang}.md"), 'r', encoding='utf-8') as file:
-        instructions = file.read()
     logger.info(local['log']['info']['lang_file_loaded'])
 except FileNotFoundError:
     logger.critical(f"语言文件未找到 / The language file was not found: {lang}")
@@ -91,8 +93,6 @@ except FileNotFoundError:
 
 ##########################
 
-# def ocr(image_path, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
-#         fine_grained_box_y2, ocr_mode, fine_grained_color, pdf_convert_confirm, clean_temp):
 # 参数定义
 parser = argparse.ArgumentParser(description="CLI application of GOT-OCR-2")
 parser.add_argument('--detailed-help', '-DH', help=local["help"]["detailed_help"], required=False, action='store_true')
@@ -103,6 +103,8 @@ parser.add_argument('--fg-box-x2', '-X2', help=local["help"]["fg_box_x2"], type=
 parser.add_argument('--fg-box-y2', '-Y2', help=local["help"]["fg_box_y2"], type=int, default=0, required=False)
 parser.add_argument('--save-as-pdf', '-PDF', help=local["help"]["save_as_pdf"], type=bool, default=True, required=False)
 parser.add_argument('--clean-temp', '-CT', help=local["help"]["clean_temp"], type=bool, default=True, required=False)
+parser.add_argument('--dpi', '-D', help=local["help"]["dpi"], type=int, default=150, required=False)
+parser.add_argument('--merge', '-M', help=local["help"]["merge"], type=bool, default=True, required=False)
 parser.add_argument('--fg-color', '-C', help=local["help"]["fg_color"], type=str,
                     choices=[
                         "red",
@@ -129,7 +131,18 @@ parser.add_argument('--pdf_ocr_mode', '-PM', help=local["help"]["pdf_ocr_mode"],
 
 # 帮助的特殊行为
 if '--detailed-help' in sys.argv and len(sys.argv) == 2:
-    print(instructions)
+    def is_glow_available():
+        return shutil.which("glow") is not None
+    # glow可用
+    if is_glow_available():
+        print(local["feedbacks"]["use_glow"])
+        subprocess.run(["glow", f"Locales/cli/instructions/{lang}.md"])
+    # glow不可用
+    else:
+        print(local["feedbacks"]["no_glow"])
+        with open(os.path.join("Locales", "cli", "instructions", f"{lang}.md"), 'r', encoding='utf-8') as file:
+            instructions = file.read()
+        print(instructions)
     input(local["instructions"]["quit"])
     exit(0)
 
@@ -170,7 +183,6 @@ else:
 
 print(local["feedbacks"]["loading"])
 
-import glob
 import scripts.Renderer as Renderer
 import scripts.PDF2ImagePlusRenderer as PDFHandler
 import scripts.PDFMerger as PDFMerger
@@ -190,7 +202,7 @@ logger.info(local["log"]["info"]["model_loaded"])
 ##########################
 
 # 提取prefix / Extracting prefix
-def extract_pdf_pattern(filename):
+def extract_pattern(filename):
     """
     从文件名中提取前缀，如果文件名不满足格式 <string>_0.pdf, 则抛出 ValueError 异常
     (Extracts the prefix from the filename, if the filename does not meet the format <string>_0.pdf, a ValueError exception is raised)
@@ -199,14 +211,13 @@ def extract_pdf_pattern(filename):
     """
     # 在最后一个下划线处分割文件名 (Split the filename at the last underscore)
     parts = filename.rsplit('_')
-    logger.debug(f"[extract_pdf_pattern] {local['log']['debug']['filename_split_res'].format(res=parts)}")
+    logger.debug(local['log']['debug']['filename_split_res'].format(res=parts))
 
     # 检查最后一部分是否为 '0.pdf' (Check if the last part is '0.pdf')
     if len(parts) == 2 and parts[1] == '0.pdf':
         return parts[0]
     else:
-        logger.error(
-            f"[extract_pdf_pattern] {local['log']['error']['filename_format_error'].format(format='<string>_0.pdf')}")
+        logger.error(local['log']['error']['filename_format_error'].format(format='<string>_0.pdf'))
         raise ValueError(local["error"]["filename_format_error"].format(format='<string>_0.pdf'))
 
 
@@ -215,76 +226,68 @@ def extract_pdf_pattern(filename):
 # 进行 OCR 识别 / Performing OCR recognition
 def ocr(image_path, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
         fine_grained_box_y2, ocr_mode, fine_grained_color, pdf_convert_confirm, clean_temp):
-    # 默认值 (Default value)
+    # 默认值 / Default value
     ocr_res = local["error"]["ocr_mode_none"]
 
     if not os.path.exists("result"):
         os.makedirs("result")
-        logger.info(f"[ocr] {local['log']['warning']['folder_created'].format(folder='result')}")
+        logger.info(local['log']['info']['res_folder_created'])
 
     try:
-        # 根据 OCR 类型进行 OCR 识别 (Performing OCR based on OCR type)
-        logger.info(f"[ocr] {local['log']['info']['performing_ocr']}")
+        # 根据 OCR 类型进行 OCR 识别 / Performing OCR based on OCR type
+        logger.info(local['log']['info']['performing_ocr'])
+        logger.debug(local['log']['debug']['ocr_mode'].format(mode=ocr_mode))
         if ocr_mode == "ocr":
-            logger.debug(f"[ocr] {local['log']['debug']['ocr_mode'].format(mode='ocr')}")
             ocr_res = model.chat(tokenizer, image_path, ocr_type='ocr')
         elif ocr_mode == "format":
-            logger.debug(f"[ocr] {local['log']['debug']['ocr_mode'].format(mode='format')}")
             ocr_res = model.chat(tokenizer, image_path, ocr_type='format')
         elif ocr_mode == "fine-grained-ocr":
-            logger.debug(f"[ocr] {local['log']['debug']['ocr_mode'].format(mode='fine-grained-ocr')}")
-            # 构建 OCR 框 (Building OCR box)
+            # 构建 OCR 框 / Building OCR box
             box = f"[{fine_grained_box_x1}, {fine_grained_box_y1}, {fine_grained_box_x2}, {fine_grained_box_y2}]"
-            logger.debug(f"[ocr] {local['log']['debug']['fg_box'].format(box=box)}")
+            logger.debug(local['log']['debug']['fg_box'].format(box=box))
             ocr_res = model.chat(tokenizer, image_path, ocr_type='ocr', ocr_box=box)
         elif ocr_mode == "fine-grained-format":
-            logger.debug(f"[ocr] {local['log']['debug']['ocr_mode'].format(mode='fine-grained-format')}")
-            # 构建 OCR 框 (Building OCR box)
+            # 构建 OCR 框 / Building OCR box
             box = f"[{fine_grained_box_x1}, {fine_grained_box_y1}, {fine_grained_box_x2}, {fine_grained_box_y2}]"
-            logger.debug(f"[ocr] {local['log']['debug']['fg_box'].format(box=box)}")
+            logger.debug(local['log']['debug']['fg_box'].format(box=box))
             ocr_res = model.chat(tokenizer, image_path, ocr_type='format', ocr_box=box)
         elif ocr_mode == "fine-grained-color-ocr":
-            logger.debug(f"[ocr] {local['log']['debug']['ocr_mode'].format(mode='fine-grained-color-ocr')}")
             ocr_res = model.chat(tokenizer, image_path, ocr_type='ocr', ocr_color=fine_grained_color)
         elif ocr_mode == "fine-grained-color-format":
-            logger.debug(f"[ocr] {local['log']['debug']['ocr_mode'].format(mode='fine-grained-color-format')}")
             ocr_res = model.chat(tokenizer, image_path, ocr_type='format', ocr_color=fine_grained_color)
         elif ocr_mode == "multi-crop-ocr":
-            logger.debug(f"[ocr] {local['log']['debug']['ocr_mode'].format(mode='multi-crop-ocr')}")
             ocr_res = model.chat_crop(tokenizer, image_path, ocr_type='ocr')
         elif ocr_mode == "multi-crop-format":
-            logger.debug(f"[ocr] {local['log']['debug']['ocr_mode'].format(mode='multi-crop-format')}")
             ocr_res = model.chat_crop(tokenizer, image_path, ocr_type='format')
         elif ocr_mode == "render":
-            logger.debug(f"[ocr] {local['log']['debug']['ocr_mode'].format(mode='render')}")
             success = Renderer.render(model=model, tokenizer=tokenizer, image_path=image_path,
                                       convert_to_pdf=pdf_convert_confirm, wait=config["pdf_render_wait"],
                                       time=config["pdf_render_wait_time"])
-            image_name_with_extension = os.path.basename(image_path)
-            logger.debug(f"[ocr] {local['log']['debug']['got_image_name'].format(name=image_name_with_extension)}")
+            image_name_ext = os.path.basename(image_path)
+            logger.debug(local['log']['debug']['got_image_name'].format(name=image_name_ext))
             if success:
-                ocr_res = local["log"]["info"]["render_success"].format(img_file=image_name_with_extension)
-                logger.info(f"[ocr] {local['log']['info']['render_completed'].format(file=image_name_with_extension)}")
+                ocr_res = local["feedbacks"]["render_success"].format(file=image_name_ext)
+                logger.info(local['log']['info']['render_completed'].format(file=image_name_ext))
                 if clean_temp and pdf_convert_confirm:
-                    logger.info(f"[ocr] {local['log']['info']['cleaning_temp']}")
+                    logger.info(local['log']['info']['cleaning_temp'])
                     TempCleaner.cleaner(["result"],
-                                        [f"{os.path.splitext(image_name_with_extension)[0]}-gb2312.html",
-                                         f"{os.path.splitext(image_name_with_extension)[0]}-utf8.html",
-                                         f"{os.path.splitext(image_name_with_extension)[0]}-utf8-local.html"])
+                                        [f"{os.path.splitext(image_name_ext)[0]}-gb2312.html",
+                                         f"{os.path.splitext(image_name_ext)[0]}-utf8.html",
+                                         f"{os.path.splitext(image_name_ext)[0]}-utf8-local.html"])
                 if clean_temp and not pdf_convert_confirm:
-                    logger.info(f"[ocr] {local['log']['info']['cleaning_temp']}")
-                    TempCleaner.cleaner(["result"], [f"{os.path.splitext(image_name_with_extension)[0]}-gb2312.html"])
+                    logger.info(local['log']['info']['cleaning_temp'])
+                    TempCleaner.cleaner(["result"], [f"{os.path.splitext(image_name_ext)[0]}-gb2312.html"])
                 else:
-                    logger.info(f"[ocr] {local['log']['info']['temp_clean_skipped']}")
+                    logger.info(local['log']['info']['temp_clean_skipped'])
             else:
-                ocr_res = local["error"]["render_fail"].format(file=image_name_with_extension)
+                ocr_res = local["error"]["render_fail"].format(file=image_name_ext)
         logger.info(local['log']['info']['ocr_completed'])
         return ocr_res
     except AttributeError:
-        logger.error(f"[ocr] {local['log']['error']['no_model_or_img']}")
+        logger.error(local['log']['error']['no_model_or_img'])
         return local["error"]["no_model_or_img"]
     except Exception as e:
-        logger.error(f"[ocr] {local['log']['error']['ocr_failed']}: {e}")
+        logger.error(local['log']['error']['ocr_failed'].format(error=str(e)))
         return str(e)
 
 
@@ -317,7 +320,7 @@ def pdf_ocr(mode, pdf, target_dpi, pdf_convert, pdf_merge, temp_clean):
     if mode == "split-to-image":
         logger.debug(local['log']['debug']['pdf_mode_split'])
         logger.info(local['log']['info']['pdf_split_start'].format(pdf=pdf_name))
-        print(local['feedbacks']['pdf_splitting_started'])
+        print(local['feedbacks']['pdf_split_start'].format(pdf=pdf_name))
         success = PDFHandler.split_pdf(pdf_path=pdf, img_path="imgs", target_dpi=target_dpi)
         if success:
             logger.info(local['log']['info']['pdf_split_success'].format(pdf=pdf_name))
@@ -328,8 +331,8 @@ def pdf_ocr(mode, pdf, target_dpi, pdf_convert, pdf_merge, temp_clean):
     # 渲染模式 / Render mode
     elif mode == "render":
         logger.debug(local['log']['debug']['pdf_mode_render'])
-        logger.info(local['log']['info']['pdf_render_started'].format(pdf=pdf_name))
-        print(local['feedbacks']['pdf_render_started'].format(pdf=pdf_name))
+        logger.info(local['log']['info']['pdf_render_start'].format(pdf=pdf_name))
+        print(local['feedbacks']['pdf_render_start'].format(pdf=pdf_name))
         success = PDFHandler.pdf_renderer(model=model,
                                           tokenizer=tokenizer,
                                           pdf_path=pdf,
@@ -346,8 +349,8 @@ def pdf_ocr(mode, pdf, target_dpi, pdf_convert, pdf_merge, temp_clean):
             pattern_html = f"{os.path.splitext(pdf_name)[0]}_\d+-.*\.html"
             pattern_pdf_temp = f"{os.path.splitext(pdf_name)[0]}_\d+-.*\.html"
             if pdf_merge:  # 决定是否要合并 / Deciding whether to merge or not
-                logger.info(local['log']['info']['pdf_merge_started'].format(pdf=pdf_name))
-                success = PDFMerger.merge_pdfs(prefix=extract_pdf_pattern(pattern_pdf))
+                logger.info(local['log']['info']['pdf_merge_start'].format(pdf=pdf_name))
+                success = PDFMerger.merge_pdfs(prefix=extract_pattern(pattern_pdf))
                 # 合并成功判定 / Merging success determination
                 if success:
                     logger.info(local['log']['info']['pdf_merge_success'].format(pdf=pdf_name))
@@ -372,8 +375,9 @@ def pdf_ocr(mode, pdf, target_dpi, pdf_convert, pdf_merge, temp_clean):
     # 合并模式 / Merging mode
     elif mode == "merge":
         logger.debug(local['log']['debug']['pdf_mode_merge'])
+        logger.info(local['log']['info']['pdf_merge_start'].format(pdf=pdf_name))
         print(local['feedbacks']['pdf_merge_start'].format(pdf=pdf_name))
-        prefix = extract_pdf_pattern(pdf_name)
+        prefix = extract_pattern(pdf_name)
         success = PDFMerger.merge_pdfs(prefix=prefix)
         # 合并成功判定 / Merging success determination
         if success:
@@ -383,8 +387,8 @@ def pdf_ocr(mode, pdf, target_dpi, pdf_convert, pdf_merge, temp_clean):
                 # 合并成功，清理临时文件 / Merged successfully, cleaning up temporary files
                 logger.info(local['log']['info']['pdf_temp_cleaning'])
                 logger.debug(local['log']['debug']['got_temp_file_pattern'].format(
-                    pattern=f'{extract_pdf_pattern(pdf_name)}_\d+.pdf'))
-                TempCleaner.cleaner(["result"], [f"{extract_pdf_pattern(pdf_name)}_\d+.pdf"])
+                    pattern=f'{extract_pattern(pdf_name)}_\d+.pdf'))
+                TempCleaner.cleaner(["result"], [f"{extract_pattern(pdf_name)}_\d+.pdf"])
             else:
                 logger.info(local['log']['info']['pdf_temp_cleaning_skipped'])
         else:
@@ -398,4 +402,5 @@ if ocr_object == "image":
               ocr_mode=args.image_ocr_mode, pdf_convert_confirm=args.save_as_pdf, clean_temp=args.clean_temp)
     print(res)
 elif ocr_object == "pdf":
-    pdf_ocr(mode=args.pdf_ocr_mode, pdf=args.path, target_dpi=150, pdf_convert=True, pdf_merge=True, temp_clean=True)
+    pdf_ocr(mode=args.pdf_ocr_mode, pdf=args.path, target_dpi=args.dpi, pdf_convert=args.save_as_pdf,
+            pdf_merge=args.merge, temp_clean=args.clean_temp)
