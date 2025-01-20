@@ -3,7 +3,7 @@ print("正在加载 / Loading...")
 import logging
 from datetime import datetime
 import scripts.Renderer as Renderer
-import scripts.PDF2ImagePlusRenderer as PDFHandler
+import scripts.PDFHandler as PDFHandler
 import scripts.PDFMerger as PDFMerger
 import scripts.TempCleaner as TempCleaner
 from transformers import AutoModel, AutoTokenizer

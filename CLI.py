@@ -101,10 +101,10 @@ parser.add_argument('--fg-box-x1', '-X1', help=local["help"]["fg_box_x1"], type=
 parser.add_argument('--fg-box-y1', '-Y1', help=local["help"]["fg_box_y1"], type=int, default=0, required=False)
 parser.add_argument('--fg-box-x2', '-X2', help=local["help"]["fg_box_x2"], type=int, default=0, required=False)
 parser.add_argument('--fg-box-y2', '-Y2', help=local["help"]["fg_box_y2"], type=int, default=0, required=False)
-parser.add_argument('--save-as-pdf', '-PDF', help=local["help"]["save_as_pdf"], type=bool, default=True, required=False)
-parser.add_argument('--clean-temp', '-CT', help=local["help"]["clean_temp"], type=bool, default=True, required=False)
+parser.add_argument('--no-pdf', '-NP', help=local["help"]["save_as_pdf"], action='store_false', required=False)
+parser.add_argument('--clean-temp', '-CT', help=local["help"]["clean_temp"], action='store_true', required=False)
 parser.add_argument('--dpi', '-D', help=local["help"]["dpi"], type=int, default=150, required=False)
-parser.add_argument('--merge', '-M', help=local["help"]["merge"], type=bool, default=True, required=False)
+parser.add_argument('--merge', '-M', help=local["help"]["merge"], action='store_true', required=False)
 parser.add_argument('--fg-color', '-C', help=local["help"]["fg_color"], type=str,
                     choices=[
                         "red",
@@ -122,7 +122,7 @@ parser.add_argument('--image-ocr-mode', '-IM', help=local["help"]["image_ocr_mod
                              'multi-crop-format',
                              'render'],
                     default='ocr', required=False)
-parser.add_argument('--pdf_ocr_mode', '-PM', help=local["help"]["pdf_ocr_mode"], type=str,
+parser.add_argument('--pdf-ocr-mode', '-PM', help=local["help"]["pdf_ocr_mode"], type=str,
                     choices=[
                         "split",
                         "merge"
@@ -184,7 +184,7 @@ else:
 print(local["feedbacks"]["loading"])
 
 import scripts.Renderer as Renderer
-import scripts.PDF2ImagePlusRenderer as PDFHandler
+import scripts.PDFHandler as PDFHandler
 import scripts.PDFMerger as PDFMerger
 import scripts.TempCleaner as TempCleaner
 from transformers import AutoModel, AutoTokenizer
@@ -225,7 +225,7 @@ def extract_pattern(filename):
 
 # 进行 OCR 识别 / Performing OCR recognition
 def ocr(image_path, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
-        fine_grained_box_y2, ocr_mode, fine_grained_color, pdf_convert_confirm, clean_temp):
+        fine_grained_box_y2, ocr_mode, fine_grained_color, save_as_pdf, clean_temp):
     # 默认值 / Default value
     ocr_res = local["error"]["ocr_mode_none"]
 
@@ -261,20 +261,20 @@ def ocr(image_path, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x
             ocr_res = model.chat_crop(tokenizer, image_path, ocr_type='format')
         elif ocr_mode == "render":
             success = Renderer.render(model=model, tokenizer=tokenizer, image_path=image_path,
-                                      convert_to_pdf=pdf_convert_confirm, wait=config["pdf_render_wait"],
+                                      convert_to_pdf=save_as_pdf, wait=config["pdf_render_wait"],
                                       time=config["pdf_render_wait_time"])
             image_name_ext = os.path.basename(image_path)
             logger.debug(local['log']['debug']['got_image_name'].format(name=image_name_ext))
             if success:
                 ocr_res = local["feedbacks"]["render_success"].format(file=image_name_ext)
                 logger.info(local['log']['info']['render_completed'].format(file=image_name_ext))
-                if clean_temp and pdf_convert_confirm:
+                if clean_temp and save_as_pdf:
                     logger.info(local['log']['info']['cleaning_temp'])
                     TempCleaner.cleaner(["result"],
                                         [f"{os.path.splitext(image_name_ext)[0]}-gb2312.html",
                                          f"{os.path.splitext(image_name_ext)[0]}-utf8.html",
                                          f"{os.path.splitext(image_name_ext)[0]}-utf8-local.html"])
-                if clean_temp and not pdf_convert_confirm:
+                if clean_temp and not save_as_pdf:
                     logger.info(local['log']['info']['cleaning_temp'])
                     TempCleaner.cleaner(["result"], [f"{os.path.splitext(image_name_ext)[0]}-gb2312.html"])
                 else:
@@ -317,7 +317,7 @@ def pdf_ocr(mode, pdf, target_dpi, pdf_convert, pdf_merge, temp_clean):
     logger.debug(local['log']['debug']['got_pdf_name'].format(name=pdf_name))
     # ---------------------------------- #
     # 分割模式 / Split mode
-    if mode == "split-to-image":
+    if mode == "split":
         logger.debug(local['log']['debug']['pdf_mode_split'])
         logger.info(local['log']['info']['pdf_split_start'].format(pdf=pdf_name))
         print(local['feedbacks']['pdf_split_start'].format(pdf=pdf_name))
@@ -399,8 +399,8 @@ def pdf_ocr(mode, pdf, target_dpi, pdf_convert, pdf_merge, temp_clean):
 if ocr_object == "image":
     res = ocr(image_path=args.path, fine_grained_box_x1=args.fg_box_x1, fine_grained_box_y1=args.fg_box_y1,
               fine_grained_box_x2=args.fg_box_x2, fine_grained_box_y2=args.fg_box_y2, fine_grained_color=args.fg_color,
-              ocr_mode=args.image_ocr_mode, pdf_convert_confirm=args.save_as_pdf, clean_temp=args.clean_temp)
+              ocr_mode=args.image_ocr_mode, save_as_pdf=args.no_pdf, clean_temp=args.clean_temp)
     print(res)
 elif ocr_object == "pdf":
-    pdf_ocr(mode=args.pdf_ocr_mode, pdf=args.path, target_dpi=args.dpi, pdf_convert=args.save_as_pdf,
+    pdf_ocr(mode=args.pdf_ocr_mode, pdf=args.path, target_dpi=args.dpi, pdf_convert=args.no_pdf,
             pdf_merge=args.merge, temp_clean=args.clean_temp)
