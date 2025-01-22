@@ -1,0 +1,35 @@
+{
+    "HTML2PDF": {
+        "critical": {},
+        "debug": {
+            "enc_detect": "[conv_html_enc] 编码检测结果：{encoding}",
+            "writing": "[output_pdf] 正在写入：{file}"
+        },
+        "error": {
+            "aio_fail": "[aio] 转换失败：{file}",
+            "aio_no_driver": "[aio] 未找到 WebDriver",
+            "enc_detect_fail": "[conv_html_enc] 编码检测失败：{e}",
+            "no_driver": "[output_pdf] EdgeDriver 不存在：{path}",
+            "unexpected_error": "[conv_html_enc] 转换失败，意料之外的错误：{e}",
+            "unexpected_error_aio": "[aio] 转换失败，意料之外的错误：{e}",
+            "unexpected_error_pdf": "[output_pdf] 转换失败，意料之外的错误：{e}",
+            "unexpected_error_rep": "[replace_content] 替换失败，意料之外的错误：{e}"
+        },
+        "info": {
+            "aio_conv": "[aio] 正在转换：{file}",
+            "aio_success": "[aio] 转换成功：{file}",
+            "closing": "[output_pdf] 正在关闭 WebDriver",
+            "cnv_completed": "[conv_html_enc] 转换完成：{file}",
+            "conv2pdf": "[output_pdf] 正在转换：{file}",
+            "converting": "[conv_html_enc] 正在转换：{file}",
+            "generating": "[output_pdf] 正在生成：{file}",
+            "no_cnv_required": "[conv_html_enc] 编码已经是UTF-8编码，无需转换",
+            "opening": "[output_pdf] 正在打开：{file}",
+            "reading": "[replace_content] 正在读取：{file}",
+            "reading_ori": "[conv_html_enc] 正在读取：{file}",
+            "replacing": "[replace_content] 正在替换：{file}",
+            "writing": "[replace_content] 正在写入：{file}"
+        },
+        "warning": {}
+    }
+}

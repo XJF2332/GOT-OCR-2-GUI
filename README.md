@@ -16,6 +16,7 @@
 
 ## 待办
 
+- [ ] 优化 PDF 相关的错误处理逻辑
 - [ ] ⚠️支持`llama-cpp-python`，希望能够加速推理
 - 遇到困难，有能力的可以提交 pr，最好可以提到 `Aplha` 分支；使用的 HuggingFace
   模型是 [kaifeise/GOT-gguf](https://huggingface.co/kaifeise/GOT-gguf/tree/main)；`GGUF Test.py`

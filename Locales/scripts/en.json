@@ -1,0 +1,35 @@
+{
+    "HTML2PDF": {
+        "critical": {},
+        "debug": {
+            "enc_detect": "[conv_html_enc] Encoding detected: {encoding}",
+            "writing": "[output_pdf] Writing: {file}"
+        },
+        "error": {
+            "aio_fail": "[aio] Conversion failed: {file}",
+            "aio_no_driver": "[aio] WebDriver not found",
+            "enc_detect_fail": "[conv_html_enc] Failed to detect encoding: {e}",
+            "no_driver": "[output_pdf] EdgeDriver not found: {path}",
+            "unexpected_error": "[conv_html_enc] Conversion failed, unexpected error: {e}",
+            "unexpected_error_aio": "[aio] Conversion failed, unexpected error: {e}",
+            "unexpected_error_pdf": "[output_pdf] Conversion failed, unexpected error: {e}",
+            "unexpected_error_rep": "[replace_content] Replacing failed, unexpected error: {e}"
+        },
+        "info": {
+            "aio_conv": "[aio] Converting: {file}",
+            "aio_success": "[aio] Successfully converted: {file}",
+            "closing": "[output_pdf] Closing WebDriver",
+            "cnv_completed": "[conv_html_enc] Successfully converted: {file}",
+            "conv2pdf": "[output_pdf] Converting: {file}",
+            "converting": "[conv_html_enc] Converting: {file}",
+            "generating": "[output_pdf] Generating: {file}",
+            "no_cnv_required": "[conv_html_enc] Encoding is already UTF-8, no conversion needed",
+            "opening": "[output_pdf] Opening: {file}",
+            "reading": "[replace_content] Reading: {file}",
+            "reading_ori": "[conv_html_enc] Reading: {file}",
+            "replacing": "[replace_content] Replacing: {file}",
+            "writing": "[replace_content] Writing: {file}"
+        },
+        "warning": {}
+    }
+}

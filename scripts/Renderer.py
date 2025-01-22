@@ -1,6 +1,6 @@
 import re
 import os
-import scripts.HTML2PDF as html2pdf
+import scripts.HTML2PDF as convertor
 import logging
 import json
 from time import sleep
@@ -75,7 +75,7 @@ def render(model: object, tokenizer: object, image_path: str, wait: bool, time: 
 
         # 转换为UTF-8编码
         Renderer_logger.debug(f"正在转换为 UTF-8 编码 (Switching Encoding to utf-8)：'{html_gb2312_path}'")
-        html2pdf.convert_html_encoding(html_gb2312_path, html_utf8_path)
+        convertor.conv_html_enc(html_gb2312_path, html_utf8_path)
 
         # 定义要替换的字符串和替换后的字符串
         search_string = '(C)'
@@ -104,9 +104,9 @@ def render(model: object, tokenizer: object, image_path: str, wait: bool, time: 
         # 根据参数决定是否转换为PDF
         if convert_to_pdf:
             Renderer_logger.info(f"正在转换为PDF (Converting to PDF)：'{html_utf8_path}'")
-            html2pdf.replace_html_content(html_utf8_path, html_utf8_local_path)
+            convertor.replace_content(html_utf8_path, html_utf8_local_path)
             pdf_path = os.path.join("result", f"{img_name_no_ext}.pdf")
-            html2pdf.output_pdf(html_utf8_local_path, pdf_path, wait=wait, waiting_time=time)
+            convertor.output_pdf(html_utf8_local_path, pdf_path, wait=wait, wait_time=time)
         return 1
     except AttributeError:
         Renderer_logger.error(f"你看起来没有加载模型或上传图片 (You seem to have not loaded the model or uploaded an image)")
