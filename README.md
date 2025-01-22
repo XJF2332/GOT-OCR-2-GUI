@@ -4,32 +4,18 @@
 
 ![img.png](img.png)
 
-**⚠️CLI 版本暂时停止更新，在 GUI 做好后，我需要将其重做成能够从命令行接受参数的形式，以便适应自动化操作⚠️**    
-**⚠️这两周我要做课设，更新得停一下了⚠️**
-
 ## 关于此项目
 
 模型权重：[镜像站](https://hf-mirror.com/stepfun-ai/GOT-OCR2_0)，[原站点](https://huggingface.co/stepfun-ai/GOT-OCR2_0)  
-原GitHub：[GOT-OCR2.0](https://github.com/Ucas-HaoranWei/GOT-OCR2.0/)  
-感谢[ GLM4 ](https://chatglm.cn/main/alltoolsdetail?lang=zh)提供的一部分代码（技术太菜了，所以不得不用一下 AI ）  
+原GitHub：[GOT-OCR2.0](https://github.com/Ucas-HaoranWei/GOT-OCR2.0/)   
 这个项目是在 Windows 下开发的，我本人没用过也不会 Linux，不能确保它能够在 Linux 下正常运行，如果你要在 Linux
-下部署，可以参考一下这个 [issue](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/3)
+下部署，可以参考一下这个 [issue](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/3)  
+部分代码来自：[ GLM4 ](https://chatglm.cn/main/alltoolsdetail?lang=zh)、[Deepseek](https://www.deepseek.com/)
 
 点个star吧
 
-## 最新开发进度
+## 待办
 
-- [x] 初步实现 PDF 导出功能
-- [x] 修复 PDF 中`LaTeX`的渲染问题
-- [x] 实现用`.json`设置语言的功能
-- [x] 写一个脚本来管理语言配置文件
-- [x] 批量渲染脚本
-- [x] PDF 处理，先分割成单页的 png ，然后批量渲染，生成每页的 pdf
-- [x] 把批量渲染器做进 GUI 里
-- [x] 更多的配置选项
-- [x] PDF 处理脚本重构
-- [x] 拉一个`Alpha`分支，没做完的都丢进这里面
-- [x] PDF 处理应该能够渲染出一整个 PDF ，而不是一页一个 PDF
 - [ ] ⚠️支持`llama-cpp-python`，希望能够加速推理
 - 遇到困难，有能力的可以提交 pr，最好可以提到 `Aplha` 分支；使用的 HuggingFace
   模型是 [kaifeise/GOT-gguf](https://huggingface.co/kaifeise/GOT-gguf/tree/main)；`GGUF Test.py`
@@ -146,13 +132,25 @@ GOT-OCR-2-GUI
 
 - 确保你安装的`torch`是 gpu 版本，因为脚本里用了`device_map='cuda'`
 
+## 错误码对照表
+
+| 错误码 | 错误信息           |
+|-----|----------------|
+| 1   | 配置文件未找到        |
+| 2   | 语言文件未找到        |
+| 3   | CLI 不提供目录的支持   |
+| 4   | 未找到输入路径所指向的文件  |
+| 5   | 输入文件类型不受支持     |
+| 6   | 渲染的HTML的编码检测失败 |
+
 ## 常见问题
+
+- Q：CLI.py: error: the following arguments are required: --path/-P
+- A：用 PowerShell，CMD 不知道为什么会有这个 bug，暂时找不到原因
 
 - Q：什么是“HTML本地文件”？难道还有没保存在本地的HTML文件吗？
 - A：因为模型输出的HTML文件虽然保存在本地，但使用了外部脚本，因此即使文件在本地，还是需要网络来打开它。于是我把外部脚本下载了进来，就是前面提到的
-  `mardown-it.js`
-  。这么做主要是防止网络问题造成的PDF导出失败。
-
+  `mardown-it.js`。这么做主要是防止网络问题造成的PDF导出失败。
 
 - Q：为什么我的模型加载失败了？
 - A：检查一下你是不是少了文件。从百度云下载的模型文件似乎缺少了文件，我建议你去前面提到的 Huggingface 下载。
@@ -160,40 +158,8 @@ GOT-OCR-2-GUI
 - Q：有什么部署这个项目的建议吗？
 - A：看这个[issue #5](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/5)
 
-## 简单的教程
-
-GUI 的教程已经内置到了 UI 中，**直接打开 GUI** 就能看到了，这里给 CLI 用户提供教程
-
-### **模式**
-
-#### `OCR` 模式
-
-- ocr: 标准OCR
-- format: 带格式的OCR
-
-#### `fine-grained` 模式
-
-- fine-grained-ocr: 在特定框内进行OCR内容识别
-- fine-grained-format: 在特定框内进行OCR内容及格式识别
-- fine-grained-color-ocr: 在特定颜色的框内进行OCR内容识别（我还没尝试过，但看起来你需要先画一个红/绿/蓝框，然后在GUI中选择颜色）
-- fine-grained-color-format: 在特定颜色的框内进行OCR内容及格式识别
-
-#### `multi-crop` 模式
-
-- 适用于更复杂的图像
-
-#### `render` 模式
-
-- 已存在的文件将被覆盖！！！点击按钮前请检查文件路径！！！
-- 渲染OCR内容并将其保存为HTML文件
-- 将保存为UTF8编码和GB2312编码文件
-- 你可以将HTML转换为PDF
-
-### **如何渲染**
-
-1. CLI将自动获取图像名称
-2. HTML文件将保存在 `result` 文件夹中
-3. 如果你想将HTML转换为PDF，只需在CLI询问时输入 `y`
+- Q：我要去哪里看帮助文档？
+- A：对于 GUI 用户，你可以找到`说明`标签页，对于 CLI 用户，你可以用`.\CLI.py --help`查看 argparse 自动生成的帮助文档，也可以用`.\CLI.py --detailed-help`查看更详细的帮助文档
 
 ## Star History
 
