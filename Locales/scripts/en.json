@@ -31,5 +31,35 @@
             "writing": "[replace_content] Writing: {file}"
         },
         "warning": {}
+    },
+    "PDFHandler": {
+        "critical": {},
+        "debug": {
+            "build_pattern": "[get_png_seq] Match Pattern: pattern}",
+            "converting_page": "[split_pdf] Converting page {page}",
+            "got_pdf_name": "[split_pdf] PDF file name: {file}",
+            "image_seq": "[pdf_renderer] Image sequence: {seq}",
+            "matched_files": "[get_png_seq] All matched file: {files}",
+            "number": "[get_png_seq] Int extracted: {num}",
+            "pdf_name": "[pdf_renderer] PDF file name: {file}",
+            "saving_page": "[split_pdf] Saving page {page}",
+            "sorted_list": "[get_png_seq] Sorted file list: {list}"
+        },
+        "error": {
+            "conv_fail": "[split_pdf] Conversion failed, unexpected error: {error}",
+            "empty_seq": "[pdf_renderer] Image sequence is empty",
+            "no_model_or_pdf": "[pdf_renderer] It looks like that you did not load model or upload PDF",
+            "seq_get_fail": "[get_png_seq] Failed to get image sequence, unexpected error: {error}"
+        },
+        "info": {
+            "conv_complete": "[split_pdf] Conversion completed",
+            "opening": "[split_pdf] Opening: {file}",
+            "render_fail": "[pdf_renderer] Render failed",
+            "render_fail_unexp": "[pdf_renderer] Render failed, unexpected error: {error}",
+            "render_success": "[pdf_renderer] Rendered successfully",
+            "rendering": "[pdf_renderer] Rendering: {file}",
+            "rendering_img": "[pdf_renderer] Rendering image: {img}"
+        },
+        "warning": {}
     }
 }

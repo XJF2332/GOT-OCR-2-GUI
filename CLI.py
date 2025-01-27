@@ -260,8 +260,8 @@ def ocr(image_path, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x
         elif ocr_mode == "multi-crop-format":
             ocr_res = model.chat_crop(tokenizer, image_path, ocr_type='format')
         elif ocr_mode == "render":
-            success = Renderer.render(model=model, tokenizer=tokenizer, image_path=image_path,
-                                      convert_to_pdf=save_as_pdf, wait=config["pdf_render_wait"],
+            success = Renderer.render(model=model, tokenizer=tokenizer, img_path=image_path,
+                                      conv_to_pdf=save_as_pdf, wait=config["pdf_render_wait"],
                                       time=config["pdf_render_wait_time"])
             image_name_ext = os.path.basename(image_path)
             logger.debug(local['log']['debug']['got_image_name'].format(name=image_name_ext))
@@ -336,8 +336,8 @@ def pdf_ocr(mode, pdf, target_dpi, pdf_convert, pdf_merge, temp_clean):
         success = PDFHandler.pdf_renderer(model=model,
                                           tokenizer=tokenizer,
                                           pdf_path=pdf,
-                                          target_dpi=target_dpi,
-                                          pdf_convert=pdf_convert,
+                                          dpi=target_dpi,
+                                          pdf_conv=pdf_convert,
                                           wait=config["pdf_render_wait"],
                                           time=config["pdf_render_wait_time"])
         # 渲染成功判定 / Rendering success determination

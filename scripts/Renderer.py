@@ -44,24 +44,24 @@ except KeyError:
 ##########################
 
 
-def render(model: object, tokenizer: object, image_path: str, wait: bool, time: int, convert_to_pdf: bool):
+def render(model: object, tokenizer: object, img_path: str, wait: bool, time: int, conv_to_pdf: bool):
     """
     使用OCR模型渲染图像内容到HTML文件，并可选择性地转换为PDF文件。
 
     Args:
         model (object): OCR模型。
         tokenizer (object): OCR模型使用的分词器。
-        image_path (str): 图像文件的路径。
+        img_path (str): 图像文件的路径。
         wait (bool): 是否等待用户输入。
         time (int): 等待时间（秒）。
-        convert_to_pdf (bool): 是否将HTML文件转换为PDF文件。
+        conv_to_pdf (bool): 是否将HTML文件转换为PDF文件。
 
     Returns:
         int: 渲染成功，则返回 1，未加载模型或无图片返回 2，出错返回 3
     """
     try:
         # 定义输出HTML路径
-        img_name = os.path.basename(image_path)
+        img_name = os.path.basename(img_path)
         Renderer_logger.debug(f"获取到图像名称 (Got image name)：{img_name}")
         img_name_no_ext = os.path.splitext(img_name)[0]
         html_gb2312_path = os.path.join("result", f"{img_name_no_ext}-gb2312.html")
@@ -71,7 +71,7 @@ def render(model: object, tokenizer: object, image_path: str, wait: bool, time: 
 
         # 渲染OCR结果
         Renderer_logger.info(f"正在渲染OCR结果 (Rendering)")
-        model.chat(tokenizer, image_path, ocr_type='format', render=True, save_render_file=html_gb2312_path)
+        model.chat(tokenizer, img_path, ocr_type='format', render=True, save_render_file=html_gb2312_path)
 
         # 转换为UTF-8编码
         Renderer_logger.debug(f"正在转换为 UTF-8 编码 (Switching Encoding to utf-8)：'{html_gb2312_path}'")
@@ -102,7 +102,7 @@ def render(model: object, tokenizer: object, image_path: str, wait: bool, time: 
             Renderer_logger.error(f"发生错误: {e}")
 
         # 根据参数决定是否转换为PDF
-        if convert_to_pdf:
+        if conv_to_pdf:
             Renderer_logger.info(f"正在转换为PDF (Converting to PDF)：'{html_utf8_path}'")
             convertor.replace_content(html_utf8_path, html_utf8_local_path)
             pdf_path = os.path.join("result", f"{img_name_no_ext}.pdf")

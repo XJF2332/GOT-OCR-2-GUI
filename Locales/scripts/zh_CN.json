@@ -31,5 +31,35 @@
             "writing": "[replace_content] 正在写入：{file}"
         },
         "warning": {}
+    },
+    "PDFHandler": {
+        "critical": {},
+        "debug": {
+            "build_pattern": "[get_png_seq] 匹配模式：{pattern}",
+            "converting_page": "[split_pdf] 正在转换第 {page} 页",
+            "got_pdf_name": "[split_pdf] PDF 文件名：{file}",
+            "image_seq": "[pdf_renderer] 图片序列：{seq}",
+            "matched_files": "[get_png_seq] 所有匹配的文件：{files}",
+            "number": "[get_png_seq] 提取的整数部分：{num}",
+            "pdf_name": "[pdf_renderer] PDF 文件名：{file}",
+            "saving_page": "[split_pdf] 正在保存第 {page} 页",
+            "sorted_list": "[get_png_seq] 排序后的文件列表：{list}"
+        },
+        "error": {
+            "conv_fail": "[split_pdf] 转换失败，意料之外的错误：{error}",
+            "empty_seq": "[pdf_renderer] 图片序列为空",
+            "no_model_or_pdf": "[pdf_renderer] 你看起来没有加载模型或上传 PDF",
+            "seq_get_fail": "[get_png_seq] 获取图像序列失败，意料之外的错误：{error}"
+        },
+        "info": {
+            "conv_complete": "[split_pdf] 转换完成",
+            "opening": "[split_pdf] 正在打开：{file}",
+            "render_fail": "[pdf_renderer] 渲染失败",
+            "render_fail_unexp": "[pdf_renderer] 渲染失败，意料之外的错误：{error}",
+            "render_success": "[pdf_renderer] 渲染成功",
+            "rendering": "[pdf_renderer] 正在渲染：{file}",
+            "rendering_img": "[pdf_renderer] 正在渲染图片：{img}"
+        },
+        "warning": {}
     }
 }

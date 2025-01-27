@@ -277,8 +277,8 @@ def ocr(image_path, fg_box_x1, fg_box_y1, fg_box_x2, fg_box_y2, mode, fg_color, 
         elif mode == "multi-crop-format":
             res = model.chat_crop(tokenizer, image_path, ocr_type='format')
         elif mode == "render":
-            success = Renderer.render(model=model, tokenizer=tokenizer, image_path=image_path,
-                                      convert_to_pdf=pdf_conv_conf, wait=config["pdf_render_wait"],
+            success = Renderer.render(model=model, tokenizer=tokenizer, img_path=image_path,
+                                      conv_to_pdf=pdf_conv_conf, wait=config["pdf_render_wait"],
                                       time=config["pdf_render_wait_time"])
             image_name_ext = os.path.basename(image_path)
             logger.debug(local['log']['debug']['got_img_name'].format(img_name=image_name_ext))
@@ -339,8 +339,8 @@ def pdf_ocr(mode, pdf, target_dpi, pdf_convert, pdf_merge, temp_clean):
         success = PDFHandler.pdf_renderer(model=model,
                                           tokenizer=tokenizer,
                                           pdf_path=pdf,
-                                          target_dpi=target_dpi,
-                                          pdf_convert=pdf_convert,
+                                          dpi=target_dpi,
+                                          pdf_conv=pdf_convert,
                                           wait=config["pdf_render_wait"],
                                           time=config["pdf_render_wait_time"])
         # 渲染成功判定 / Rendering success determination
@@ -409,8 +409,8 @@ def renderer(imgs_path, pdf_convert_confirm, clean_temp):
     # 逐个发送图片给 renderer 的 render 函数 / Sending images one by one to the 'render' function of renderer
     for image_path in image_files:
         logger.info(local['log']['info']['renderer_started'].format(image=image_path))
-        success = Renderer.render(model=model, tokenizer=tokenizer, image_path=image_path,
-                                  convert_to_pdf=pdf_convert_confirm, wait=config["pdf_render_wait"],
+        success = Renderer.render(model=model, tokenizer=tokenizer, img_path=image_path,
+                                  conv_to_pdf=pdf_convert_confirm, wait=config["pdf_render_wait"],
                                   time=config["pdf_render_wait_time"])
         if success == 1:
             logger.info(local['log']['info']['renderer_success'].format(image=image_path))
