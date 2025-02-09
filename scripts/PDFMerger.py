@@ -1,44 +1,11 @@
 import os
 import fitz
 import glob
-import logging
-import json
-from time import sleep
+from scripts import scriptsLogger, local
 
 #################################
 
-PDFMerger_logger = logging.getLogger(__name__)
-
-config_path = os.path.join("Configs", "Config.json")
-try:
-    with open(config_path, 'r', encoding='utf-8') as file:
-        config = json.load(file)
-except FileNotFoundError:
-    print("配置文件未找到 (The configuration file was not found)")
-    print("程序将在3秒后退出")
-    sleep(3)
-    exit(1)
-
-try:
-    lvl = config['logger_level']
-    if lvl.lower() == 'debug':
-        PDFMerger_logger.setLevel(logging.DEBUG)
-    elif lvl.lower() == 'info':
-        PDFMerger_logger.setLevel(logging.INFO)
-    elif lvl.lower() == 'warning':
-        PDFMerger_logger.setLevel(logging.WARNING)
-    elif lvl.lower() == 'error':
-        PDFMerger_logger.setLevel(logging.ERROR)
-    elif lvl.lower() == 'critical':
-        PDFMerger_logger.setLevel(logging.CRITICAL)
-    else:
-        PDFMerger_logger.warning("无效的日志级别，回滚到 INFO 级别 (Invalid log level, rolling back to INFO level)")
-        PDFMerger_logger.warning("请检查配置文件 (Please check the configuration file)")
-        PDFMerger_logger.setLevel(logging.INFO)
-except KeyError:
-    PDFMerger_logger.warning("配置文件中未找到日志级别，回滚到 INFO 级别 (The log level was not found in the configuration file, rolling back to INFO level)")
-    PDFMerger_logger.warning("请检查配置文件 (Please check the configuration file)")
-    PDFMerger_logger.setLevel(logging.INFO)
+PDFMerger_logger = scriptsLogger.getChild("PDFMerger")
 
 #################################
 
@@ -48,29 +15,30 @@ pdf_list = []
 
 def get_pdf_list(directory: str, prefix: str, except_pattern: str):
     """
-    获取指定目录下指定前缀的 PDF 文件列表
+    获取指定目录下指定前缀的 PDF 文件列表，并排除文件名有特定字符串的文件
+    Get List of PDF files that have certain prefix in a certain folder, and remove files that has certain pattern in its name
 
     Args:
-        directory (str): 目录路径
-        prefix (str): 文件前缀
-        except_pattern (str): 排除的文件后缀
+        directory (str): 目录路径 / Folder path
+        prefix (str): 文件前缀 / File prefix
+        except_pattern (str): 排除的文件名特征 / Substring in filename that needs to be removed
 
     Returns:
-        list: PDF 文件列表
+        list: PDF 文件列表 / PDF file list
     """
     try:
-        # 查找文件
-        PDFMerger_logger.info(f"[get_pdf_list] 查找目录 (Looking for files in directory)：{directory}")
+        # 查找文件 / Find files
+        PDFMerger_logger.info(local["PDFMerger"]["info"]["looking_dir"].format(path=directory))
         pattern = os.path.join(directory, f"{prefix}_*.pdf")
         PDFMerger_logger.debug(f"[get_pdf_list] 文件名特征 (Got file name pattern)：{pattern}")
         pdf_list = glob.glob(pattern)
 
-        # 排除具有指定后缀的文件
+        # 排除具有指定特征的文件 / Remove files that has certain substring
         for pdf in pdf_list:
             if except_pattern in pdf:
                 pdf_list.remove(pdf)
 
-        # 按数字排序
+        # 按数字排序 / Sort
         def extract_integer(filename):
             number_part = os.path.basename(filename).replace(f"{prefix}_", "").replace(".pdf", "")
             PDFMerger_logger.debug(

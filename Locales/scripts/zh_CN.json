@@ -61,5 +61,14 @@
             "rendering_img": "[pdf_renderer] 正在渲染图片：{img}"
         },
         "warning": {}
+    },
+    "PDFMerger": {
+        "critical": {},
+        "debug": {},
+        "error": {},
+        "info": {
+            "looking_dir": "[get_pdf_list] 查找目录：{path}"
+        },
+        "warning": {}
     }
 }

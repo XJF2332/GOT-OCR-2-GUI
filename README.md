@@ -4,6 +4,8 @@
 
 ![img.png](img.png)
 
+日志正在本地化，但键有些多，我难以确定是不是缺了或者错了键，如果你发现了 KeyError，请报告 Issue
+
 ## 关于此项目
 
 模型权重：[镜像站](https://hf-mirror.com/stepfun-ai/GOT-OCR2_0)，[原站点](https://huggingface.co/stepfun-ai/GOT-OCR2_0)  
@@ -17,6 +19,7 @@
 ## 待办
 
 - [ ] 优化 PDF 相关的错误处理逻辑
+- [ ] 日志内容本地化
 - [ ] ⚠️支持`llama-cpp-python`，希望能够加速推理
 - 遇到困难，有能力的可以提交 pr，最好可以提到 `Aplha` 分支；使用的 HuggingFace
   模型是 [kaifeise/GOT-gguf](https://huggingface.co/kaifeise/GOT-gguf/tree/main)；`GGUF Test.py`
