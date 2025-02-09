@@ -4,6 +4,9 @@
 
 ![img.png](img.png)
 
+Logs are being localized, but there are too many keys, it's hard for me to check if there are any missing keys. If you
+Encountered KeyErrors, please report an Issue.
+
 ## About this project
 
 Model
@@ -17,6 +20,9 @@ Click a star, please
 
 ## To-Dos
 
+- [ ] Add support for new model: stepfun-ai/GOT-OCR-2.0-hf  
+- [ ] Optimize PDF error handling
+- [ ] Localize logs
 - [ ] Support for `llama-cpp-python`, hoping to accelerate inference
 - I ran into some troubles, if you have the solution, you can create a pull request, pull into `Alpha` branch for now;
   HuggingFace model used is [kaifeise/GOT-gguf](https://huggingface.co/kaifeise/GOT-gguf/tree/main); `GGUF Test.py` used

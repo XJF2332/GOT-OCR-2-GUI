@@ -57,7 +57,7 @@ def write_config_language(config_path: str, language: str):
 
 def lang_manager():
     # 获取用户选择的子文件夹
-    print("Choose a UI you want to manage:")
+    print("Choose a UI you want to manage\nNote: GUI settings will also affect log language settings of scripts in 'scripts' folder")
     print("1. cli")
     print("2. gui")
     subfolder_choice = int(input("input your choice (1 or 2): "))

@@ -2,44 +2,11 @@ import fitz
 import os
 import glob
 import scripts.Renderer as Renderer
-import logging
-import json
-from time import sleep
+from scripts import scriptsLogger, local
 
 #################################
 
-PDF2ImagePlusRenderer_logger = logging.getLogger(__name__)
-
-config_path = os.path.join("Configs", "Config.json")
-try:
-    with open(config_path, 'r', encoding='utf-8') as file:
-        config = json.load(file)
-except FileNotFoundError:
-    print("配置文件未找到 (The configuration file was not found)")
-    print("程序将在3秒后退出")
-    sleep(3)
-    exit(1)
-
-try:
-    lvl = config['logger_level']
-    if lvl.lower() == 'debug':
-        PDF2ImagePlusRenderer_logger.setLevel(logging.DEBUG)
-    elif lvl.lower() == 'info':
-        PDF2ImagePlusRenderer_logger.setLevel(logging.INFO)
-    elif lvl.lower() == 'warning':
-        PDF2ImagePlusRenderer_logger.setLevel(logging.WARNING)
-    elif lvl.lower() == 'error':
-        PDF2ImagePlusRenderer_logger.setLevel(logging.ERROR)
-    elif lvl.lower() == 'critical':
-        PDF2ImagePlusRenderer_logger.setLevel(logging.CRITICAL)
-    else:
-        PDF2ImagePlusRenderer_logger.warning("无效的日志级别，回滚到 INFO 级别 (Invalid log level, rolling back to INFO level)")
-        PDF2ImagePlusRenderer_logger.warning("请检查配置文件 (Please check the configuration file)")
-        PDF2ImagePlusRenderer_logger.setLevel(logging.INFO)
-except KeyError:
-    PDF2ImagePlusRenderer_logger.warning("配置文件中未找到日志级别，回滚到 INFO 级别 (The log level was not found in the configuration file, rolling back to INFO level)")
-    PDF2ImagePlusRenderer_logger.warning("请检查配置文件 (Please check the configuration file)")
-    PDF2ImagePlusRenderer_logger.setLevel(logging.INFO)
+PDFHandler_logger = scriptsLogger.getChild("PDFHandler")
 
 #################################
 
@@ -53,139 +20,140 @@ def remove_extension(base_name):
 
 #################################
 
-def split_pdf(pdf_path: str, img_path: str, target_dpi: int):
+def split_pdf(pdf_path: str, img_path: str, target_dpi: int) -> bool:
     """
-    将PDF文件拆分为单页PDF文件，并保存为PNG图像文件。
+    将 PDF 文件的每一页都拆成独立的图片文件
+    Split every page in the input PDF file into images
 
     Args:
-        pdf_path (str): PDF文件路径
-        img_path (str): 保存PNG图像文件的目录路径
-        target_dpi (int): 目标DPI
+        pdf_path (str): PDF 文件路径 / PDF to be split
+        img_path (str): 保存 PNG 图像文件的目录路径 / Path to save images
+        target_dpi (int): 分割 PDF 时使用的 DPI / DPI used while splitting PDFs
     Returns:
-        bool: 操作是否成功
+        bool: 操作是否成功 / Succeeded or not
     """
     try:
         if not os.path.exists(img_path):
             os.makedirs(img_path)
 
-        PDF2ImagePlusRenderer_logger.info(f"[split_pdf] 正在打开 (Opening)：{pdf_path}")
+        PDFHandler_logger.info(local["PDFHandler"]["info"]["opening"].format(file=pdf_path))
         doc = fitz.open(pdf_path)
 
-        pdf_path_base = get_base_name(path=pdf_path)
-        PDF2ImagePlusRenderer_logger.debug(f"[split_pdf] PDF 文件名 (Got PDF file name)：{pdf_path_base}")
-        pdf_path_base = remove_extension(pdf_path_base)
-        PDF2ImagePlusRenderer_logger.debug(f"[split_pdf] PDF 文件名去掉扩展名 (Got PDF file name without extension)：{pdf_path_base}")
+        pdf_path_base = remove_extension(get_base_name(pdf_path))
+        PDFHandler_logger.debug(local["PDFHandler"]["debug"]["got_pdf_name"])
 
         for page_number in range(len(doc)):
             zoom = target_dpi / 72.0
             matrix = fitz.Matrix(zoom, zoom)
 
             # 将PDF页面转换为图像
-            PDF2ImagePlusRenderer_logger.debug(f"[split_pdf] 正在转换第 {page_number + 1} 页 (Converting page {page_number + 1})")
+            PDFHandler_logger.debug(local["PDFHandler"]["debug"]["converting_page"].format(page=page_number + 1))
             page = doc[page_number]
             pix = page.get_pixmap(matrix=matrix)
 
             # 保存图像
-            PDF2ImagePlusRenderer_logger.debug(f"[split_pdf] 正在保存第 {page_number + 1} 页 (Saving page {page_number + 1})")
+            PDFHandler_logger.debug(local["PDFHandler"]["debug"]["saving_page"].format(page=page_number + 1))
             output_path = os.path.join(f"{img_path}", f"{pdf_path_base}_{page_number}.png")
             pix.save(output_path)
 
-        PDF2ImagePlusRenderer_logger.info("[split_pdf] 转换完成 (Conversion completed)")
+        PDFHandler_logger.info(local["PDFHandler"]["info"]["conv_complete"])
         doc.close()
         return True
     except Exception as e:
-        PDF2ImagePlusRenderer_logger.error(f"[split_pdf] 转换失败 (Conversion failed): {e}")
+        PDFHandler_logger.error(local["PDFHandler"]["info"]["conv_fail"].format(error=str(e)))
         return False
 
 #################################
 
-def get_sorted_png_files(directory: str, prefix: str):
+def get_png_seq(directory: str, prefix: str):
     """
-    获取指定目录下，符合前缀和整数后缀的PNG文件列表，并按整数大小排序。
+    获取指定目录下，符合前缀和整数后缀的 PNG 文件列表，并按整数大小排序
+    Get png file sequence that has given prefix in the given directory, and sort them by number
 
     Args:
-        directory (str): 目录路径
-        prefix (str): 文件名前缀
+        directory (str): 目录路径 / Directory you want to scan
+        prefix (str): 文件名前缀 / Prefix of your image sequence
     Returns:
-        list: 排序后的PNG文件列表
+        list: 排序后的 PNG 文件列表 / Sorted png list
     """
     try:
-        # 构建匹配模式
+        # 构建匹配模式 / Build pattern
         pattern = os.path.join(directory, f"{prefix}_*.png")
-        PDF2ImagePlusRenderer_logger.debug(f"[get_sorted_png_files] 匹配模式 (Pattern)：{pattern}")
+        PDFHandler_logger.debug(local["PDFHandler"]["debug"]["build_pattern"].format(pattern=pattern))
 
-        # 获取所有匹配的文件
+        # 获取所有匹配的文件 / Get all matched files
         files = glob.glob(pattern)
-        PDF2ImagePlusRenderer_logger.debug(f"[get_sorted_png_files] 所有匹配的文件 (All matched files)：{files}")
+        PDFHandler_logger.debug(local["PDFHandler"]["debug"]["matched_files"].format(files=files))
 
-        # 定义一个函数，用于从文件名中提取整数部分
-        def extract_integer(filename):
-            # 假设文件名格式正确，去掉扩展名 .png 和前缀
+        # 从文件名中提取整数部分 / Extract int from filename
+        def extract_int(filename):
+            # 去掉扩展名 .png 和前缀 / Remove .png and the prefix
             number_part = os.path.basename(filename).replace(f"{prefix}_", "").replace(".png", "")
+            PDFHandler_logger.debug(local["PDFHandler"]["debug"]["number"].forma(num=number_part))
             return int(number_part)
 
         # 按整数大小排序文件列表
-        sorted_files = sorted(files, key=extract_integer)
-        PDF2ImagePlusRenderer_logger.debug(f"[get_sorted_png_files] 排序后的文件列表 (Sorted file list)：{sorted_files}")
+        sorted_files = sorted(files, key=extract_int)
+        PDFHandler_logger.debug(local["PDFHandler"]["debug"]["sorted_list"].format(list=sorted_files))
         return sorted_files
     except Exception as e:
-        PDF2ImagePlusRenderer_logger.error(f"[get_sorted_png_files] 获取文件列表失败 (Failed to get file list): {e}")
+        PDFHandler_logger.error(local["PDFHandler"]["error"]["seq_get_fail"].format(error=str(e)))
 
 #################################
 
-def pdf_renderer(model: object, tokenizer: object, pdf_path: str, target_dpi: int, pdf_convert: bool, wait: bool,
+def pdf_renderer(model: object, tokenizer: object, pdf_path: str, dpi: int, pdf_conv: bool, wait: bool,
                  time: int):
     """
-    将PDF文件转换为图片，并调用渲染器进行渲染。
+    将 PDF 文件转换为图片，并调用渲染器进行渲染
+    wait 这个参数说是等待浏览器渲染，但我测试没有发现浏览器没有渲染就被转 PDF 的现象，所以不等大概率也是没问题的
+    Split PDF into images and render them using the renderer
+    the param "wait" was said to wait your browser to fully render the HTML, but I did not find not-rendered PDF, so it's possibly safe not to wait
 
     Args:
-        model (object): 模型对象
-        tokenizer (object): 分词器对象
-        pdf_path (str): PDF文件路径
-        target_dpi (int): 目标DPI
-        pdf_convert (bool): 是否将渲染结果转换为PDF
-        wait (bool): 是否等待浏览器渲染
+        model (object): 模型对象 / Your loaded model
+        tokenizer (object): 分词器对象 / Your loaded tokenizer
+        pdf_path (str): PDF 文件路径 / PDF file path
+        dpi (int): 分割 PDF 时使用的 DPI / DPI used when splitting PDF
+        pdf_conv (bool): 是否将渲染结果转换为 PDF / Whether to convert render results into PDF
+        wait (bool): 是否等待浏览器渲染 / Whether to wait the browser to render
         time (int): 等待时间
     Returns:
-        bool: 操作是否成功
+        bool: 操作是否成功 / Whether the process is successful
     """
-    # 创建目录
+    # 创建目录 / Create folder
     if not os.path.exists("pdf"):
         os.makedirs("pdf")
     if not os.path.exists("imgs"):
         os.makedirs("imgs")
 
     try:
-        # 将 pdf 文件转换为图片
-        PDF2ImagePlusRenderer_logger.info(f"[pdf_renderer] 正在渲染 (Rendering)：{pdf_path}")
-        split_pdf(pdf_path=pdf_path, img_path="imgs", target_dpi=target_dpi)
-        # pdf 文件名
-        pdf_name = get_base_name(path=pdf_path)
-        pdf_name = remove_extension(pdf_name)
-        PDF2ImagePlusRenderer_logger.debug(f"[pdf_renderer] PDF 文件名 (Got PDF file name)：{pdf_name}")
-        # 获取图片列表
-        img_list = get_sorted_png_files(directory="imgs", prefix=pdf_name)
-        PDF2ImagePlusRenderer_logger.debug(f"[pdf_renderer] 图片列表 (Got image list)：{img_list}")
+        re=False
+        PDFHandler_logger.info(local["PDFHandler"]["info"]["rendering"].format(file=pdf_path))
+        # 将 PDF 文件转换为图片 / Split PDFs into images
+        split_pdf(pdf_path=pdf_path, img_path="imgs", target_dpi=dpi)
+        # PDF 文件名 / PDF file name
+        pdf_name = remove_extension(get_base_name(pdf_path))
+        PDFHandler_logger.debug(local["PDFHandler"]["debug"]["pdf_name"].format(file=pdf_name))
+        # 获取图片序列 / Get image sequence
+        img_list = get_png_seq(directory="imgs", prefix=pdf_name)
+        PDFHandler_logger.debug(local["PDFHandler"]["debug"]["image_seq"].format(seq=img_list))
         if len(img_list) == 0:
-            PDF2ImagePlusRenderer_logger.error("[pdf_renderer] 图片列表为空 (Image list is empty)")
+            PDFHandler_logger.error(local["PDFHandler"]["error"]["empty_seq"])
             return False
-        # 调用渲染器
+        # 调用渲染器 / Use renderer
         for img in img_list:
-            PDF2ImagePlusRenderer_logger.info(f"[pdf_renderer] 正在渲染图片 (Rendering image)：{img}")
-            success = Renderer.render(model=model, tokenizer=tokenizer, image_path=img, wait=wait, time=time,
-                                      convert_to_pdf=pdf_convert)
+            PDFHandler_logger.info(local["PDFHandler"]["info"]["rendering_img"].format(img=img))
+            success = Renderer.render(model=model, tokenizer=tokenizer, img_path=img, wait=wait, time=time, conv_to_pdf=pdf_conv)
             if success == 1:
-                PDF2ImagePlusRenderer_logger.info("[pdf_renderer] 渲染成功 (Rendering succeeded)")
+                PDFHandler_logger.info(local["PDFHandler"]["info"]["render_success"])
                 re = True
             elif success == 2:
-                PDF2ImagePlusRenderer_logger.error(
-                    "[pdf_renderer] 你看起来没有加载模型或上传图片 (You seem to have not loaded the model or uploaded an image)")
+                PDFHandler_logger.error(local["PDFHandler"]["error"]["no_model_or_pdf"])
                 re = False
             elif success == 3:
-                PDF2ImagePlusRenderer_logger.error("[pdf_renderer] 渲染失败 (Rendering failed)")
+                PDFHandler_logger.error(local["PDFHandler"]["error"]["render_fail"])
                 re = False
-
         return re
     except Exception as e:
-        PDF2ImagePlusRenderer_logger.error(f"[pdf_renderer] 渲染失败 (Rendering failed): {e}")
+        PDFHandler_logger.error(local["PDFHandler"]["error"]["render_fail_unexp"].format(error=str(e)))
         return False

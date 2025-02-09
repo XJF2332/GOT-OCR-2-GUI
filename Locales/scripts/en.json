@@ -1,0 +1,65 @@
+{
+    "HTML2PDF": {
+        "critical": {},
+        "debug": {
+            "enc_detect": "[conv_html_enc] Encoding detected: {encoding}",
+            "writing": "[output_pdf] Writing: {file}"
+        },
+        "error": {
+            "aio_fail": "[aio] Conversion failed: {file}",
+            "aio_no_driver": "[aio] WebDriver not found",
+            "enc_detect_fail": "[conv_html_enc] Failed to detect encoding: {e}",
+            "no_driver": "[output_pdf] EdgeDriver not found: {path}",
+            "unexpected_error": "[conv_html_enc] Conversion failed, unexpected error: {e}",
+            "unexpected_error_aio": "[aio] Conversion failed, unexpected error: {e}",
+            "unexpected_error_pdf": "[output_pdf] Conversion failed, unexpected error: {e}",
+            "unexpected_error_rep": "[replace_content] Replacing failed, unexpected error: {e}"
+        },
+        "info": {
+            "aio_conv": "[aio] Converting: {file}",
+            "aio_success": "[aio] Successfully converted: {file}",
+            "closing": "[output_pdf] Closing WebDriver",
+            "cnv_completed": "[conv_html_enc] Successfully converted: {file}",
+            "conv2pdf": "[output_pdf] Converting: {file}",
+            "converting": "[conv_html_enc] Converting: {file}",
+            "generating": "[output_pdf] Generating: {file}",
+            "no_cnv_required": "[conv_html_enc] Encoding is already UTF-8, no conversion needed",
+            "opening": "[output_pdf] Opening: {file}",
+            "reading": "[replace_content] Reading: {file}",
+            "reading_ori": "[conv_html_enc] Reading: {file}",
+            "replacing": "[replace_content] Replacing: {file}",
+            "writing": "[replace_content] Writing: {file}"
+        },
+        "warning": {}
+    },
+    "PDFHandler": {
+        "critical": {},
+        "debug": {
+            "build_pattern": "[get_png_seq] Match Pattern: pattern}",
+            "converting_page": "[split_pdf] Converting page {page}",
+            "got_pdf_name": "[split_pdf] PDF file name: {file}",
+            "image_seq": "[pdf_renderer] Image sequence: {seq}",
+            "matched_files": "[get_png_seq] All matched file: {files}",
+            "number": "[get_png_seq] Int extracted: {num}",
+            "pdf_name": "[pdf_renderer] PDF file name: {file}",
+            "saving_page": "[split_pdf] Saving page {page}",
+            "sorted_list": "[get_png_seq] Sorted file list: {list}"
+        },
+        "error": {
+            "conv_fail": "[split_pdf] Conversion failed, unexpected error: {error}",
+            "empty_seq": "[pdf_renderer] Image sequence is empty",
+            "no_model_or_pdf": "[pdf_renderer] It looks like that you did not load model or upload PDF",
+            "seq_get_fail": "[get_png_seq] Failed to get image sequence, unexpected error: {error}"
+        },
+        "info": {
+            "conv_complete": "[split_pdf] Conversion completed",
+            "opening": "[split_pdf] Opening: {file}",
+            "render_fail": "[pdf_renderer] Render failed",
+            "render_fail_unexp": "[pdf_renderer] Render failed, unexpected error: {error}",
+            "render_success": "[pdf_renderer] Rendered successfully",
+            "rendering": "[pdf_renderer] Rendering: {file}",
+            "rendering_img": "[pdf_renderer] Rendering image: {img}"
+        },
+        "warning": {}
+    }
+}

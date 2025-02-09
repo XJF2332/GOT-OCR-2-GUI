@@ -105,7 +105,7 @@ logger.debug(f"图片文件列表 (Image file list): {image_files}")
 # 逐个发送图片给renderer的render函数
 for image_path in image_files:
     logger.info(f"正在渲染图片 (Rendering image): {image_path}")
-    success = Render.render(model=model, tokenizer=tokenizer, image_path=image_path, convert_to_pdf=convert_confirm,
+    success = Render.render(model=model, tokenizer=tokenizer, img_path=image_path, conv_to_pdf=convert_confirm,
                             wait=config["pdf_render_wait"], time=config["pdf_render_wait_time"])
     if success == 1:
         logger.info(f"图片渲染成功 (Image rendering successful): {image_path}")
