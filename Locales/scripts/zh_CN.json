@@ -64,10 +64,20 @@
     },
     "PDFMerger": {
         "critical": {},
-        "debug": {},
-        "error": {},
+        "debug": {
+            "filename_pattern": "[get_pdf_list] 文件名特征：{pattern}",
+            "insert_page": "[merge_pdfs] 插入页面：{page}",
+            "num_part": "[get_pdf_list] {file}的数字部分：{num}"
+        },
+        "error": {
+            "merge_fail": "[merge_pdfs] PDF 文件合并失败，意料之外的错误：{error}",
+            "pdf_list_fail": "[get_pdf_list] 获取 PDF 文件列表失败，意料之外的错误：{error}"
+        },
         "info": {
-            "looking_dir": "[get_pdf_list] 查找目录：{path}"
+            "looking_dir": "[get_pdf_list] 查找目录：{path}",
+            "merging": "[merge_pdfs] 正在合并 PDF 文件",
+            "pdf_list": "[get_pdf_list] PDF 文件列表：{lst}",
+            "save_merged": "[merge_pdfs] 合并结果已保存到：{path}"
         },
         "warning": {}
     }

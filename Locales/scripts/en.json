@@ -61,5 +61,24 @@
             "rendering_img": "[pdf_renderer] Rendering image: {img}"
         },
         "warning": {}
+    },
+    "PDFMerger": {
+        "critical": {},
+        "debug": {
+            "filename_pattern": "[get_pdf_list] Filename pattern: {pattern}",
+            "insert_page": "[merge_pdfs] Inserting page: {page}",
+            "num_part": "[get_pdf_list] Number part of {file}: {num}"
+        },
+        "error": {
+            "merge_fail": "[merge_pdfs] Failed to merge PDFs, unexpected error: {error}",
+            "pdf_list_fail": "[get_pdf_list] Failed to get PDF file list, unexpected error：{error}"
+        },
+        "info": {
+            "looking_dir": "[get_pdf_list] Looking in directory: {path}",
+            "merging": "[merge_pdfs] Merging PDF files",
+            "pdf_list": "[get_pdf_list] PDF File list: {lst}",
+            "save_merged": "[merge_pdfs] Merged PDF saved to: {path}"
+        },
+        "warning": {}
     }
 }
