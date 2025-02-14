@@ -80,5 +80,26 @@
             "save_merged": "[merge_pdfs] 合并结果已保存到：{path}"
         },
         "warning": {}
+    },
+    "Renderer": {
+        "critical": {},
+        "debug": {
+            "conv_enc": "[render] 正在转换为 UTF-8 编码：{path}",
+            "img_name": "[render] 图像名称：{name}",
+            "output_path": "[render] 定义输出HTML路径：{path1}, {path2}, {path3}",
+            "reading": "[render] 正在读取文件：{path}",
+            "writing": "[render] 正在将替换后的内容写回文件：{path}"
+        },
+        "error": {
+            "file_not_found": "[render] 文件 {path} 不存在。",
+            "no_model_or_img": "[render] 你看起来没有加载模型或上传图片",
+            "render_fail": "[render] 渲染失败，意料之外的错误：{error}",
+            "repl_fail": "[render] 替换内容时出现了意料之外的错误：{error}"
+        },
+        "info": {
+            "conv2pdf": "[render] 正在转换为 PDF：{path}",
+            "rendering": "[render] 正在渲染：{path}"
+        },
+        "warning": {}
     }
 }

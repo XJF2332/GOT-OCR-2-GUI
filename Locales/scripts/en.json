@@ -80,5 +80,26 @@
             "save_merged": "[merge_pdfs] Merged PDF saved to: {path}"
         },
         "warning": {}
+    },
+    "Renderer": {
+        "critical": {},
+        "debug": {
+            "conv_enc": "[render] Converting encoding to UTF-8: {path}",
+            "img_name": "[render] Image name: {name}",
+            "output_path": "[render] Output HTML paths: {path1}, {path2}, {path3}",
+            "reading": "[render] Reading file: {path}",
+            "writing": "[render] Writing back to file: {path}"
+        },
+        "error": {
+            "file_not_found": "[render] File not found: {path}",
+            "no_model_or_img": "[render] Probably no model loaded or no image uploaded",
+            "render_fail": "[render] Rendering failed, unexpected error: {error}",
+            "repl_fail": "[render] Unexpected error occurred while replacing content: {error}"
+        },
+        "info": {
+            "conv2pdf": "[render] Converting to PDF: {path}",
+            "rendering": "[render] Rendering: {path}"
+        },
+        "warning": {}
     }
 }
