@@ -18,9 +18,9 @@
 
 ## 待办
 
+- [x] 日志内容本地化
 - [ ] 支持新模型 stepfun-ai/GOT-OCR-2.0-hf
 - [ ] 优化 PDF 相关的错误处理逻辑
-- [ ] 日志内容本地化
 - [ ] ⚠️支持`llama-cpp-python`，希望能够加速推理
 - 遇到困难，有能力的可以提交 pr，最好可以提到 `Aplha` 分支；使用的 HuggingFace
   模型是 [kaifeise/GOT-gguf](https://huggingface.co/kaifeise/GOT-gguf/tree/main)；`GGUF Test.py`
@@ -152,17 +152,17 @@ GOT-OCR-2-GUI
 
 - Q：CLI.py: error: the following arguments are required: --path/-P
 - A：用 PowerShell，CMD 不知道为什么会有这个 bug，暂时找不到原因
-
+---
 - Q：什么是“HTML本地文件”？难道还有没保存在本地的HTML文件吗？
 - A：因为模型输出的HTML文件虽然保存在本地，但使用了外部脚本，因此即使文件在本地，还是需要网络来打开它。于是我把外部脚本下载了进来，就是前面提到的
   `mardown-it.js`。这么做主要是防止网络问题造成的PDF导出失败。
-
+---
 - Q：为什么我的模型加载失败了？
 - A：检查一下你是不是少了文件。从百度云下载的模型文件似乎缺少了文件，我建议你去前面提到的 Huggingface 下载。
-
+---
 - Q：有什么部署这个项目的建议吗？
 - A：看这个[issue #5](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/5)
-
+---
 - Q：我要去哪里看帮助文档？
 - A：对于 GUI 用户，你可以找到`说明`标签页，对于 CLI 用户，你可以用`.\CLI.py --help`查看 argparse 自动生成的帮助文档，也可以用`.\CLI.py --detailed-help`查看更详细的帮助文档
 

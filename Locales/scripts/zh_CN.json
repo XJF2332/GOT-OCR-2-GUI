@@ -1,6 +1,5 @@
 {
     "HTML2PDF": {
-        "critical": {},
         "debug": {
             "enc_detect": "[conv_html_enc] 编码检测结果：{encoding}",
             "writing": "[output_pdf] 正在写入：{file}"
@@ -29,11 +28,9 @@
             "reading_ori": "[conv_html_enc] 正在读取：{file}",
             "replacing": "[replace_content] 正在替换：{file}",
             "writing": "[replace_content] 正在写入：{file}"
-        },
-        "warning": {}
+        }
     },
     "PDFHandler": {
-        "critical": {},
         "debug": {
             "build_pattern": "[get_png_seq] 匹配模式：{pattern}",
             "converting_page": "[split_pdf] 正在转换第 {page} 页",
@@ -60,10 +57,8 @@
             "rendering": "[pdf_renderer] 正在渲染：{file}",
             "rendering_img": "[pdf_renderer] 正在渲染图片：{img}"
         },
-        "warning": {}
     },
     "PDFMerger": {
-        "critical": {},
         "debug": {
             "filename_pattern": "[get_pdf_list] 文件名特征：{pattern}",
             "insert_page": "[merge_pdfs] 插入页面：{page}",
@@ -78,11 +73,9 @@
             "merging": "[merge_pdfs] 正在合并 PDF 文件",
             "pdf_list": "[get_pdf_list] PDF 文件列表：{lst}",
             "save_merged": "[merge_pdfs] 合并结果已保存到：{path}"
-        },
-        "warning": {}
+        }
     },
     "Renderer": {
-        "critical": {},
         "debug": {
             "conv_enc": "[render] 正在转换为 UTF-8 编码：{path}",
             "img_name": "[render] 图像名称：{name}",
@@ -99,7 +92,15 @@
         "info": {
             "conv2pdf": "[render] 正在转换为 PDF：{path}",
             "rendering": "[render] 正在渲染：{path}"
+        }
+    },
+    "TempCleaner": {
+        "debug": {
+            "del_file": "[cleaner] 删除临时文件：{path}",
+            "find_files": "[find_files] 找到临时文件：{path}"
         },
-        "warning": {}
+        "info": {
+            "cleaning": "[cleaner] 正在清理临时文件"
+        }
     }
 }

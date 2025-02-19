@@ -101,5 +101,14 @@
             "rendering": "[render] Rendering: {path}"
         },
         "warning": {}
+    },
+    "TempCleaner": {
+        "debug": {
+            "del_file": "[cleaner] Deleted temp file: {path}",
+            "find_files": "[find_files] Found temp file: {path}"
+        },
+        "info": {
+            "cleaning": "[cleaner] Cleaning temp files"
+        }
     }
 }
