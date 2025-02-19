@@ -61,5 +61,54 @@
             "rendering_img": "[pdf_renderer] Rendering image: {img}"
         },
         "warning": {}
+    },
+    "PDFMerger": {
+        "critical": {},
+        "debug": {
+            "filename_pattern": "[get_pdf_list] Filename pattern: {pattern}",
+            "insert_page": "[merge_pdfs] Inserting page: {page}",
+            "num_part": "[get_pdf_list] Number part of {file}: {num}"
+        },
+        "error": {
+            "merge_fail": "[merge_pdfs] Failed to merge PDFs, unexpected error: {error}",
+            "pdf_list_fail": "[get_pdf_list] Failed to get PDF file list, unexpected error：{error}"
+        },
+        "info": {
+            "looking_dir": "[get_pdf_list] Looking in directory: {path}",
+            "merging": "[merge_pdfs] Merging PDF files",
+            "pdf_list": "[get_pdf_list] PDF File list: {lst}",
+            "save_merged": "[merge_pdfs] Merged PDF saved to: {path}"
+        },
+        "warning": {}
+    },
+    "Renderer": {
+        "critical": {},
+        "debug": {
+            "conv_enc": "[render] Converting encoding to UTF-8: {path}",
+            "img_name": "[render] Image name: {name}",
+            "output_path": "[render] Output HTML paths: {path1}, {path2}, {path3}",
+            "reading": "[render] Reading file: {path}",
+            "writing": "[render] Writing back to file: {path}"
+        },
+        "error": {
+            "file_not_found": "[render] File not found: {path}",
+            "no_model_or_img": "[render] Probably no model loaded or no image uploaded",
+            "render_fail": "[render] Rendering failed, unexpected error: {error}",
+            "repl_fail": "[render] Unexpected error occurred while replacing content: {error}"
+        },
+        "info": {
+            "conv2pdf": "[render] Converting to PDF: {path}",
+            "rendering": "[render] Rendering: {path}"
+        },
+        "warning": {}
+    },
+    "TempCleaner": {
+        "debug": {
+            "del_file": "[cleaner] Deleted temp file: {path}",
+            "find_files": "[find_files] Found temp file: {path}"
+        },
+        "info": {
+            "cleaning": "[cleaner] Cleaning temp files"
+        }
     }
 }

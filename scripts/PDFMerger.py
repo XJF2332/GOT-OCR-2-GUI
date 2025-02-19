@@ -6,10 +6,8 @@ from scripts import scriptsLogger, local
 #################################
 
 PDFMerger_logger = scriptsLogger.getChild("PDFMerger")
-
-#################################
-
 pdf_list = []
+
 
 #################################
 
@@ -30,7 +28,7 @@ def get_pdf_list(directory: str, prefix: str, except_pattern: str):
         # 查找文件 / Find files
         PDFMerger_logger.info(local["PDFMerger"]["info"]["looking_dir"].format(path=directory))
         pattern = os.path.join(directory, f"{prefix}_*.pdf")
-        PDFMerger_logger.debug(f"[get_pdf_list] 文件名特征 (Got file name pattern)：{pattern}")
+        PDFMerger_logger.debug(local["PDFMerger"]["debug"]["filename_pattern"].format(pattern=pattern))
         pdf_list = glob.glob(pattern)
 
         # 排除具有指定特征的文件 / Remove files that has certain substring
@@ -42,56 +40,54 @@ def get_pdf_list(directory: str, prefix: str, except_pattern: str):
         def extract_integer(filename):
             number_part = os.path.basename(filename).replace(f"{prefix}_", "").replace(".pdf", "")
             PDFMerger_logger.debug(
-                f"[get_pdf_list] {os.path.basename(filename)}的数字部分 (Number part of {os.path.basename(filename)}): {number_part}")
+                local["PDFMerger"]["debug"]["num_part"].format(file=os.path.basename(filename), num=number_part))
             return int(number_part)
 
         pdf_list = sorted(pdf_list, key=extract_integer)
-        PDFMerger_logger.debug(f"[get_pdf_list] PDF 文件列表 (Got PDF file list)：{pdf_list}")
+        PDFMerger_logger.info(local["PDFMerger"]["info"]["pdf_list"].format(lst=pdf_list))
         return pdf_list
     except Exception as e:
-        PDFMerger_logger.error(f"[get_pdf_list] 获取 PDF 文件列表失败 (Failed to get PDF file list)：{e}")
+        PDFMerger_logger.error(local["PDFMerger"]["info"]["pdf_list_fail"].format(error=str(e)))
+
 
 #################################
 
 def merge_pdfs(prefix: str):
     """
-    指定前缀的 PDF 文件
+    Merge PDF files that have given prefix
+    合并指定前缀的 PDF 文件
 
     Args:
-        prefix (str): 文件前缀
+        prefix (str): 文件前缀 / Prefix of PDF files to merged
 
     Returns:
-        bool: 是否成功
+        bool: 是否成功 / Succeeded or not
     """
     try:
-        PDFMerger_logger.info("[merge_pdfs] 合并 PDF 文件 (Merging PDF files)")
-        # 创建空文档
+        PDFMerger_logger.info(local["PDFMerger"]["info"]["merging"])
+        # 创建空文档 / Create an empty doc
         merged = fitz.open()
 
-        # 合并
+        # 合并 / Merge
         pdf_list = get_pdf_list(directory=r"result", prefix=prefix, except_pattern="Merged")
         for pdf in pdf_list:
             with fitz.open(pdf) as pdf_doc:
                 for page in pdf_doc:
                     merged.insert_pdf(pdf_doc, from_page=page.number, to_page=page.number)
-                    PDFMerger_logger.debug(f"[merge_pdfs] 插入页面 (Inserting page)：{page.number}")
+                    PDFMerger_logger.debug(local["PDFMerger"]["debug"]["insert_page"].format(page=page.number))
 
-        # 保存合并后的 PDF
+        # 保存 / Save
         output_file = os.path.join(r"result", f"{prefix}_Merged.pdf")
         merged.save(output_file)
-        PDFMerger_logger.info(f"[merge_pdfs] 保存合并后的 PDF (Saved merged PDF)：{output_file}")
+        PDFMerger_logger.info(local["PDFMerger"]["info"]["save_merged"].format(path=output_file))
         merged.close()
         return True
     except Exception as e:
-        PDFMerger_logger.error(f"[merge_pdfs] 合并 PDF 文件失败 (Failed to merge PDF files)：{e}")
+        PDFMerger_logger.error(local["PDFMerger"]["error"]["merge_fail"].format(error=str(e)))
         return False
 
-#################################
-
-def t():
-    merge_pdfs("t")
 
 #################################
 
 if __name__ == "__main__":
-    t()
+    pass

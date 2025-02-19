@@ -25,9 +25,13 @@ Logs can be found at:
 ```text
 <GOT-OCR-2-GUI>\Logs\<YYYY-MM-DD_HH-MM-SS>.log
 ```
-Make sure that the log you uploaded contains the error information.  
-确保你上传的日志包含错误信息。
-
+Make sure that the log you uploaded contains the error information and was recorded in DEBUG level.    
+确保你上传的日志包含错误信息，且是在 DEBUG 等级下记录的。  
+Steps to set logger to DEBUG level:  
+把日志记录器调整到 DEBUG 等级的步骤：
+```text
+Config Manager.py -> Configure other settings -> logger_level -> 1. DEBUG -> Done!
+```
 
 ### **Additional context / 额外信息**
 Additional context or screenshots about the bug here.
