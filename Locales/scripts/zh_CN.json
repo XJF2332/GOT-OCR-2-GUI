@@ -56,7 +56,7 @@
             "render_success": "[pdf_renderer] 渲染成功",
             "rendering": "[pdf_renderer] 正在渲染：{file}",
             "rendering_img": "[pdf_renderer] 正在渲染图片：{img}"
-        },
+        }
     },
     "PDFMerger": {
         "debug": {
