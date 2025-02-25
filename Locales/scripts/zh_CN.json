@@ -102,5 +102,10 @@
         "info": {
             "cleaning": "[cleaner] 正在清理临时文件"
         }
+    },
+    "got.cpp": {
+        "error": {
+            "embed_type": "[ocr_run] image_embeds 必须是一个 numpy.ndarray"
+        }
     }
 }

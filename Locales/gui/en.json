@@ -2,6 +2,7 @@
     "btn": {
         "do_ocr": "Perform OCR",
         "load_model": "Load model",
+        "ocr_gguf": "OCR (GGUF)",
         "pdf_ocr": "Perform OCR (PDF)",
         "render": "Render",
         "unload_model": "Unload model"
@@ -35,6 +36,7 @@
     },
     "label": {
         "clean_temp": "Clean temporary files",
+        "execution_providers": "ONNX mode",
         "fine_grained_box_x1": "Box coordinate x1",
         "fine_grained_box_x2": "Box coordinate x2",
         "fine_grained_box_y1": "Box coordinate y1",
@@ -43,6 +45,8 @@
         "fine_grained_settings": "Fine-grained settings",
         "img_name": "Image name",
         "input_folder_path": "Input folder path",
+        "gguf_models" : "GGUF model",
+        "gguf_result": "OCR result",
         "merge_pdf": "Merge PDF",
         "ocr_mode": "OCR mode",
         "ocr_settings": "OCR settings",

@@ -2,6 +2,7 @@
     "btn": {
         "do_ocr": "执行 OCR",
         "load_model": "加载模型",
+        "ocr_gguf": "OCR (GGUF)",
         "pdf_ocr": "对 PDF 文件执行 OCR",
         "render": "渲染",
         "unload_model": "卸载模型"
@@ -35,12 +36,15 @@
     },
     "label": {
         "clean_temp": "清理临时文件",
+        "execution_providers": "ONNX 运行模式",
         "fine_grained_box_x1": "框坐标 x1",
         "fine_grained_box_x2": "框坐标 x2",
         "fine_grained_box_y1": "框坐标 y1",
         "fine_grained_box_y2": "框坐标 y2",
         "fine_grained_color": "框颜色",
         "fine_grained_settings": "fine-grained 设置",
+        "gguf_models" : "GGUF 模型",
+        "gguf_result": "OCR 结果",
         "img_name": "图片名称",
         "input_folder_path": "输入文件夹路径",
         "merge_pdf": "合并 PDF",

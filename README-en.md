@@ -23,11 +23,8 @@ Click a star, please
 - [x] Localize logs
 - [ ] Add support for new model: stepfun-ai/GOT-OCR-2.0-hf  
 - [ ] Optimize PDF error handling
-- [ ] Support for `llama-cpp-python`, hoping to accelerate inference
-- I ran into some troubles, if you have the solution, you can create a pull request, pull into `Alpha` branch for now;
-  HuggingFace model used is [kaifeise/GOT-gguf](https://huggingface.co/kaifeise/GOT-gguf/tree/main); `GGUF Test.py` used
-  codes from [1694439208/GOT-OCR-Inference](https://github.com/1694439208/GOT-OCR-Inference). Files are in the `gguf`
-  folder
+- [x] Support GGUF models, hoping to accelerate inference (Thank [issue #19](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/19) for helping)
+- [ ] Improve support for GGUF models
 - [ ] html to word functionality, preserve formulas for editing
 - I got two ideas for now. One is creating docx from PDF files, but it's too slow since you need selenium to open your
   browser and output PDFs. The other is `pdflatex`, but you have to have latex installed. I checked TexLive, but it's

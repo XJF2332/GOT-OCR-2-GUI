@@ -6,11 +6,14 @@ import scripts.Renderer as Renderer
 import scripts.PDFHandler as PDFHandler
 import scripts.PDFMerger as PDFMerger
 import scripts.TempCleaner as TempCleaner
+import scripts.got_cpp.got_ocr as got_cpp
+from onnxruntime import get_available_providers
 from transformers import AutoModel, AutoTokenizer
 import gradio as gr
 import os
 import glob
 import json
+import gc
 from time import sleep
 
 ##########################
@@ -300,7 +303,8 @@ def ocr(image_path, fg_box_x1, fg_box_y1, fg_box_x2, fg_box_y2, mode, fg_color, 
                 res = local["error"]["render_fail"].format(img_file=image_name_ext)
         logger.info(local['log']['info']['ocr_completed'])
         return res
-    except AttributeError:
+    except AttributeError as e:
+        print(e)
         logger.error(local['log']['error']['no_model_or_img'])
         return local["error"]["no_model_or_img"]
     except Exception as e:
@@ -490,7 +494,6 @@ with gr.Blocks(theme=theme) as demo:
                 # OCR 按钮 / Buttons and Results
                 do_ocr = gr.Button(local["btn"]["do_ocr"], variant="primary")
                 result = gr.Textbox(label=local["label"]["result"])
-    # ---------------------------------- #
     # 渲染器选项卡 / Renderer tab
     with gr.Tab(local["tab"]["renderer"]):
         # 输入 / Input folder path
@@ -529,7 +532,21 @@ with gr.Blocks(theme=theme) as demo:
                 with gr.Row(equal_height=True):
                     pdf_ocr_btn = gr.Button(local["btn"]["pdf_ocr"], variant="primary", scale=2)
                     clean_temp = gr.Checkbox(label=local["label"]["clean_temp"], value=True, interactive=True)
-    # 指南选项卡 / Instructions tab
+    # GGUF 选项卡 /  GGUF tab
+    with gr.Tab("GGUF"):
+        gguf_list = os.listdir(os.path.join("gguf", "decoders"))
+        dropdown_choices = [(f, os.path.join("gguf", "decoders", f)) for f in gguf_list]
+        execution_providers = get_available_providers()
+        with gr.Row():
+            gguf_models = gr.Dropdown(label=local["label"]["gguf_models"], choices=dropdown_choices, value=dropdown_choices[0][1] if dropdown_choices != [] else None, interactive=True)
+            execution_providers = gr.Dropdown(label=local["label"]["execution_providers"], choices=execution_providers, value=execution_providers[0], interactive=True, multiselect=True, max_choices=1)
+        with gr.Row():
+            upload_img_gguf = gr.Image(type="filepath", label=local["label"]["upload_img"])
+            encoder_path = gr.Textbox(value=os.path.join("gguf", "Encoder.onnx"), visible=False)
+            with gr.Column():
+                ocr_gguf_btn = gr.Button(local["btn"]["ocr_gguf"], variant="primary")
+                gguf_result = gr.Textbox(label=local["label"]["gguf_result"], interactive=False)
+     # 指南选项卡 / Instructions tab
     with gr.Tab(local["tab"]["instructions"]):
         with open(os.path.join('Locales', 'gui', 'instructions', f'{lang}.md'), 'r', encoding='utf-8') as file:
             instructions = file.read()
@@ -608,6 +625,11 @@ with gr.Blocks(theme=theme) as demo:
         outputs=model_status
     )
     # ----------------------------------- #
+    ocr_gguf_btn.click(
+        fn=got_cpp.main,
+        inputs=[encoder_path, gguf_models, upload_img_gguf, execution_providers],
+        outputs=gguf_result
+    )
 
 ##########################
 

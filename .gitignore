@@ -15,7 +15,8 @@
 /tests/
 RUN.bat
 /pdf/
-/gguf/*.gguf
+/gguf/decoders/*.gguf
+/gguf/*.onnx
 *.pyc
 /__pycache__/
 /scripts/__pycache__/

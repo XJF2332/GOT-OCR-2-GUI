@@ -21,11 +21,8 @@
 - [x] 日志内容本地化
 - [ ] 支持新模型 stepfun-ai/GOT-OCR-2.0-hf
 - [ ] 优化 PDF 相关的错误处理逻辑
-- [ ] ⚠️支持`llama-cpp-python`，希望能够加速推理
-- 遇到困难，有能力的可以提交 pr，最好可以提到 `Aplha` 分支；使用的 HuggingFace
-  模型是 [kaifeise/GOT-gguf](https://huggingface.co/kaifeise/GOT-gguf/tree/main)；`GGUF Test.py`
-  使用了来自 [1694439208/GOT-OCR-Inference](https://github.com/1694439208/GOT-OCR-Inference) 的代码 。文件都在`gguf`
-  文件夹里了）
+- [x] 支持 GGUF 模型，希望能够加速推理（感谢 [issue #19](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/19) 提供的帮助）
+- [ ] 完善 GGUF 模型的支持
 - [ ] html 转 word 功能，保留公式可以编辑
 - 目前想到两个方法，一个是先转 PDF 然后 PDF 转 Word，但这样太慢，因为要用 selenium 打开浏览器去渲染 PDF；另一个是`pdflatex`
   ，但是这样就要再装一个 TeX 发行版，我看了一下 TexLive ，又是好几个 GB。感觉这两个方法都不太行。不知道有没有人有更好的方法？
