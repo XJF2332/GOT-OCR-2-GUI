@@ -13,7 +13,6 @@ import gradio as gr
 import os
 import glob
 import json
-import gc
 from time import sleep
 
 ##########################
