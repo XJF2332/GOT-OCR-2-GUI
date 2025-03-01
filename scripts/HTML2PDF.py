@@ -21,14 +21,18 @@ def conv_html_enc(original_path: str, utf8_path: str) -> None:
     将HTML文件转换为UTF-8编码
     Convert encoding of HTML files to UTF-8
 
+    返回值及其含义
+    Return value and its meaning
+        0: 成功 / Success
+        1: 编码检测失败 / Failed to detect encoding
+        2: 未知错误 / Unknown error
+
     Args:
         original_path: 输入 HTML 文件路径 / Input HTML file path
         utf8_path: 转换后的 HTML 文件路径 / Converted HTML file path
 
     Returns:
-        0: 成功 / Success
-        1: 编码检测失败 / Failed to detect encoding
-        2: 未知错误 / Unknown error
+        错误码 / Error codes
     """
     # 检测编码 / Detect encoding
     try:
@@ -67,13 +71,17 @@ def replace_content(utf8_path: str, utf8_local_path: str):
     替换 HTML 中的在线脚本为本地文件
     Replace online script in HTML files into local file
 
+    返回值及其含义
+    Return value and its meaning
+        0: 成功 / Success
+        1: 未知错误 / Unknown error
+
     Args:
         utf8_path: UTF-8编码的HTML文件路径 / Input HTML path (UTF-8)
         utf8_local_path: 替换后的HTML文件路径 / Replaced HTML path
 
     Returns:
-        0: 成功 / Success
-        1: 未知错误 / Unknown error
+        错误码 / Error code
     """
     try:
         HTML2PDF_logger.info(local["HTML2PDF"]["info"]["replacing"].format(file=utf8_path))
@@ -110,9 +118,9 @@ def output_pdf(html_path: str, pdf_path: str, wait_time: int, wait: bool = False
         wait: 是否等待 / Whether to wait the browser
 
     Returns:
+        0: 转换成功 / Succeeded
         1: 未找到 WebDriver / WebDriver not found
-        2: 转换成功 / Succeeded
-        3: 转换失败 / Failed
+        2: 未知错误 / Unknown error
     """
     try:
         HTML2PDF_logger.info(local["HTML2PDF"]["info"]["conv2pdf"].format(file=html_path))
@@ -161,10 +169,10 @@ def output_pdf(html_path: str, pdf_path: str, wait_time: int, wait: bool = False
         # 关闭 WebDriver / Close WebDriver
         HTML2PDF_logger.info(local["HTML2PDF"]["info"]["closing"])
         driver.quit()
-        return 2
+        return 0
     except Exception as e:
         HTML2PDF_logger.error(local["HTML2PDF"]["error"]["unexpected_error_pdf"].format(e=e))
-        return 3
+        return 2
 
 
 #################################
@@ -210,10 +218,10 @@ def aio(ori_html_path: str, html_utf8_path: str, html_utf8_local_path: str, pdf_
         if output_flag == 1:
             HTML2PDF_logger.error(local["HTML2PDF"]["error"]["aio_no_driver"])
             return 4
-        elif output_flag == 2:
+        elif output_flag == 0:
             HTML2PDF_logger.info(local["HTML2PDF"]["info"]["aio_success"].format(file=pdf_path))
             return 0
-        elif output_flag == 3:
+        elif output_flag == 2:
             HTML2PDF_logger.error(local["HTML2PDF"]["info"]["aio_fail"].format(file=ori_html_path))
             return 5
     except Exception as e:
