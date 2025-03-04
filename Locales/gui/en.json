@@ -43,11 +43,13 @@
         "fine_grained_box_y2": "Box coordinate y2",
         "fine_grained_color": "Box color",
         "fine_grained_settings": "Fine-grained settings",
-        "img_name": "Image name",
-        "input_folder_path": "Input folder path",
-        "gguf_models" : "GGUF model",
+        "gguf_models": "GGUF model",
         "gguf_result": "OCR result",
+        "img_name": "Image name",
+        "img_name_placeholder": "Image name will be shown here",
+        "input_folder_path": "Input folder path",
         "merge_pdf": "Merge PDF",
+        "new_render_settings": "Render mode settings (new)",
         "ocr_mode": "OCR mode",
         "ocr_settings": "OCR settings",
         "pdf_file": "PDF file",
@@ -55,8 +57,10 @@
         "render_settings": "Render mode settings",
         "result": "Result",
         "save_as_pdf": "Save as PDF",
+        "save_format": "Save format",
         "target_dpi": "Target DPI",
-        "upload_img": "Upload image"
+        "upload_img": "Upload image",
+        "use_new_render_mode": "Use new render mode"
     },
     "log": {
         "critical": {},
@@ -68,6 +72,7 @@
             "filename_split_res": "[extract_pdf_pattern] Filename split to: {res}",
             "got_image_list": "[renderer] Got image list: {list}",
             "got_img_name": "[ocr] Got image name: {img_name}",
+            "got_pdf_name": "[pdf_ocr] Got PDF name: {name}",
             "got_temp_file_pattern": "[pdf_ocr] Got temporary file pattern: {pattern}",
             "merge_pdf_checkbox_disabled": "[update_pdf_merge_conf_visibility] Merge PDF checkbox deactivated (PDF tab)",
             "merge_pdf_checkbox_enabled": "[update_pdf_merge_conf_visibility] Merge PDF checkbox activated (PDF tab)",
@@ -138,6 +143,7 @@
     "tab": {
         "instructions": "Instructions",
         "ocr": "OCR",
-        "renderer": "Renderer"
+        "renderer": "Renderer",
+        "settings": "Settings"
     }
 }

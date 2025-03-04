@@ -43,20 +43,24 @@
         "fine_grained_box_y2": "框坐标 y2",
         "fine_grained_color": "框颜色",
         "fine_grained_settings": "fine-grained 设置",
-        "gguf_models" : "GGUF 模型",
+        "gguf_models": "GGUF 模型",
         "gguf_result": "OCR 结果",
         "img_name": "图片名称",
+        "img_name_placeholder": "图片名称将会显示在这里",
         "input_folder_path": "输入文件夹路径",
         "merge_pdf": "合并 PDF",
+        "new_render_settings": "渲染模式设置（新版）",
         "ocr_mode": "OCR 模式",
         "ocr_settings": "OCR 设置",
         "pdf_file": "PDF 文件",
         "pdf_file_name": "PDF 文件名",
-        "render_settings": "render 模式设置",
+        "render_settings": "渲染模式设置",
         "result": "结果",
         "save_as_pdf": "保存为 PDF",
+        "save_format": "保存格式",
         "target_dpi": "目标 DPI",
-        "upload_img": "上传图片"
+        "upload_img": "上传图片",
+        "use_new_render_mode": "使用新版渲染模式"
     },
     "log": {
         "critical": {},
@@ -68,13 +72,13 @@
             "filename_split_res": "[extract_pdf_pattern] 文件名分割结果：{res}",
             "got_image_list": "[renderer] 获取到图片列表：{list}",
             "got_img_name": "[ocr] 获取图片名称：{img_name}",
+            "got_pdf_name": "[pdf_ocr] 获取到 PDF 名称：{name}",
             "got_temp_file_pattern": "[pdf_ocr] 获取临时文件特征：{pattern}",
             "merge_pdf_checkbox_disabled": "[update_pdf_merge_conf_visibility] 合并 PDF 勾选框已禁用（ PDF 标签页）",
             "merge_pdf_checkbox_enabled": "[update_pdf_merge_conf_visibility] 合并 PDF 勾选框已启用（ PDF 标签页）",
             "pdf_mode_merge": "[pdf_ocr] 当前 PDF OCR 模式：merge",
             "pdf_mode_render": "[pdf_ocr] 当前 PDF OCR 模式：render",
             "pdf_mode_split": "[pdf_ocr] 当前 PDF OCR 模式：split-to-image",
-            "got_pdf_name": "[pdf_ocr] 获取到 PDF 名称：{name}",
             "save_pdf_checkbox_disabled": "[update_pdf_conv_conf_visibility] 保存 PDF 勾选框已禁用（ PDF 标签页）",
             "save_pdf_checkbox_enabled": "[update_pdf_conv_conf_visibility] 保存 PDF 勾选框已启用（ PDF 标签页）"
         },
@@ -139,6 +143,7 @@
     "tab": {
         "instructions": "说明",
         "ocr": "OCR",
-        "renderer": "渲染器"
+        "renderer": "渲染器",
+        "settings": "设置"
     }
 }

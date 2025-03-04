@@ -121,7 +121,7 @@ def main(encoder_path, decoder_path, image_path, providers):
     img_embeds: np.ndarray = session.run(None, {
         "input": img_arr.reshape(1, 3, 1024, 1024)
     })[0].reshape(256, 1024)
-    result = ocr_run(decoder, img_embeds, GOT_FORMAT_TYPE)
+    result = ocr_run(decoder, img_embeds, GOT_CROP_FORMAT_TYPE)
     try:
         if result:
             print("Error:", result.contents.error.decode('utf-8') if result.contents.error is not None else None)

@@ -25,10 +25,7 @@ Click a star, please
 - [ ] Optimize PDF error handling
 - [x] Support GGUF models, hoping to accelerate inference (Thank [issue #19](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/19) for helping)
 - [ ] Improve support for GGUF models
-- [ ] html to word functionality, preserve formulas for editing
-- I got two ideas for now. One is creating docx from PDF files, but it's too slow since you need selenium to open your
-  browser and output PDFs. The other is `pdflatex`, but you have to have latex installed. I checked TexLive, but it's
-  too big, so I'm not sure if it's worth it. Is anyone interested in this?
+- [ ] New render mode: optimize performance and support for more formats
 
 ## How to use
 

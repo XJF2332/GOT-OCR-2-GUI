@@ -168,7 +168,7 @@ def update_img_name(image_uploaded):
     except:
         image_name_ext = local["info"]["image_cleared"]
         logger.debug(local['log']['info']['image_name_cleared'])
-    return gr.Textbox(label=local["label"]["img_name"], value=image_name_ext)
+    return gr.Markdown(value=image_name_ext)
 
 
 ##########################
@@ -454,30 +454,12 @@ with gr.Blocks(theme=theme) as demo:
     # ---------------------------------- #
     # OCR 选项卡 / OCR tab
     with gr.Tab(local["tab"]["ocr"]):
-        # 特殊模式设置 / Special mode settings
-        with gr.Row():
-            # Fine-grained 设置 / Fine-grained settings
-            with gr.Column():
-                gr.Markdown(local["label"]["fine_grained_settings"])
-                with gr.Row():
-                    fine_grained_box_x1 = gr.Number(label=local["label"]["fine_grained_box_x1"], value=0)
-                    fine_grained_box_y1 = gr.Number(label=local["label"]["fine_grained_box_y1"], value=0)
-                    fine_grained_box_x2 = gr.Number(label=local["label"]["fine_grained_box_x2"], value=0)
-                    fine_grained_box_y2 = gr.Number(label=local["label"]["fine_grained_box_y2"], value=0)
-                fine_grained_color = gr.Dropdown(choices=["red", "green", "blue"],
-                                                 label=local["label"]["fine_grained_color"], value="red")
-            # 渲染设置 / Rendering settings
-            with gr.Column():
-                gr.Markdown(local["label"]["render_settings"])
-                img_name = gr.Textbox(label=local["label"]["img_name"], value="ocr")
-                with gr.Row(equal_height=True):
-                    pdf_convert_confirm = gr.Checkbox(label=local["label"]["save_as_pdf"])
-                    clean_temp_render = gr.Checkbox(label=local["label"]["clean_temp"])
         # OCR 相关 / OCR Settings
-        gr.Markdown(local["label"]["ocr_settings"])
         with gr.Row():
-            # 上传图片 / Upload Image
-            upload_img = gr.Image(type="filepath", label=local["label"]["upload_img"])
+            with gr.Column():
+                # 上传图片 / Upload Image
+                img_name = gr.Markdown(local["label"]["img_name_placeholder"])
+                upload_img = gr.Image(type="filepath", label=local["label"]["upload_img"])
             # 其他组件 / Other Components
             with gr.Column():
                 # 模式 / Mode
@@ -545,7 +527,32 @@ with gr.Blocks(theme=theme) as demo:
             with gr.Column():
                 ocr_gguf_btn = gr.Button(local["btn"]["ocr_gguf"], variant="primary")
                 gguf_result = gr.Textbox(label=local["label"]["gguf_result"], interactive=False)
-     # 指南选项卡 / Instructions tab
+    # 设置选项卡 / Settings tab
+    with gr.Tab(local["tab"]["settings"]):
+        # 特殊模式设置 / Special mode settings
+        with gr.Row():
+            # Fine-grained 设置 / Fine-grained settings
+            with gr.Column():
+                gr.Markdown(local["label"]["fine_grained_settings"])
+                with gr.Row():
+                    fine_grained_box_x1 = gr.Number(label=local["label"]["fine_grained_box_x1"], value=0)
+                    fine_grained_box_y1 = gr.Number(label=local["label"]["fine_grained_box_y1"], value=0)
+                    fine_grained_box_x2 = gr.Number(label=local["label"]["fine_grained_box_x2"], value=0)
+                    fine_grained_box_y2 = gr.Number(label=local["label"]["fine_grained_box_y2"], value=0)
+                fine_grained_color = gr.Dropdown(choices=["red", "green", "blue"],
+                                                 label=local["label"]["fine_grained_color"], value="red")
+            # 渲染设置 / Rendering settings
+            with gr.Column():
+                gr.Markdown(local["label"]["render_settings"])
+                with gr.Row(equal_height=True):
+                    pdf_convert_confirm = gr.Checkbox(label=local["label"]["save_as_pdf"])
+                    clean_temp_render = gr.Checkbox(label=local["label"]["clean_temp"])
+                gr.Markdown(local["label"]["new_render_settings"])
+                gr.Markdown(local["info"]["developing"])
+                use_new_render_mode = gr.Checkbox(label=local["label"]["use_new_render_mode"])
+                save_format = gr.Dropdown(choices=["DOCX", "Markdown", "Tex"], label=local["label"]["save_format"],
+                                          multiselect=True)
+    # 指南选项卡 / Instructions tab
     with gr.Tab(local["tab"]["instructions"]):
         with open(os.path.join('Locales', 'gui', 'instructions', f'{lang}.md'), 'r', encoding='utf-8') as file:
             instructions = file.read()
