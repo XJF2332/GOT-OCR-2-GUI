@@ -15,7 +15,8 @@
         "pdf_filename_format_error": "Filename format should be like this: <string>_0.pdf",
         "pdf_merge_fail": "Failed to merge {pdf_file}",
         "pdf_render_fail": "Failed to render {pdf_file}",
-        "pdf_split_fail": "Failed to split {pdf_file}"
+        "pdf_split_fail": "Failed to split {pdf_file}",
+        "render_fail": "Failed to render {img_file}"
     },
     "info": {
         "developing": "Developing...",

@@ -15,7 +15,8 @@
         "pdf_filename_format_error": "文件名不满足格式 <string>_0.pdf",
         "pdf_merge_fail": "{pdf_file} 合并失败",
         "pdf_render_fail": "{pdf_file} 渲染失败",
-        "pdf_split_fail": "{pdf_file} 分割失败"
+        "pdf_split_fail": "{pdf_file} 分割失败",
+        "render_fail": "{img_file} 渲染失败"
     },
     "info": {
         "developing": "正在施工",

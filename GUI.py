@@ -240,6 +240,51 @@ def extract_pdf_pattern(filename):
 
 ##########################
 
+class OCRHandler:
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def render_old(image_path, pdf_conv_conf, temp_clean):
+        """
+        渲染模式（旧版）
+        Render mode (old)
+
+        Args:
+            image_path: 输入图像路径 / Input image path
+            pdf_conv_conf: 是否保存为 PDF / Whether to save as PDF
+            temp_clean: 是否清理临时文件 / Whether to clean temp files
+
+        Returns:
+            运行状态
+            Status
+        """
+        success = Renderer.render(model=model, tokenizer=tokenizer, img_path=image_path, conv_to_pdf=pdf_conv_conf,
+                                  wait=config["pdf_render_wait"], time=config["pdf_render_wait_time"])
+        image_name_ext = os.path.basename(image_path)
+        logger.debug(local['log']['debug']['got_img_name'].format(img_name=image_name_ext))
+
+        if success == 0:
+            res = local["info"]["render_success"].format(img_file=image_name_ext)
+            logger.info(local['log']['info']['render_completed'])
+            if temp_clean and pdf_conv_conf:
+                logger.info(f"[ocr] {local['log']['info']['temp_cleaning']}")
+                TempCleaner.cleaner(["result"],
+                                    [f"{os.path.splitext(image_name_ext)[0]}-gb2312.html",
+                                     f"{os.path.splitext(image_name_ext)[0]}-utf8.html",
+                                     f"{os.path.splitext(image_name_ext)[0]}-utf8-local.html"])
+            if temp_clean and not pdf_conv_conf:
+                logger.info(f"[ocr] {local['log']['info']['temp_cleaning']}")
+                TempCleaner.cleaner(["result"], [f"{os.path.splitext(image_name_ext)[0]}-gb2312.html"])
+            else:
+                logger.info(f"[ocr] {local['log']['info']['temp_cleaning_skipped']}")
+        else:
+            res = local["error"]["render_fail"].format(img_file=image_name_ext) + f": {str(success)}"
+
+        return res
+
+##########################
+
 # 进行 OCR 识别 / Performing OCR recognition
 def ocr(image_path, fg_box_x1, fg_box_y1, fg_box_x2, fg_box_y2, mode, fg_color, pdf_conv_conf, temp_clean):
     # 默认值 / Default value
@@ -279,27 +324,7 @@ def ocr(image_path, fg_box_x1, fg_box_y1, fg_box_x2, fg_box_y2, mode, fg_color, 
         elif mode == "multi-crop-format":
             res = model.chat_crop(tokenizer, image_path, ocr_type='format')
         elif mode == "render":
-            success = Renderer.render(model=model, tokenizer=tokenizer, img_path=image_path,
-                                      conv_to_pdf=pdf_conv_conf, wait=config["pdf_render_wait"],
-                                      time=config["pdf_render_wait_time"])
-            image_name_ext = os.path.basename(image_path)
-            logger.debug(local['log']['debug']['got_img_name'].format(img_name=image_name_ext))
-            if success:
-                res = local["info"]["render_success"].format(img_file=image_name_ext)
-                logger.info(local['log']['info']['render_completed'])
-                if temp_clean and pdf_conv_conf:
-                    logger.info(f"[ocr] {local['log']['info']['temp_cleaning']}")
-                    TempCleaner.cleaner(["result"],
-                                        [f"{os.path.splitext(image_name_ext)[0]}-gb2312.html",
-                                         f"{os.path.splitext(image_name_ext)[0]}-utf8.html",
-                                         f"{os.path.splitext(image_name_ext)[0]}-utf8-local.html"])
-                if temp_clean and not pdf_conv_conf:
-                    logger.info(f"[ocr] {local['log']['info']['temp_cleaning']}")
-                    TempCleaner.cleaner(["result"], [f"{os.path.splitext(image_name_ext)[0]}-gb2312.html"])
-                else:
-                    logger.info(f"[ocr] {local['log']['info']['temp_cleaning_skipped']}")
-            else:
-                res = local["error"]["render_fail"].format(img_file=image_name_ext)
+            res = OCRHandler.render_old(image_path=image_path, pdf_conv_conf=pdf_conv_conf, temp_clean=temp_clean)
         logger.info(local['log']['info']['ocr_completed'])
         return res
     except AttributeError as e:
