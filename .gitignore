@@ -22,3 +22,4 @@ RUN.bat
 /scripts/__pycache__/
 /Logs/
 /models_hf
+/.vscode
