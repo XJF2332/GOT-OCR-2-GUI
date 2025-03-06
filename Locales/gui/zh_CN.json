@@ -16,7 +16,8 @@
         "pdf_merge_fail": "{pdf_file} 合并失败",
         "pdf_render_fail": "{pdf_file} 渲染失败",
         "pdf_split_fail": "{pdf_file} 分割失败",
-        "render_fail": "{img_file} 渲染失败"
+        "render_fail": "{img_file} 渲染失败",
+        "render_failed": "[OCRHandler.render_old] 渲染失败，意料之外的错误：{error}"
     },
     "info": {
         "developing": "正在施工",
@@ -91,10 +92,12 @@
             "pdf_merge_failed": "[pdf_ocr] PDF 合并失败：{name}",
             "pdf_render_failed": "[pdf_ocr] PDF 渲染失败：{name}",
             "pdf_split_fail": "[pdf_ocr] PDF 分割失败",
-            "renderer_failed": "[renderer] 渲染失败：{image}",
+            "renderer_failed": "[OCRHandler.render_old] 渲染失败：{image}",
             "renderer_no_model_or_img": "[renderer] 没有加载模型或上传图片"
         },
         "info": {
+            "crop_ocr_start": "[OCRHandler.ocr_crop] 开始对图片执行 multi-crop OCR",
+            "fg_ocr_start": "[OCRHandler.ocr_fg] 开始对图片执行 fine-grained OCR",
             "got_pdf_name": "[pdf_ocr] 获取到 PDF 名称：{name}",
             "image_name_cleared": "[update_img_name] 上传的图片已被清理，图片名称已清除",
             "img_name_updated": "[update_img_name] 图片名称已更新：{name}",

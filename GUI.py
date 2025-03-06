@@ -242,6 +242,8 @@ def extract_pdf_pattern(filename):
 
 class OCRHandler:
     def __init__(self):
+        # self.safetensors_model = None
+        # self.safetensors_tokenizer = None
         pass
 
     @staticmethod
@@ -259,29 +261,83 @@ class OCRHandler:
             运行状态
             Status
         """
-        success = Renderer.render(model=model, tokenizer=tokenizer, img_path=image_path, conv_to_pdf=pdf_conv_conf,
-                                  wait=config["pdf_render_wait"], time=config["pdf_render_wait_time"])
-        image_name_ext = os.path.basename(image_path)
-        logger.debug(local['log']['debug']['got_img_name'].format(img_name=image_name_ext))
+        try:
+            gr.Info(local["info"]["render_start"].format(img_file = os.path.basename(image_path)))
+            success = Renderer.render(model=model, tokenizer=tokenizer, img_path=image_path, conv_to_pdf=pdf_conv_conf,
+                                    wait=config["pdf_render_wait"], time=config["pdf_render_wait_time"])
+            image_name_ext = os.path.basename(image_path)
+            logger.debug(local['log']['debug']['got_img_name'].format(img_name=image_name_ext))
 
-        if success == 0:
-            res = local["info"]["render_success"].format(img_file=image_name_ext)
-            logger.info(local['log']['info']['render_completed'])
-            if temp_clean and pdf_conv_conf:
-                logger.info(f"[ocr] {local['log']['info']['temp_cleaning']}")
-                TempCleaner.cleaner(["result"],
-                                    [f"{os.path.splitext(image_name_ext)[0]}-gb2312.html",
-                                     f"{os.path.splitext(image_name_ext)[0]}-utf8.html",
-                                     f"{os.path.splitext(image_name_ext)[0]}-utf8-local.html"])
-            if temp_clean and not pdf_conv_conf:
-                logger.info(f"[ocr] {local['log']['info']['temp_cleaning']}")
-                TempCleaner.cleaner(["result"], [f"{os.path.splitext(image_name_ext)[0]}-gb2312.html"])
+            if success == 0:
+                res = local["info"]["render_success"].format(img_file=image_name_ext)
+                logger.info(local['log']['info']['render_completed'])
+                if temp_clean and pdf_conv_conf:
+                    logger.info(f"[ocr] {local['log']['info']['temp_cleaning']}")
+                    TempCleaner.cleaner(["result"],
+                                        [f"{os.path.splitext(image_name_ext)[0]}-gb2312.html",
+                                        f"{os.path.splitext(image_name_ext)[0]}-utf8.html",
+                                        f"{os.path.splitext(image_name_ext)[0]}-utf8-local.html"])
+                if temp_clean and not pdf_conv_conf:
+                    logger.info(f"[ocr] {local['log']['info']['temp_cleaning']}")
+                    TempCleaner.cleaner(["result"], [f"{os.path.splitext(image_name_ext)[0]}-gb2312.html"])
+                else:
+                    logger.info(f"[ocr] {local['log']['info']['temp_cleaning_skipped']}")
             else:
-                logger.info(f"[ocr] {local['log']['info']['temp_cleaning_skipped']}")
-        else:
-            res = local["error"]["render_fail"].format(img_file=image_name_ext) + f": {str(success)}"
+                res = local["error"]["render_fail"].format(img_file=image_name_ext) + f": {str(success)}"
+
+            return res
+        except Exception as e:
+            logger.error(local['log']['error']['render_failed'].format(image=image_name_ext))
+            return local["error"]["render_failed"].format(error=e)
+    
+    @staticmethod
+    def ocr_fg(image_path, fg_box_x1, fg_box_y1, fg_box_x2, fg_box_y2, mode, fg_color):
+        """
+        指定区域的 OCR 识别
+        OCR recognition for specified area
+
+        Args:
+            image_path: 输入图像路径 / Input image path
+            fg_box_x1: 指定区域 x 坐标 1 / The first x coordinate of the specified area
+            fg_box_y1: 指定区域 y 坐标 1 / The first y coordinate of the specified area
+            fg_box_x2: 指定区域 x 坐标 2 / The second x coordinate of the specified area
+            fg_box_y2: 指定区域 y 坐标 2 / The second y coordinate of the specified area
+            mode: OCR 模式 / OCR mode
+            fg_color: 指定颜色 / Specified color
+        """
+        logger.info(local['log']['info']['fg_ocr_start'])
+        logger.debug(local['log']['debug']['current_ocr_mode'].format(ocr_mode=mode))
+        if mode == "fine-grained-ocr":
+            # 构建 OCR 框 / Building OCR box
+            box = f"[{fg_box_x1}, {fg_box_y1}, {fg_box_x2}, {fg_box_y2}]"
+            logger.debug(local['log']['debug']['current_ocr_box'].format(ocr_box=box))
+            res = model.chat(tokenizer, image_path, ocr_type='ocr', ocr_box=box)
+        elif mode == "fine-grained-format":
+            # 构建 OCR 框 / Building OCR box
+            box = f"[{fg_box_x1}, {fg_box_y1}, {fg_box_x2}, {fg_box_y2}]"
+            logger.debug(local['log']['debug']['current_ocr_box'].format(ocr_box=box))
+            res = model.chat(tokenizer, image_path, ocr_type='format', ocr_box=box)
+        elif mode == "fine-grained-color-ocr":
+            res = model.chat(tokenizer, image_path, ocr_type='ocr', ocr_color=fg_color)
+        elif mode == "fine-grained-color-format":
+            res = model.chat(tokenizer, image_path, ocr_type='format', ocr_color=fg_color)
 
         return res
+    
+    @staticmethod
+    def ocr_crop(image_path, mode):
+        logger.info(local['log']['info']['crop_ocr_start'])
+        logger.debug(local['log']['debug']['current_ocr_mode'].format(ocr_mode=mode))
+        if mode == "multi-crop-ocr":
+            res = model.chat_crop(tokenizer, image_path, ocr_type='ocr')
+        elif mode == "multi-crop-format":
+            res = model.chat_crop(tokenizer, image_path, ocr_type='format')
+
+        return res
+    
+    @staticmethod
+    def ocr():
+        pass
 
 ##########################
 
