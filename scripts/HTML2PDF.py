@@ -16,16 +16,12 @@ HTML2PDF_logger = scriptsLogger.getChild("HTML2PDF")
 
 #################################
 
-def conv_html_enc(original_path: str, utf8_path: str) -> None:
+def conv_html_enc(original_path: str, utf8_path: str) -> int:
     """
     将HTML文件转换为UTF-8编码
     Convert encoding of HTML files to UTF-8
-
-    返回值及其含义
-    Return value and its meaning
-        0: 成功 / Success
-        1: 编码检测失败 / Failed to detect encoding
-        2: 未知错误 / Unknown error
+    如果输入已经是UTF-8了，则会复制一份
+    If input is already UTF-8, it will create a copy
 
     Args:
         original_path: 输入 HTML 文件路径 / Input HTML file path
@@ -66,15 +62,10 @@ def conv_html_enc(original_path: str, utf8_path: str) -> None:
 
 #################################
 
-def replace_content(utf8_path: str, utf8_local_path: str):
+def replace_content(utf8_path: str, utf8_local_path: str) -> int:
     """
     替换 HTML 中的在线脚本为本地文件
     Replace online script in HTML files into local file
-
-    返回值及其含义
-    Return value and its meaning
-        0: 成功 / Success
-        1: 未知错误 / Unknown error
 
     Args:
         utf8_path: UTF-8编码的HTML文件路径 / Input HTML path (UTF-8)
@@ -106,7 +97,7 @@ def replace_content(utf8_path: str, utf8_local_path: str):
 
 #################################
 
-def output_pdf(html_path: str, pdf_path: str, wait_time: int, wait: bool = False):
+def output_pdf(html_path: str, pdf_path: str, wait_time: int, wait: bool = False) -> int:
     """
     将 HTML 文件转换为 PDF 文件
     Convert HTML to PDF
@@ -118,9 +109,7 @@ def output_pdf(html_path: str, pdf_path: str, wait_time: int, wait: bool = False
         wait: 是否等待 / Whether to wait the browser
 
     Returns:
-        0: 转换成功 / Succeeded
-        1: 未找到 WebDriver / WebDriver not found
-        2: 未知错误 / Unknown error
+        运行状态 / Status
     """
     try:
         HTML2PDF_logger.info(local["HTML2PDF"]["info"]["conv2pdf"].format(file=html_path))
@@ -177,7 +166,12 @@ def output_pdf(html_path: str, pdf_path: str, wait_time: int, wait: bool = False
 
 #################################
 
-def aio(ori_html_path: str, html_utf8_path: str, html_utf8_local_path: str, pdf_path: str, wait: bool, wait_time: int):
+def aio(ori_html_path: str,
+        html_utf8_path: str,
+        html_utf8_local_path: str,
+        pdf_path: str,
+        wait: bool,
+        wait_time: int) -> int | None:
     """
     上面的函数三合一
     All-In-One

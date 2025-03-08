@@ -264,11 +264,11 @@ class OCRHandler:
             运行状态
             Status
         """
+        image_name_ext = os.path.basename(image_path)
         try:
             gr.Info(local["info"]["render_start"].format(img_file = os.path.basename(image_path)))
             success = Renderer.render(model=model, tokenizer=tokenizer, img_path=image_path, conv_to_pdf=pdf_conv_conf,
-                                    wait=config["pdf_render_wait"], time=config["pdf_render_wait_time"])
-            image_name_ext = os.path.basename(image_path)
+                                      wait=config["pdf_render_wait"], time=config["pdf_render_wait_time"])
             logger.debug(local['log']['debug']['got_img_name'].format(img_name=image_name_ext))
 
             if success == 0:
@@ -278,8 +278,8 @@ class OCRHandler:
                     logger.info(f"[ocr] {local['log']['info']['temp_cleaning']}")
                     TempCleaner.cleaner(["result"],
                                         [f"{os.path.splitext(image_name_ext)[0]}-gb2312.html",
-                                        f"{os.path.splitext(image_name_ext)[0]}-utf8.html",
-                                        f"{os.path.splitext(image_name_ext)[0]}-utf8-local.html"])
+                                         f"{os.path.splitext(image_name_ext)[0]}-utf8.html",
+                                         f"{os.path.splitext(image_name_ext)[0]}-utf8-local.html"])
                 if temp_clean and not pdf_conv_conf:
                     logger.info(f"[ocr] {local['log']['info']['temp_cleaning']}")
                     TempCleaner.cleaner(["result"], [f"{os.path.splitext(image_name_ext)[0]}-gb2312.html"])
