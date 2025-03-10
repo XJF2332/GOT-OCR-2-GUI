@@ -108,7 +108,7 @@ def ocr_free_result(result):
 def main(encoder_path, decoder_path, image_path, providers):
     img = Image.open(image_path).convert('RGB')
     session = ort.InferenceSession(encoder_path, providers=providers)
-    decoder = ocr_init(7, [
+    decoder = ocr_init(9, [
         "got",
         "-m",
         decoder_path,
@@ -116,6 +116,8 @@ def main(encoder_path, decoder_path, image_path, providers):
         "100",
         "--log-verbosity",
         "-1",
+        "--predict",
+        "2048"
     ])
     img_arr: np.ndarray = GOTImageEvalProcessor(1024)(img).detach().numpy()
     img_embeds: np.ndarray = session.run(None, {

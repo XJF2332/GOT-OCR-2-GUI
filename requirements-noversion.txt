@@ -30,6 +30,7 @@ fsspec
 gobject
 gradio
 gradio_client
+groovy
 h11
 html5lib
 httpcore

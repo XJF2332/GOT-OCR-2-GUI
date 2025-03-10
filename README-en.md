@@ -39,11 +39,8 @@ This environment was tested under **python 3.11.9**.
 
 Choose a suitable **GPU version** of `torch` and from [PyTorch](https://pytorch.org/get-started/locally/) and install
 it.  
-I am using stable 2.4.1 + cu124, so I suggest you to use this version.
-
-#### FlashAttention
-
-Not a must-have, but if you want to install it, check [#12](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/12)
+I used stable 2.4.1 + cu124 before.  
+Now I am using stable 2.0.1 + cu118, it would solve `1 Torch was not compiled with Flash Attention`, no problems found for now.
 
 #### PyMuPDF
 
