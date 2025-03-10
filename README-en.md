@@ -4,13 +4,12 @@
 
 ![img.png](img.png)
 
-Logs are being localized, but there are too many keys, it's hard for me to check if there are any missing keys. If you
+Logs are localized, but there are too many keys, it's hard for me to check if there are any missing keys. If you
 Encountered KeyErrors, please report an Issue.
 
 ## About this project
 
-Model
-weights: [Mirror Site](https://hf-mirror.com/stepfun-ai/GOT-OCR2_0), [Original Site](https://huggingface.co/stepfun-ai/GOT-OCR2_0)  
+Model weights: [Mirror Site](https://hf-mirror.com/stepfun-ai/GOT-OCR2_0), [Original Site](https://huggingface.co/stepfun-ai/GOT-OCR2_0)  
 Original GitHub: [GOT-OCR2.0](https://github.com/Ucas-HaoranWei/GOT-OCR2.0/) 
 This project was developed under Windows, so I can't guarantee that it will work on Linux. If you want to use it on
 Linux, you can check this [issue](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/3)   
@@ -88,8 +87,14 @@ pip install -r requirements-noversion.txt
 
 ### Download model file
 
+You only need one of the models below to perform OCR, but you must have the safetensors model to enable automatically model loading on start.  
+GGUF is not fully supported, you can try it separately at GGUF tab
+
+#### Safetensors
+
 1. Download to `models` folder
 2. Stop downloading fewer files
+3. If you are using the new `GOT-OCR-2-HF` model (NOT supported yet), download it to the `models-hf` folder.
 
 - The file structure should be:
 
@@ -107,6 +112,11 @@ GOT-OCR-2-GUI
    ├─tokenization_qwen.py
    └─tokenizer_config.json
 ```
+
+#### GGUF
+
+GGUF support is provided by `got.cpp`  
+Head to `MosRat/got.cpp` for models, put `Encoder.onnx` to `gguf\Encoder.onnx`, and other GGUF Decoders to `gguf\deocders`  
 
 ### Getting Started
 
@@ -130,17 +140,6 @@ GOT-OCR-2-GUI
 - If you wish to add language support, for the CLI, just add a new `language.json` file (I strongly recommend using an
   existing file as a starting point). For the GUI, you will also need the corresponding `language.md` file.
 - You can run `Config Manager.py` to manage the language and other configuration files.
-
-## Error Codes
-
-| Error Code | Message                                     |
-|------------|---------------------------------------------|
-| 1          | Config file not found                       |
-| 2          | Language file not found                     |
-| 3          | CLI do not have support for folder          |
-| 4          | Input file not found                        |
-| 5          | Unsupported file type                       |
-| 6          | Failed to detect encoding of rendered HTMLs |
 
 ## Tips
 

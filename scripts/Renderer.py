@@ -11,22 +11,15 @@ Renderer_logger = scriptsLogger.getChild("Renderer")
 ##########################
 
 
-def render(model: object, tokenizer: object, img_path: str, wait: bool, time: int, conv_to_pdf: bool):
+def render(model: object,
+           tokenizer: object,
+           img_path: str,
+           wait: bool,
+           time: int,
+           conv_to_pdf: bool) -> int:
     """
     Render images to HTML files, and convert to PDF files (optional)
     渲染图像到HTML文件，并可选择性地转换为PDF文件。
-
-    返回值-含义 / Returns-meaning
-    0-成功 / success
-    2-未加载模型或未提供图片 / no model or no image
-    3-出错 / an error occurred
-    4-替换时未找到 utf8_path / utf8_path not found while replacing
-    5-替换失败 / replacing failed
-    6-HTML 编码检测失败 / Failed to detect HTML encoding
-    7-转换 HTML 编码时遇到了未知错误 / Unknown error occurred while converting HTML encoding
-    8-替换 HTML 内容时遇到了未知错误 / Unknown error occurred while replacing HTML content
-    9-未找到 WebDriver / WebDriver not found
-    10-生成 PDF 时遇到了未知错误 / Unknown error occurred while generating PDF
 
     Args:
         model: OCR模型 / Model
