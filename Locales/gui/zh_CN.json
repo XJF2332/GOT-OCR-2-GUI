@@ -1,6 +1,8 @@
 {
     "btn": {
         "do_ocr": "执行 OCR",
+        "gguf_load_model": "加载 GGUF 模型",
+        "gguf_unload_model": "卸载 GGUF 模型",
         "load_model": "加载模型",
         "ocr_gguf": "OCR (GGUF)",
         "pdf_ocr": "对 PDF 文件执行 OCR",
@@ -8,6 +10,8 @@
         "unload_model": "卸载模型"
     },
     "error": {
+        "gguf_model_load_failed": "加载 GGUF 模型失败",
+        "gguf_model_unload_failed": "[gguf_model_unload] 卸载 GGUF 模型失败",
         "no_model_or_img": "未加载模型或未上传图片",
         "no_pdf": "未上传 PDF 文件",
         "ocr_failed": "OCR 失败，意料之外的错误：{error}",
@@ -85,6 +89,8 @@
             "save_pdf_checkbox_enabled": "[update_pdf_conv_conf_visibility] 保存 PDF 勾选框已启用（ PDF 标签页）"
         },
         "error": {
+            "gguf_model_load_failed": "[gguf_model_load] 加载 GGUF 模型失败",
+            "gguf_model_unload_failed": "[gguf_model_unload] 卸载 GGUF 模型失败",
             "no_model_or_img": "[ocr] 没有加载模型或上传图片",
             "no_pdf_uploaded": "[pdf_ocr] 未上传 PDF 文件",
             "ocr_failed": "[ocr] OCR 失败，意料之外的错误：{error}",
@@ -98,6 +104,8 @@
         "info": {
             "crop_ocr_start": "[OCRHandler.ocr_crop] 开始对图片执行 multi-crop OCR",
             "fg_ocr_start": "[OCRHandler.ocr_fg] 开始对图片执行 fine-grained OCR",
+            "gguf_model_loaded": "[gguf_model_load] GGUF 模型已加载：{model}",
+            "gguf_model_unloaded": "[gguf_model_unload] GGUF 模型已卸载",
             "got_pdf_name": "[pdf_ocr] 获取到 PDF 名称：{name}",
             "image_name_cleared": "[update_img_name] 上传的图片已被清理，图片名称已清除",
             "img_name_updated": "[update_img_name] 图片名称已更新：{name}",

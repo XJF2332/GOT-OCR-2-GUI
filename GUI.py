@@ -1,19 +1,21 @@
 print("正在加载 / Loading...")
 
-import logging
-from datetime import datetime
-import scripts.Renderer as Renderer
-import scripts.PDFHandler as PDFHandler
-import scripts.PDFMerger as PDFMerger
-import scripts.TempCleaner as TempCleaner
-import scripts.got_cpp.got_ocr as got_cpp
-from onnxruntime import get_available_providers
-from transformers import AutoModel, AutoTokenizer
-import gradio as gr
-import os
 import glob
 import json
+import logging
+import os
+from datetime import datetime
 from time import sleep
+
+import gradio as gr
+from onnxruntime import get_available_providers
+from transformers import AutoModel, AutoTokenizer
+
+import scripts.PDFHandler as PDFHandler
+import scripts.PDFMerger as PDFMerger
+import scripts.Renderer as Renderer
+import scripts.TempCleaner as TempCleaner
+import scripts.got_cpp.got_ocr as got_cpp
 
 ##########################
 
@@ -100,6 +102,7 @@ except FileNotFoundError:
 
 model = None
 tokenizer = None
+gguf_ocr_handler = got_cpp.GGUFHandler()
 
 
 ##########################
@@ -174,16 +177,12 @@ def update_img_name(image_uploaded):
     return gr.Markdown(value=image_name_ext)
 
 
-##########################
-
 # 更新 PDF 名称 / Update PDF name
 def update_pdf_name(pdf_uploaded):
     pdf_name_with_extension = os.path.basename(pdf_uploaded)
     logger.debug(local['log']['info']['pdf_name_updated'].format(name=pdf_name_with_extension))
     return gr.Textbox(label=local["label"]["pdf_file"], value=pdf_name_with_extension)
 
-
-##########################
 
 # 更新保存 PDF 勾选框可见性（PDF 标签页）/ Update visibility of save as PDF checkbox (PDF tab)
 def update_pdf_conv_conf_visibility(pdf_ocr_mode_update):
@@ -195,8 +194,6 @@ def update_pdf_conv_conf_visibility(pdf_ocr_mode_update):
         return gr.Checkbox(label=local["label"]["save_as_pdf"], interactive=True, visible=False, value=False)
 
 
-##########################
-
 # 更新合并 PDF 勾选框可见性（PDF 标签页）/ Updating visibility of merge PDF checkbox (PDF tab)
 def update_pdf_merge_conf_visibility(pdf_convert_confirm_update):
     if pdf_convert_confirm_update:
@@ -206,8 +203,6 @@ def update_pdf_merge_conf_visibility(pdf_convert_confirm_update):
         logger.debug(local['log']['debug']['merge_pdf_checkbox_disabled'])
         return gr.Checkbox(label=local["label"]["merge_pdf"], interactive=True, visible=False, value=False)
 
-
-##########################
 
 # 更新目标 DPI 输入框可见性（PDF 标签页）/ Update visibility of target DPI input box (PDF tab)
 def update_pdf_dpi_visibility(pdf_ocr_mode_update):
@@ -341,6 +336,31 @@ class OCRHandler:
     @staticmethod
     def ocr():
         pass
+
+##########################
+
+def gguf_model_load(Encoder_path, decoder_path, providers):
+    load_status = gguf_ocr_handler.load_model(enc_path=Encoder_path, dec_path=decoder_path, providers=providers)
+    if load_status == 0:
+        logger.info(local['log']['info']['gguf_model_loaded'].format(model = decoder_path))
+        return local["info"]["model_already_loaded"]
+    else:
+        logger.error(local['log']['error']['gguf_model_load_failed'])
+        raise gr.Error(local['error']['gguf_model_load_failed'], duration=5)
+
+def gguf_model_unload():
+    unload_status = gguf_ocr_handler.unload_model()
+    if unload_status == 0:
+        logger.info(local['log']['info']['gguf_model_unloaded'])
+        return local["info"]["model_not_loaded"]
+    else:
+        logger.error(local['log']['error']['gguf_model_unload_failed'])
+        raise gr.Error(local['error']['gguf_model_unload_failed'],duration=5)
+
+def do_gguf_ocr(image_path):
+    res = gguf_ocr_handler.gguf_ocr(image_path=image_path)
+    return res
+
 
 ##########################
 
@@ -599,9 +619,14 @@ with gr.Blocks(theme=theme) as demo:
                     clean_temp = gr.Checkbox(label=local["label"]["clean_temp"], value=True, interactive=True)
     # GGUF 选项卡 /  GGUF tab
     with gr.Tab("GGUF"):
+        enc_path = gr.Text(r"C:\AI\GOT-OCR-2-GUI\gguf\Encoder.onnx", visible=False)
         gguf_list = os.listdir(os.path.join("gguf", "decoders"))
         dropdown_choices = [(f, os.path.join("gguf", "decoders", f)) for f in gguf_list]
         execution_providers = get_available_providers()
+        with gr.Row():
+            gguf_load_model = gr.Button(local["btn"]["gguf_load_model"], variant="primary")
+            gguf_unload_model = gr.Button(local["btn"]["gguf_unload_model"], variant="secondary")
+        gguf_model_status = gr.Markdown(local["info"]["model_not_loaded"], show_label=False)
         with gr.Row():
             gguf_models = gr.Dropdown(label=local["label"]["gguf_models"], choices=dropdown_choices, value=dropdown_choices[0][1] if dropdown_choices != [] else None, interactive=True)
             execution_providers = gr.Dropdown(label=local["label"]["execution_providers"], choices=execution_providers, value=execution_providers[0], interactive=True, multiselect=True, max_choices=1)
@@ -643,7 +668,7 @@ with gr.Blocks(theme=theme) as demo:
         gr.Markdown(instructions)
     # ---------------------------------- #
     # 事件 / events
-    # ---------------------------------- #
+
     # OCR / OCR
     do_ocr.click(
         fn=ocr,
@@ -651,73 +676,88 @@ with gr.Blocks(theme=theme) as demo:
                 fine_grained_box_y2, ocr_mode, fine_grained_color, pdf_convert_confirm, clean_temp_render],
         outputs=result
     )
-    # ---------------------------------- #
+
     # 渲染 / Render
     batch_render_btn.click(
         fn=renderer,
         inputs=[input_folder_path, batch_pdf_convert_confirm, clean_temp_renderer],
         outputs=None
     )
-    # ---------------------------------- #
+
     # 更新图片名称 / Updating image name
     upload_img.change(
         fn=update_img_name,
         inputs=upload_img,
         outputs=img_name
     )
-    # ---------------------------------- #
+
     # 更新 PDF OCR 保存 PDF 选项 / Updating save as PDF option for PDF OCR
     pdf_ocr_mode.change(
         fn=update_pdf_conv_conf_visibility,
         inputs=pdf_ocr_mode,
         outputs=pdf_pdf_convert_confirm
     )
-    # ----------------------------------- #
+
     # 更新 PDF OCR DPI 输入框 / Updating target DPI input box for PDF OCR
     pdf_ocr_mode.change(
         fn=update_pdf_dpi_visibility,
         inputs=pdf_ocr_mode,
         outputs=dpi
     )
-    # ----------------------------------- #
+
     # 更新 PDF OCR 合并 PDF 选项 / Updating merge PDF option for PDF OCR
     pdf_pdf_convert_confirm.change(
         fn=update_pdf_merge_conf_visibility,
         inputs=pdf_pdf_convert_confirm,
         outputs=pdf_pdf_merge_confirm
     )
-    # ----------------------------------- #
+
+    # 加载GGUF模型 / Loading GGUF model
+    gguf_load_model.click(
+        fn=gguf_model_load,
+        inputs=[enc_path, gguf_models, execution_providers],
+        outputs=gguf_model_status
+    )
+
+    # 卸载GGUF模型 / Unloading GGUF model
+    gguf_unload_model.click(
+        fn=gguf_model_unload,
+        inputs=None,
+        outputs=gguf_model_status
+    )
+
     # 执行PDF OCR / Performing PDF OCR
     pdf_ocr_btn.click(
         fn=pdf_ocr,
         inputs=[pdf_ocr_mode, pdf_file, dpi, pdf_pdf_convert_confirm, pdf_pdf_merge_confirm, clean_temp],
         outputs=None
     )
-    # ----------------------------------- #
+
     # 更新 PDF 名称 / Updating PDF name
     pdf_file.change(
         fn=update_pdf_name,
         inputs=pdf_file,
         outputs=pdf_file_name
     )
-    # ----------------------------------- #
+
     # 加载模型 / Loading model
     load_model_btn.click(
         fn=load_model,
         inputs=None,
         outputs=model_status
     )
-    # ----------------------------------- #
+
     # 卸载模型 / Unloading model
     unload_model_btn.click(
         fn=unload_model,
         inputs=None,
         outputs=model_status
     )
-    # ----------------------------------- #
+
+    # 执行GGUF OCR / Performing GGUF OCR
     ocr_gguf_btn.click(
-        fn=got_cpp.main,
-        inputs=[encoder_path, gguf_models, upload_img_gguf, execution_providers],
+        fn=do_gguf_ocr,
+        inputs=upload_img_gguf,
         outputs=gguf_result
     )
 

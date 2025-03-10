@@ -1,6 +1,8 @@
 {
     "btn": {
         "do_ocr": "Perform OCR",
+        "gguf_load_model": "Load GGUF model",
+        "gguf_unload_model": "Unload GGUF model",
         "load_model": "Load model",
         "ocr_gguf": "OCR (GGUF)",
         "pdf_ocr": "Perform OCR (PDF)",
@@ -8,6 +10,8 @@
         "unload_model": "Unload model"
     },
     "error": {
+        "gguf_model_load_failed": "[gguf_model_load] Failed to load GGUF model",
+        "gguf_model_unload_failed": "[gguf_model_unload] Failed to unload GGUF model",
         "no_model_or_img": "No model loaded or no image uploaded",
         "no_pdf": "No PDF file uploaded",
         "ocr_failed": "OCR failed, unexpected error: {error}",
@@ -85,6 +89,8 @@
             "save_pdf_checkbox_enabled": "[update_pdf_conv_conf_visibility] Save as PDF checkbox activated (PDF tab)"
         },
         "error": {
+            "gguf_model_load_failed": "[gguf_model_load] Failed to load GGUF model",
+            "gguf_model_unload_failed": "[gguf_model_unload] Failed to unload GGUF model",
             "no_model_or_img": "[ocr] No model loaded or no image uploaded",
             "no_pdf_uploaded": "[pdf_ocr] No PDF uploaded",
             "ocr_failed": "[ocr] OCR failed, unexpected error: {error}",
@@ -98,6 +104,8 @@
         "info": {
             "crop_ocr_start": "[OCRHandler.ocr_crop] OCR started (Multi-Crop OCR)",
             "fg_ocr_start": "[OCRHandler.ocr_fg] OCR started (Fine-Grained OCR)",
+            "gguf_model_loaded": "[gguf_model_load] GGUF model loaded{model}",
+            "gguf_model_unloaded": "[gguf_model_unload] GGUF model unloaded",
             "got_pdf_name": "[pdf_ocr] Got PDF name: {name}",
             "image_name_cleared": "[update_img_name] Image name was cleared because the uploaded image were cleared",
             "img_name_updated": "[update_img_name] Image name updated: {name}",

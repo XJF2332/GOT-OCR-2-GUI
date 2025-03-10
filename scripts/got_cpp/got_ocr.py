@@ -1,3 +1,5 @@
+# original repo: MosRat/got.cpp
+
 import numpy as np
 import onnxruntime as ort
 from torchvision.transforms import InterpolationMode
@@ -132,6 +134,77 @@ def main(encoder_path, decoder_path, image_path, providers):
         ocr_cleanup_ctx(decoder)
         ocr_free(decoder)
     return result.contents.result.decode('utf-8') if result.contents.result is not None else None
+
+
+class GGUFHandler:
+    def __init__(self):
+        self.gguf_dec = None
+        self.onnx_enc = None
+        self.img_path = None
+
+    def load_model(
+            self,
+            enc_path:str = None,
+            dec_path:str = None,
+            providers:list = None) -> int:
+        """
+        加载ONNX编码器和GGUF解码器
+        Load ONNX encoders and GGUF decoders
+
+        Args:
+            enc_path: ONNX模型路径 / ONNX model path
+            dec_path: GGUF模型路径 / GGUF model path
+            providers: ONNX providers列表 / ONNX providers list
+
+        Returns:
+            成功则返回0 / Return 0 if success
+        """
+        try:
+            self.gguf_dec = None
+            self.onnx_enc = None
+            enc_path = r"C:\AI\GOT-OCR-2-GUI\gguf\Encoder.onnx" if enc_path is None else enc_path
+            self.onnx_enc = ort.InferenceSession(enc_path, providers=providers)
+            self.gguf_dec = ocr_init(9, [
+                "got",
+                "-m",
+                dec_path,
+                "-ngl",
+                "100",
+                "--log-verbosity",
+                "-1",
+                "--predict",
+                "2048"
+            ])
+            return 0
+        except Exception as e:
+            print(e)
+            return 1
+
+    def unload_model(self):
+        try:
+            ocr_cleanup_ctx(self.gguf_dec)
+            ocr_free(self.gguf_dec)
+            self.gguf_dec = None
+            self.onnx_enc = None
+            return 0
+        except Exception as e:
+            print(e)
+            return 1
+
+    def gguf_ocr(self, image_path:str = None):
+        img = Image.open(image_path).convert('RGB')
+        img_arr: np.ndarray = GOTImageEvalProcessor(1024)(img).detach().numpy()
+        img_embeds: np.ndarray = self.onnx_enc.run(None, {
+            "input": img_arr.reshape(1, 3, 1024, 1024)
+        })[0].reshape(256, 1024)
+        result = ocr_run(self.gguf_dec, img_embeds, GOT_CROP_FORMAT_TYPE)
+        if result:
+            print("Error:", result.contents.error.decode('utf-8') if result.contents.error is not None else None)
+            # 清理上下文
+            # ocr_cleanup_ctx(self.gguf_dec)
+            # ocr_free(self.gguf_dec)
+
+        return result.contents.result.decode('utf-8') if result.contents.result is not None else None
 
 
 if __name__ == '__main__':
