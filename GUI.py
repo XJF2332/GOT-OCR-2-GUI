@@ -248,7 +248,9 @@ class OCRHandler:
     def render_old(image_path, pdf_conv_conf, temp_clean):
         """
         渲染模式（旧版）
+        渲染一张图片，可保存为PDF，使用selenium
         Render mode (old)
+        Render one image, able to save as PDF, using selenium
 
         Args:
             image_path: 输入图像路径 / Input image path
@@ -256,17 +258,16 @@ class OCRHandler:
             temp_clean: 是否清理临时文件 / Whether to clean temp files
 
         Returns:
-            运行状态
-            Status
+            list: 第一项是结果，第二项是错误码 / The first one is the result, the second one is the error code
         """
         image_name_ext = os.path.basename(image_path)
         try:
             gr.Info(local["info"]["render_start"].format(img_file = os.path.basename(image_path)))
-            success = Renderer.render(model=model, tokenizer=tokenizer, img_path=image_path, conv_to_pdf=pdf_conv_conf,
+            render_status = Renderer.render(model=model, tokenizer=tokenizer, img_path=image_path, conv_to_pdf=pdf_conv_conf,
                                       wait=config["pdf_render_wait"], time=config["pdf_render_wait_time"])
             logger.debug(local['log']['debug']['got_img_name'].format(img_name=image_name_ext))
 
-            if success == 0:
+            if render_status == 0:
                 res = local["info"]["render_success"].format(img_file=image_name_ext)
                 logger.info(local['log']['info']['render_completed'])
                 if temp_clean and pdf_conv_conf:
@@ -280,13 +281,13 @@ class OCRHandler:
                     TempCleaner.cleaner(["result"], [f"{os.path.splitext(image_name_ext)[0]}-gb2312.html"])
                 else:
                     logger.info(f"[ocr] {local['log']['info']['temp_cleaning_skipped']}")
+                return [res, 0]
             else:
-                res = local["error"]["render_fail"].format(img_file=image_name_ext) + f": {str(success)}"
-
-            return res
+                res = local["error"]["render_fail"].format(img_file=image_name_ext, code=render_status)
+                return [res, 1]
         except Exception as e:
             logger.error(local['log']['error']['render_failed'].format(image=image_name_ext))
-            return local["error"]["render_failed"].format(error=e)
+            return [local["error"]["render_failed"].format(error=e), 1]
     
     @staticmethod
     def ocr_fg(image_path, fg_box_x1, fg_box_y1, fg_box_x2, fg_box_y2, mode, fg_color):
@@ -405,7 +406,7 @@ def ocr(image_path, fg_box_x1, fg_box_y1, fg_box_x2, fg_box_y2, mode, fg_color, 
         elif mode == "render":
             res = OCRHandler.render_old(image_path=image_path, pdf_conv_conf=pdf_conv_conf, temp_clean=temp_clean)
         logger.info(local['log']['info']['ocr_completed'])
-        return res
+        return res[0] if type(res) == list else res
     except AttributeError as e:
         print(e)
         logger.error(local['log']['error']['no_model_or_img'])
@@ -509,35 +510,21 @@ def pdf_ocr(mode, pdf, target_dpi, pdf_convert, pdf_merge, temp_clean):
 ##########################
 
 # 渲染器 / Renderer
-def renderer(imgs_path, pdf_convert_confirm, clean_temp):
+def renderer(imgs_path, renderer_pdf_conv, renderer_clean_temp):
+    renderer_handler = OCRHandler()
     # 获取图片文件列表 / Get a list of image files
     image_files = glob.glob(os.path.join(imgs_path, '*.jpg')) + glob.glob(os.path.join(imgs_path, '*.png'))
     logger.debug(local['log']['debug']['got_image_list'].format(list=image_files))
     # 逐个发送图片给 renderer 的 render 函数 / Sending images one by one to the 'render' function of renderer
     for image_path in image_files:
         logger.info(local['log']['info']['renderer_started'].format(image=image_path))
-        success = Renderer.render(model=model, tokenizer=tokenizer, img_path=image_path,
-                                  conv_to_pdf=pdf_convert_confirm, wait=config["pdf_render_wait"],
-                                  time=config["pdf_render_wait_time"])
-        if success == 1:
-            logger.info(local['log']['info']['renderer_success'].format(image=image_path))
-            if clean_temp and pdf_convert_confirm:
-                logger.info(local['log']['info']['renderer_temp_cleaning'])
-                TempCleaner.cleaner(["result"],
-                                    [f"{os.path.splitext(os.path.basename(image_path))[0]}-gb2312.html",
-                                     f"{os.path.splitext(os.path.basename(image_path))[0]}-utf8.html",
-                                     f"{os.path.splitext(os.path.basename(image_path))[0]}-utf8-local.html"])
-            if clean_temp and not pdf_convert_confirm:
-                logger.info(local['log']['info']['renderer_temp_cleaning'])
-                TempCleaner.cleaner(["result"], [f"{os.path.splitext(os.path.basename(image_path))[0]}-gb2312.html"])
-            else:
-                logger.info(local['log']['info']['renderer_temp_cleaning_skipped'])
-        elif success == 2:
-            logger.error(local['log']['error']['renderer_no_model_or_img'])
-            raise gr.Error(duration=0, message=local["error"]["no_model_or_img"])
-        elif success == 3:
-            logger.error(local['log']['error']['renderer_failed'])
-            raise gr.Error(duration=0, message=local["error"]["render_fail"].format(img_file=image_path))
+        render_res = renderer_handler.render_old(image_path = image_path,
+                                    pdf_conv_conf = renderer_pdf_conv,
+                                    temp_clean = renderer_clean_temp)
+        if render_res[1] == 0:
+            gr.Info(local["info"]["render_success"].format(img_file=os.path.basename(image_path)), duration=3)
+        else:
+            raise gr.Error(local["error"]["renderer_failed"].format(error=render_res[0]), duration=0)
 
 
 ##########################

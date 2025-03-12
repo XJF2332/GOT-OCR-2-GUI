@@ -45,6 +45,7 @@
         "error": {
             "conv_fail": "[split_pdf] 转换失败，意料之外的错误：{error}",
             "empty_seq": "[pdf_renderer] 图片序列为空",
+            "error_renderer": "[pdf_renderer] 在渲染时出现了错误，错误代码：{code}",
             "no_model_or_pdf": "[pdf_renderer] 你看起来没有加载模型或上传 PDF",
             "seq_get_fail": "[get_png_seq] 获取图像序列失败，意料之外的错误：{error}"
         },

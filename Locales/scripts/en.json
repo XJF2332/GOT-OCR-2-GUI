@@ -1,6 +1,5 @@
 {
     "HTML2PDF": {
-        "critical": {},
         "debug": {
             "enc_detect": "[conv_html_enc] Encoding detected: {encoding}",
             "writing": "[output_pdf] Writing: {file}"
@@ -29,11 +28,9 @@
             "reading_ori": "[conv_html_enc] Reading: {file}",
             "replacing": "[replace_content] Replacing: {file}",
             "writing": "[replace_content] Writing: {file}"
-        },
-        "warning": {}
+        }
     },
     "PDFHandler": {
-        "critical": {},
         "debug": {
             "build_pattern": "[get_png_seq] Match Pattern: pattern}",
             "converting_page": "[split_pdf] Converting page {page}",
@@ -48,6 +45,7 @@
         "error": {
             "conv_fail": "[split_pdf] Conversion failed, unexpected error: {error}",
             "empty_seq": "[pdf_renderer] Image sequence is empty",
+            "error_renderer": "[pdf_renderer] An error occurred while rendering, error code: {code}",
             "no_model_or_pdf": "[pdf_renderer] It looks like that you did not load model or upload PDF",
             "seq_get_fail": "[get_png_seq] Failed to get image sequence, unexpected error: {error}"
         },
@@ -59,11 +57,9 @@
             "render_success": "[pdf_renderer] Rendered successfully",
             "rendering": "[pdf_renderer] Rendering: {file}",
             "rendering_img": "[pdf_renderer] Rendering image: {img}"
-        },
-        "warning": {}
+        }
     },
     "PDFMerger": {
-        "critical": {},
         "debug": {
             "filename_pattern": "[get_pdf_list] Filename pattern: {pattern}",
             "insert_page": "[merge_pdfs] Inserting page: {page}",
@@ -78,11 +74,9 @@
             "merging": "[merge_pdfs] Merging PDF files",
             "pdf_list": "[get_pdf_list] PDF File list: {lst}",
             "save_merged": "[merge_pdfs] Merged PDF saved to: {path}"
-        },
-        "warning": {}
+        }
     },
     "Renderer": {
-        "critical": {},
         "debug": {
             "conv_enc": "[render] Converting encoding to UTF-8: {path}",
             "img_name": "[render] Image name: {name}",
@@ -99,8 +93,7 @@
         "info": {
             "conv2pdf": "[render] Converting to PDF: {path}",
             "rendering": "[render] Rendering: {path}"
-        },
-        "warning": {}
+        }
     },
     "TempCleaner": {
         "debug": {
@@ -109,6 +102,11 @@
         },
         "info": {
             "cleaning": "[cleaner] Cleaning temp files"
+        }
+    },
+    "got.cpp": {
+        "error": {
+            "embed_type": "[ocr_run] image_embeds must be a numpy.ndarray"
         }
     }
 }

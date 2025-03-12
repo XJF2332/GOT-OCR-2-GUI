@@ -20,8 +20,9 @@
         "pdf_merge_fail": "{pdf_file} 合并失败",
         "pdf_render_fail": "{pdf_file} 渲染失败",
         "pdf_split_fail": "{pdf_file} 分割失败",
-        "render_fail": "{img_file} 渲染失败",
-        "render_failed": "[OCRHandler.render_old] 渲染失败，意料之外的错误：{error}"
+        "render_fail": "{img_file} 渲染失败，错误码：{code}",
+        "render_failed": "渲染失败，意料之外的错误：{error}",
+        "renderer_failed": "渲染失败：{error}"
     },
     "info": {
         "developing": "正在施工",
@@ -98,7 +99,7 @@
             "pdf_merge_failed": "[pdf_ocr] PDF 合并失败：{name}",
             "pdf_render_failed": "[pdf_ocr] PDF 渲染失败：{name}",
             "pdf_split_fail": "[pdf_ocr] PDF 分割失败",
-            "renderer_failed": "[OCRHandler.render_old] 渲染失败：{image}",
+            "render_failed": "[OCRHandler.render_old] 渲染失败：{image}",
             "renderer_no_model_or_img": "[renderer] 没有加载模型或上传图片"
         },
         "info": {

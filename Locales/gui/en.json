@@ -20,8 +20,9 @@
         "pdf_merge_fail": "Failed to merge {pdf_file}",
         "pdf_render_fail": "Failed to render {pdf_file}",
         "pdf_split_fail": "Failed to split {pdf_file}",
-        "render_fail": "Failed to render {img_file}",
-        "render_failed": "[OCRHandler.render_old] Rendering failed, unexpected error: {error}"
+        "render_fail": "Failed to render {img_file}, error code: {code}",
+        "render_failed": "Render failed, unexpected error: {error}",
+        "renderer_failed": "Render failed: {error}"
     },
     "info": {
         "developing": "Developing...",
@@ -98,7 +99,7 @@
             "pdf_merge_failed": "[pdf_ocr] Failed to merge PDF: {name}",
             "pdf_render_failed": "[pdf_ocr] Failed to render PDF: {name}",
             "pdf_split_fail": "[pdf_ocr] Failed to split PDF",
-            "renderer_failed": "[OCRHandler.render_old] Rendering failed: {image}",
+            "render_failed": "[OCRHandler.render_old] Render failed: {image}",
             "renderer_no_model_or_img": "[renderer] No model loaded or no image uploaded"
         },
         "info": {

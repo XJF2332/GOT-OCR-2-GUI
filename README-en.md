@@ -30,6 +30,18 @@ Click a star, please
 
 If you don't have the folder mentioned here, **create a new one**
 
+### Choose a branch
+
+#### Alpha
+
+The most frequently updated branch, newest changes will be committed to this branch.  
+The codes may not be tested.  
+Very unstable, sometimes can not run.  
+
+#### main
+
+More stable, but misses some new features.
+
 ### Dependencies
 
 This environment was tested under **python 3.11.9**.

@@ -11,12 +11,8 @@ Renderer_logger = scriptsLogger.getChild("Renderer")
 ##########################
 
 
-def render(model: object,
-           tokenizer: object,
-           img_path: str,
-           wait: bool,
-           time: int,
-           conv_to_pdf: bool) -> int:
+def render(model: object, tokenizer: object, img_path: str, wait: bool,
+           time: int, conv_to_pdf: bool) -> int:
     """
     Render images to HTML files, and convert to PDF files (optional)
     渲染图像到HTML文件，并可选择性地转换为PDF文件。
@@ -46,15 +42,11 @@ def render(model: object,
         Renderer_logger.info(local["Renderer"]["info"]["rendering"].format(path=img_path))
         model.chat(tokenizer, img_path, ocr_type='format', render=True, save_render_file=gb2312_path)
 
-        # 转换为UTF-8编码 / Convert to UTF-8
+        # 转换为 UTF-8 编码 / Convert to UTF-8
         Renderer_logger.debug(local["Renderer"]["debug"]["conv_enc"].format(path=gb2312_path))
         conv_res = convertor.conv_html_enc(gb2312_path, utf8_path)
-        if conv_res == 1:
-            return 6
-        elif conv_res ==2:
-            return 7
-        else:
-            pass
+        if conv_res != 0:
+            return conv_res
 
         # 替换 / Replace
         search_string = '(C)'
@@ -84,16 +76,12 @@ def render(model: object,
         if conv_to_pdf:
             Renderer_logger.info(local["Renderer"]["info"]["conv2pdf"].format(path=utf8_path))
             repl_res = convertor.replace_content(utf8_path, utf8_local_path)
-            if repl_res == 1:
-                return 8
+            if repl_res != 0:
+                return repl_res
             pdf_path = os.path.join("result", f"{img_name_no_ext}.pdf")
             output_res = convertor.output_pdf(utf8_local_path, pdf_path, wait=wait, wait_time=time)
-            if output_res == 1:
-                return 9
-            elif output_res == 2:
-                return 10
-            else:
-                pass
+            if output_res != 0:
+                return output_res
         return 0
     except AttributeError:
         Renderer_logger.error(local["Renderer"]["error"]["no_model_or_img"])
