@@ -30,6 +30,31 @@
             "writing": "[replace_content] Writing: {file}"
         }
     },
+    "OCRHandler": {
+        "debug": {
+            "current_ocr_box": "[ocr_fg] Current OCR box: {box}",
+            "current_ocr_color": "[ocr_fg] Current OCR box color: {color}",
+            "current_ocr_mode_crop": "[ocr_crop] Current OCR mode: {mode}",
+            "current_ocr_mode_fg": "[ocr_fg] Current OCR mode: {mode}",
+            "got_img_name": "[render_old] Image name: {img_name}"
+        },
+        "error": {
+            "crop_ocr_fail": "[ocr_crop] multi-crop OCR failed, unexpected error: {error}",
+            "invalid_mode_crop": "[ocr_crop] Invalid OCR mode: {mode}",
+            "invalid_mode_fg": "[ocr_fg] Invalid OCR mode: {mode}",
+            "no_image_crop": "[ocr_crop] No image uploaded",
+            "no_model_crop": "[ocr_crop] No model loaded",
+            "no_model_img_fg": "[ocr_fg] No model loaded or no image uploaded",
+            "no_model_img_render_old": "[render_old] No model loaded or no image uploaded",
+            "render_fail": "[render_old] Failed to render {img}, error code: {code}",
+            "render_fail_unexpected": "[render_old] Failed to render {img} , unexpected error: {error}"
+        },
+        "info": {
+            "render_completed": "[render_old] Rendering completed",
+            "temp_cleaning": "[render_old] Cleaning temp files",
+            "temp_cleaning_skipped": "[render_old] Temp file cleaning skipped"
+        }
+    },
     "PDFHandler": {
         "debug": {
             "build_pattern": "[get_png_seq] Match Pattern: pattern}",
