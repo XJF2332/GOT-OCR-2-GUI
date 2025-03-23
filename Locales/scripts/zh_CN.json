@@ -34,18 +34,23 @@
         "debug": {
             "current_ocr_box": "[ocr_fg] 当前 OCR 框：{box}",
             "current_ocr_color": "[ocr_fg] 当前 OCR 框颜色：{color}",
-            "current_ocr_mode_crop": "[ocr_crop] 当前 OCR 模式：{mode}",
-            "current_ocr_mode_fg": "[ocr_fg] 当前 OCR 模式：{mode}",
-            "got_img_name": "[render_old] 图像名称：{img_name}"
+            "got_img_name": "[render_old] 图像名称：{img_name}",
+            "params": "[ocr] 当前所有参数：{params}",
+            "params_crop": "[ocr_crop] 当前所有参数：{params}",
+            "params_fg": "[ocr_fg] 当前所有参数：{params}",
+            "params_render_old": "[render_old] 当前所有参数：{params}"
         },
         "error": {
             "crop_ocr_fail": "[ocr_crop] multi-crop OCR 失败，意料之外的错误：{error}",
+            "invalid_mode": "[ocr] 无效的 OCR 模式：{mode}",
             "invalid_mode_crop": "[ocr_crop] 无效的 OCR 模式：{mode}",
             "invalid_mode_fg": "[ocr_fg] 无效的 OCR 模式：{mode}",
             "no_image_crop": "[ocr_crop] 未上传图片",
             "no_model_crop": "[ocr_crop] 未加载模型",
+            "no_model_img": "[ocr] 未加载模型或未上传图片",
             "no_model_img_fg": "[ocr_fg] 未加载模型或未上传图片",
             "no_model_img_render_old": "[render_old] 未加载模型或未上传图片",
+            "ocr_fail": "[ocr] OCR 失败，意料之外的错误：{error}",
             "render_fail": "[render_old] 渲染 {img} 失败，错误码：{code}",
             "render_fail_unexpected": "[render_old] 渲染 {img} 失败，意料之外的错误：{error}"
         },

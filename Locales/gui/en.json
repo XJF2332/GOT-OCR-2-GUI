@@ -10,11 +10,11 @@
         "unload_model": "Unload model"
     },
     "error": {
-        "gguf_model_load_failed": "[gguf_model_load] Failed to load GGUF model",
-        "gguf_model_unload_failed": "[gguf_model_unload] Failed to unload GGUF model",
+        "gguf_model_load_failed": "Failed to load GGUF model",
+        "gguf_model_unload_failed": "Failed to unload GGUF model",
         "no_model_or_img": "No model loaded or no image uploaded",
         "no_pdf": "No PDF file uploaded",
-        "ocr_failed": "OCR failed, unexpected error: {error}",
+        "ocr_failed": "OCR failed, error: {error}, error code: {code}",
         "ocr_mode_none": "No OCR mode selected",
         "pdf_filename_format_error": "Filename format should be like this: <string>_0.pdf",
         "pdf_merge_fail": "Failed to merge {pdf_file}",
@@ -94,7 +94,7 @@
             "gguf_model_unload_failed": "[gguf_model_unload] Failed to unload GGUF model",
             "no_model_or_img": "[ocr] No model loaded or no image uploaded",
             "no_pdf_uploaded": "[pdf_ocr] No PDF uploaded",
-            "ocr_failed": "[ocr] OCR failed, unexpected error: {error}",
+            "ocr_failed": "[ocr] OCR failed, error: {error}, error code: {code}",
             "pdf_filename_format_error": "[extract_pdf_pattern] Filename format should be like: <string>_0.pdf",
             "pdf_merge_failed": "[pdf_ocr] Failed to merge PDF: {name}",
             "pdf_render_failed": "[pdf_ocr] Failed to render PDF: {name}",

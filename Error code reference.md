@@ -15,4 +15,5 @@
 | 16               | 未知错误 / Unknown Error                                                                |
 | 17               | 查看返回的另一个错误码以确定问题 / See the other error code for the problem                         |
 | 18               | 无效的 OCR 模式 / Invalid OCR mode                                                       |
-| 19               | 未加载模型或未上传图片 / No model loaded or no image uploaded                                  |                                                     |
+| 19               | 未加载模型或未上传图片 / No model loaded or no image uploaded                                  |
+| 20               | 无效的 OCR 模式 / Invalid OCR mode                                                       |

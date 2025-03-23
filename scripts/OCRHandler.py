@@ -24,6 +24,52 @@ class OCRHandler:
         self.safetensors_tokenizer = None
         pass
 
+
+    def ocr(self,
+            image_path:str = None,
+            mode:str = None,
+            model:object = None,
+            tokenizer:object = None):
+        """
+        OCR 和格式化 OCR
+        如果不提供模型或tokenizer，则使用类自己的
+        OCR and formatted OCR
+        If no model or tokenizer provided, then model and tokenizer in the class itself will be used
+
+        Args:
+            image_path: 输入图像路径 / Input image path
+            mode: OCR 模式 / OCR mode
+            model: 模型 / Model
+            tokenizer: Tokenizer
+
+        Returns:
+            一个元组，第一个是结果（str），第二个是错误码（成功则为0）
+            A tuple, the first element is the result (string), the second one is the error code (will be 0 if succeeded)
+        """
+        # 检查图片和模型有效性
+        model = self.safetensors_model if model is None else model
+        tokenizer = self.safetensors_tokenizer if tokenizer is None else tokenizer
+        if image_path is None or model is None or tokenizer is None:
+            OCRHandler_logger.error(local['OCRHandler']['error']['no_model_img'])
+            return local['OCRHandler']['error']['no_model_img'], 19
+        OCRHandler_logger.debug(local['OCRHandler']['debug']['params'].format(params=str(locals())))
+
+        try:
+            if mode == "ocr":
+                res = model.chat(tokenizer, image_path, ocr_type='ocr')
+                return res, 0
+            elif mode == "format":
+                res = model.chat(tokenizer, image_path, ocr_type='format')
+                return res, 0
+            else:
+                OCRHandler_logger.error(local['OCRHandler']['error']['invalid_mode'].format(mode=mode))
+                res = local['OCRHandler']['error']['invalid_mode'].format(mode=mode)
+                return res, 20
+        except Exception as e:
+            OCRHandler_logger.error(local['OCRHandler']['error']['ocr_fail'].format(error=str(e)))
+            return local['OCRHandler']['error']['ocr_fail'].format(error=str(e)), 16
+
+
     def render_old(self,
                    image_path:str = None,
                    pdf_conv_conf:bool = False,
@@ -57,16 +103,17 @@ class OCRHandler:
             OCRHandler_logger.error(local['OCRHandler']['error']['no_model_img_render_old'])
             return local['OCRHandler']['error']['no_model_img_render_old'], 19
 
+        OCRHandler_logger.debug(local['OCRHandler']['debug']['params_render_old'].format(params=str(locals())))
+
         image_basename = os.path.basename(image_path)
         try:
+            OCRHandler_logger.debug(local['OCRHandler']['debug']['got_img_name'].format(img_name=image_basename))
             render_status = Renderer.render(model=model,
                                             tokenizer=tokenizer,
                                             img_path=image_path,
                                             conv_to_pdf=pdf_conv_conf,
                                             wait=config["pdf_render_wait"],
                                             time=config["pdf_render_wait_time"])
-            OCRHandler_logger.debug(local['OCRHandler']['debug']['got_img_name'].format(img_name=image_basename))
-
             if render_status == 0:
                 OCRHandler_logger.info(local['OCRHandler']['info']['render_completed'])
                 if temp_clean and pdf_conv_conf:
@@ -83,11 +130,12 @@ class OCRHandler:
                 res = local["OCRHandler"]["info"]["render_completed"].format(img_file=image_basename)
                 return res, 0
             else:
+                OCRHandler_logger.error(local['OCRHandler']['error']['render_fail'].format(img=image_basename, code=render_status))
                 res = local["OCRHandler"]["error"]["render_fail"].format(img=image_basename, code=render_status)
                 return res, 17
         except Exception as e:
             OCRHandler_logger.error(local['OCRHandler']['error']['render_fail_unexpected'].format(img=image_basename, error=str(e)))
-            return local["OCRHandler"]["error"]["render_fail_unexpected"].format(img=image_basename, error=str(e)), 18
+            return local["OCRHandler"]["error"]["render_fail_unexpected"].format(img=image_basename, error=str(e)), 16
 
     def ocr_fg(self,
                image_path:str = None,
@@ -119,14 +167,14 @@ class OCRHandler:
             一个元组， 第一项是结果（str），第二个是错误码，成功则为 0
             A tuple, the first element is the result (string), the second one is error code, will be 0 if succeeded
         """
-        OCRHandler_logger.debug(local['OCRHandler']['debug']['current_ocr_mode_fg'].format(mode=mode))
-
         # 检查模型和图片是否有效
         model = self.safetensors_model if model is None else model
         tokenizer = self.safetensors_tokenizer if tokenizer is None else tokenizer
         if model is None or tokenizer is None or image_path is None:
             OCRHandler_logger.error(local['OCRHandler']['error']['no_model_img_fg'])
             return local['OCRHandler']['error']['no_model_img_fg'], 19
+
+        OCRHandler_logger.debug(local['OCRHandler']['debug']['params_fg'].format(params=str(locals())))
 
         if mode == "fine-grained-ocr":
             # 构建 OCR 框 / Building OCR box
@@ -149,6 +197,7 @@ class OCRHandler:
             res = model.chat(tokenizer, image_path, ocr_type='format', ocr_color=fg_color)
             return res, 0
         else:
+            OCRHandler_logger.error(local['OCRHandler']['error']['invalid_mode_fg'].format(mode=mode))
             res = local["OCRHandler"]["error"]["invalid_mode_fg"].format(mode=mode)
             return res, 18
 
@@ -173,7 +222,6 @@ class OCRHandler:
             一个元组，第一个元素是结果（str），第二个是错误码，成功则为 0
             A tuple, the first element is the result (string), the second one is the error code, will be 0 if succeeded
         """
-        OCRHandler_logger.debug(local['OCRHandler']['debug']['current_ocr_mode_crop'].format(mode=mode))
         # 检查图片是否上传
         # 检查模型是否已加载
         model = self.safetensors_model if model is None else model
@@ -183,14 +231,19 @@ class OCRHandler:
             res = local["OCRHandler"]["error"]["no_model_crop"]
             return res, 19
 
+        OCRHandler_logger.debug(local['OCRHandler']['debug']['params_crop'].format(params=str(locals())))
+
         try:
             if mode == "multi-crop-ocr":
                 res = model.chat_crop(tokenizer, image_path, ocr_type='ocr')
+                return res, 0
             elif mode == "multi-crop-format":
                 res = model.chat_crop(tokenizer, image_path, ocr_type='format')
+                return res, 0
             else:
+                OCRHandler_logger.error(local["OCRHandler"]["error"]["invalid_mode_crop"].format(mode=mode))
                 res = local["OCRHandler"]["error"]["invalid_mode_crop"].format(mode=mode)
-            return res, 18
+                return res, 18
         except Exception as e:
             OCRHandler_logger.error(local['OCRHandler']['error']['crop_ocr_fail'].format(error=str(e)))
             return local["OCRHandler"]["error"]["crop_ocr_fail"].format(error=str(e)), 16
