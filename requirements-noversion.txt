@@ -11,6 +11,7 @@ charset-normalizer
 ci-info
 click
 colorama
+coloredlogs
 configobj
 configparser
 contourpy
@@ -23,17 +24,20 @@ executing
 fastapi
 ffmpy
 filelock
+flatbuffers
 fonttools
 fsspec
 gobject
 gradio
 gradio_client
+groovy
 h11
 html5lib
 httpcore
 httplib2
 httpx
 huggingface-hub
+humanfriendly
 idna
 importlib_resources
 ipython
@@ -53,6 +57,7 @@ networkx
 nibabel
 nipype
 numpy
+onnxruntime-gpu
 orjson
 outcome
 packaging
@@ -62,6 +67,7 @@ pathlib
 pillow
 pipdeptree
 prompt_toolkit
+protobuf
 prov
 psutil
 pure_eval
@@ -74,6 +80,7 @@ pydyf
 Pygments
 pyparsing
 pyphen
+pyreadline3
 PySocks
 python-dateutil
 python-multipart

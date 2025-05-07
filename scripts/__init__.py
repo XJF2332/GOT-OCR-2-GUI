@@ -23,6 +23,9 @@ except FileNotFoundError:
 current_time = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 scriptsLogger = logging.getLogger(__name__)
 
+if not os.path.exists("Logs"):
+    os.mkdir("Logs")
+
 logging.basicConfig(
     filename=os.path.join("Logs", f"{current_time}.log"),
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',

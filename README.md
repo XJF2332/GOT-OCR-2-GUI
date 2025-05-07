@@ -4,7 +4,8 @@
 
 ![img.png](img.png)
 
-日志正在本地化，但键有些多，我难以确定是不是缺了或者错了键，如果你发现了 KeyError，请报告 Issue
+日志本地化已完成，但键有些多，我难以确定是不是缺了或者错了键，如果你发现了 KeyError，请报告 Issue  
+CLI 停止支持，以后随性更新，一个人做不过来
 
 ## 关于此项目
 
@@ -21,18 +22,25 @@
 - [x] 日志内容本地化
 - [ ] 支持新模型 stepfun-ai/GOT-OCR-2.0-hf
 - [ ] 优化 PDF 相关的错误处理逻辑
-- [ ] ⚠️支持`llama-cpp-python`，希望能够加速推理
-- 遇到困难，有能力的可以提交 pr，最好可以提到 `Aplha` 分支；使用的 HuggingFace
-  模型是 [kaifeise/GOT-gguf](https://huggingface.co/kaifeise/GOT-gguf/tree/main)；`GGUF Test.py`
-  使用了来自 [1694439208/GOT-OCR-Inference](https://github.com/1694439208/GOT-OCR-Inference) 的代码 。文件都在`gguf`
-  文件夹里了）
-- [ ] html 转 word 功能，保留公式可以编辑
-- 目前想到两个方法，一个是先转 PDF 然后 PDF 转 Word，但这样太慢，因为要用 selenium 打开浏览器去渲染 PDF；另一个是`pdflatex`
-  ，但是这样就要再装一个 TeX 发行版，我看了一下 TexLive ，又是好几个 GB。感觉这两个方法都不太行。不知道有没有人有更好的方法？
+- [x] 支持 GGUF 模型，希望能够加速推理（感谢 [issue #19](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/19) 提供的帮助）
+- [ ] 完善 GGUF 模型的支持
+- [ ] 新版渲染模式：优化性能，支持更多格式输出
 
 ## 使用方法
 
 如果这里面提到的文件夹你没有，那就**新建一个**
+
+### 选择一个分支
+
+#### Alpha
+
+更新最快的分支，最新的更改都会提交到这个分支。  
+代码有时会未经测试。  
+非常不稳定，有时甚至无法使用。  
+
+#### main
+
+较为稳定的分支，但会缺失一些新特性。
 
 ### 依赖
 
@@ -41,11 +49,8 @@
 #### torch
 
 从[torch官网](https://pytorch.org/get-started/locally/)选择适合自己的**GPU版本**的torch安装即可  
-我用的是 Stable 2.4.1 + cu124 ，建议你也用这个版本
-
-#### FlashAttention
-
-不是强制要求，不过如果你想安装的话可以看[#12](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/12)
+我之前用的是 Stable 2.4.1 + cu124  
+目前在使用 Stable 2.0.1 + cu118 ，可以解决`1 Torch is not compiled with Flash Attention`，暂未发现其他问题
 
 #### PyMuPDF
 
@@ -90,8 +95,14 @@ pip install -r requirements-noversion.txt
 
 ### 下载模型文件
 
+下列模型中只要有一个就能执行 OCR ，但要启用自动加载模型，那就要有`Safetensors`模型  
+GGUF 模型的支持还不完善，你目前可以在 GGUF 标签页单独体验
+
+#### Safetensors
+
 1. 下载到`models`文件夹中
 2. 别少下载文件了
+3. 如果是新的`GOT-OCR-2-HF`模型（目前未完成支持），下载到`models-hf`文件夹中（但目前还没有添加对其的支持）
 
 - 文件结构应该是：
 
@@ -109,6 +120,11 @@ GOT-OCR-2-GUI
    ├─tokenization_qwen.py
    └─tokenizer_config.json
 ```
+
+#### GGUF
+
+GGUF 模型由`got.cpp`提供支持  
+前往`MosRat/got.cpp`仓库下载模型，`Encode.onnx`放到`gguf\Encoder.onnx`，剩下的 Decoder GGUF 模型放进`gguf\decoders`
 
 ### 开始使用
 
@@ -136,17 +152,6 @@ GOT-OCR-2-GUI
 > 如果你不小心删除了，可以在`scripts`文件夹里找到备份，复制一份过去就行了
 
 - 确保你安装的`torch`是 gpu 版本，因为脚本里用了`device_map='cuda'`
-
-## 错误码对照表
-
-| 错误码 | 错误信息           |
-|-----|----------------|
-| 1   | 配置文件未找到        |
-| 2   | 语言文件未找到        |
-| 3   | CLI 不提供目录的支持   |
-| 4   | 未找到输入路径所指向的文件  |
-| 5   | 输入文件类型不受支持     |
-| 6   | 渲染的HTML的编码检测失败 |
 
 ## 常见问题
 

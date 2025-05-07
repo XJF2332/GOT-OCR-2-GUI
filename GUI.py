@@ -1,17 +1,21 @@
 print("正在加载 / Loading...")
 
+import glob
+import json
 import logging
+import os
 from datetime import datetime
-import scripts.Renderer as Renderer
+from time import sleep
+
+import gradio as gr
+from onnxruntime import get_available_providers
+from transformers import AutoModel, AutoTokenizer
+
 import scripts.PDFHandler as PDFHandler
 import scripts.PDFMerger as PDFMerger
 import scripts.TempCleaner as TempCleaner
-from transformers import AutoModel, AutoTokenizer
-import gradio as gr
-import os
-import glob
-import json
-from time import sleep
+import scripts.got_cpp.got_ocr as got_cpp
+from scripts.OCRHandler import OCRHandler
 
 ##########################
 
@@ -31,6 +35,9 @@ except FileNotFoundError:
 # 日志记录器 / Logger
 current_time = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 logger = logging.getLogger(__name__)
+
+if not os.path.exists("Logs"):
+    os.mkdir("Logs")
 
 logging.basicConfig(
     filename=os.path.join("Logs", f"{current_time}.log"),
@@ -95,36 +102,37 @@ except FileNotFoundError:
 
 model = None
 tokenizer = None
-
+gguf_ocr_handler = got_cpp.GGUFHandler()
+ocr_handler = OCRHandler()
+ocr_modes = ["ocr", "format"]
+ocr_fg_modes = ["fine-grained-ocr", "fine-grained-format", "fine-grained-color-ocr", "fine-grained-color-format"]
+ocr_crop_modes = ["multi-crop-ocr", "multi-crop-format"]
 
 ##########################
 
 # 加载模型函数 / Loading model function
 def load_model():
     logger.info(local['log']['info']['model_loading'])
-    global model, tokenizer
-    model = None
-    tokenizer = None
-    tokenizer = AutoTokenizer.from_pretrained('models', trust_remote_code=True)
-    model = AutoModel.from_pretrained('models', trust_remote_code=True, low_cpu_mem_usage=True, device_map='cuda',
-                                      use_safetensors=True, pad_token_id=tokenizer.eos_token_id)
-    model = model.eval().cuda()
+    global ocr_handler
+    ocr_handler.safetensors_tokenizer = None
+    ocr_handler.safetensors_model = None
+    ocr_handler.safetensors_tokenizer = AutoTokenizer.from_pretrained('models', trust_remote_code=True)
+    ocr_handler.safetensors_model = AutoModel.from_pretrained('models',
+                                                              trust_remote_code=True, low_cpu_mem_usage=True,
+                                                              device_map='cuda', use_safetensors=True)
+    ocr_handler.safetensors_model = ocr_handler.safetensors_model.eval().cuda()
     logger.info(local['log']['info']['model_loaded'])
     return local["info"]["model_already_loaded"]
 
 
-##########################
-
 # 卸载模型函数 / Unloading model function
 def unload_model():
-    global model, tokenizer
-    model = None
-    tokenizer = None
+    global ocr_handler
+    ocr_handler.safetensors_model = None
+    ocr_handler.safetensors_tokenizer = None
     logger.info(local['log']['info']['model_unloaded'])
     return local["info"]["model_not_loaded"]
 
-
-##########################
 
 # 决定是否加载模型 / Deciding whether to load the model
 if config["load_model_on_start"]:
@@ -166,10 +174,8 @@ def update_img_name(image_uploaded):
     except:
         image_name_ext = local["info"]["image_cleared"]
         logger.debug(local['log']['info']['image_name_cleared'])
-    return gr.Textbox(label=local["label"]["img_name"], value=image_name_ext)
+    return gr.Markdown(value=image_name_ext)
 
-
-##########################
 
 # 更新 PDF 名称 / Update PDF name
 def update_pdf_name(pdf_uploaded):
@@ -177,8 +183,6 @@ def update_pdf_name(pdf_uploaded):
     logger.debug(local['log']['info']['pdf_name_updated'].format(name=pdf_name_with_extension))
     return gr.Textbox(label=local["label"]["pdf_file"], value=pdf_name_with_extension)
 
-
-##########################
 
 # 更新保存 PDF 勾选框可见性（PDF 标签页）/ Update visibility of save as PDF checkbox (PDF tab)
 def update_pdf_conv_conf_visibility(pdf_ocr_mode_update):
@@ -190,8 +194,6 @@ def update_pdf_conv_conf_visibility(pdf_ocr_mode_update):
         return gr.Checkbox(label=local["label"]["save_as_pdf"], interactive=True, visible=False, value=False)
 
 
-##########################
-
 # 更新合并 PDF 勾选框可见性（PDF 标签页）/ Updating visibility of merge PDF checkbox (PDF tab)
 def update_pdf_merge_conf_visibility(pdf_convert_confirm_update):
     if pdf_convert_confirm_update:
@@ -201,8 +203,6 @@ def update_pdf_merge_conf_visibility(pdf_convert_confirm_update):
         logger.debug(local['log']['debug']['merge_pdf_checkbox_disabled'])
         return gr.Checkbox(label=local["label"]["merge_pdf"], interactive=True, visible=False, value=False)
 
-
-##########################
 
 # 更新目标 DPI 输入框可见性（PDF 标签页）/ Update visibility of target DPI input box (PDF tab)
 def update_pdf_dpi_visibility(pdf_ocr_mode_update):
@@ -238,6 +238,31 @@ def extract_pdf_pattern(filename):
 
 ##########################
 
+def gguf_model_load(Encoder_path, decoder_path, providers):
+    load_status = gguf_ocr_handler.load_model(enc_path=Encoder_path, dec_path=decoder_path, providers=providers)
+    if load_status == 0:
+        logger.info(local['log']['info']['gguf_model_loaded'].format(model = decoder_path))
+        return local["info"]["model_already_loaded"]
+    else:
+        logger.error(local['log']['error']['gguf_model_load_failed'])
+        raise gr.Error(local['error']['gguf_model_load_failed'], duration=5)
+
+def gguf_model_unload():
+    unload_status = gguf_ocr_handler.unload_model()
+    if unload_status == 0:
+        logger.info(local['log']['info']['gguf_model_unloaded'])
+        return local["info"]["model_not_loaded"]
+    else:
+        logger.error(local['log']['error']['gguf_model_unload_failed'])
+        raise gr.Error(local['error']['gguf_model_unload_failed'],duration=5)
+
+def do_gguf_ocr(image_path):
+    res = gguf_ocr_handler.gguf_ocr(image_path=image_path)
+    return res
+
+
+##########################
+
 # 进行 OCR 识别 / Performing OCR recognition
 def ocr(image_path, fg_box_x1, fg_box_y1, fg_box_x2, fg_box_y2, mode, fg_color, pdf_conv_conf, temp_clean):
     # 默认值 / Default value
@@ -254,58 +279,24 @@ def ocr(image_path, fg_box_x1, fg_box_y1, fg_box_x2, fg_box_y2, mode, fg_color, 
         # 根据 OCR 类型进行 OCR 识别 / Performing OCR based on OCR type
         logger.info(local['log']['info']['ocr_started'])
         logger.debug(local['log']['debug']['current_ocr_mode'].format(ocr_mode=mode))
-        if mode == "ocr":
-            res = model.chat(tokenizer, image_path, ocr_type='ocr')
-        elif mode == "format":
-            res = model.chat(tokenizer, image_path, ocr_type='format')
-        elif mode == "fine-grained-ocr":
-            # 构建 OCR 框 / Building OCR box
-            box = f"[{fg_box_x1}, {fg_box_y1}, {fg_box_x2}, {fg_box_y2}]"
-            logger.debug(local['log']['debug']['current_ocr_box'].format(ocr_box=box))
-            res = model.chat(tokenizer, image_path, ocr_type='ocr', ocr_box=box)
-        elif mode == "fine-grained-format":
-            # 构建 OCR 框 / Building OCR box
-            box = f"[{fg_box_x1}, {fg_box_y1}, {fg_box_x2}, {fg_box_y2}]"
-            logger.debug(local['log']['debug']['current_ocr_box'].format(ocr_box=box))
-            res = model.chat(tokenizer, image_path, ocr_type='format', ocr_box=box)
-        elif mode == "fine-grained-color-ocr":
-            res = model.chat(tokenizer, image_path, ocr_type='ocr', ocr_color=fg_color)
-        elif mode == "fine-grained-color-format":
-            res = model.chat(tokenizer, image_path, ocr_type='format', ocr_color=fg_color)
-        elif mode == "multi-crop-ocr":
-            res = model.chat_crop(tokenizer, image_path, ocr_type='ocr')
-        elif mode == "multi-crop-format":
-            res = model.chat_crop(tokenizer, image_path, ocr_type='format')
+        if mode in ocr_modes:
+            res = ocr_handler.ocr(image_path, mode)
+        elif mode in ocr_fg_modes:
+            res = ocr_handler.ocr_fg(image_path, fg_box_x1, fg_box_y1, fg_box_x2, fg_box_y2, mode, fg_color)
+        elif mode in ocr_crop_modes:
+            res = ocr_handler.ocr_crop(image_path, mode)
         elif mode == "render":
-            success = Renderer.render(model=model, tokenizer=tokenizer, img_path=image_path,
-                                      conv_to_pdf=pdf_conv_conf, wait=config["pdf_render_wait"],
-                                      time=config["pdf_render_wait_time"])
-            image_name_ext = os.path.basename(image_path)
-            logger.debug(local['log']['debug']['got_img_name'].format(img_name=image_name_ext))
-            if success:
-                res = local["info"]["render_success"].format(img_file=image_name_ext)
-                logger.info(local['log']['info']['render_completed'])
-                if temp_clean and pdf_conv_conf:
-                    logger.info(f"[ocr] {local['log']['info']['temp_cleaning']}")
-                    TempCleaner.cleaner(["result"],
-                                        [f"{os.path.splitext(image_name_ext)[0]}-gb2312.html",
-                                         f"{os.path.splitext(image_name_ext)[0]}-utf8.html",
-                                         f"{os.path.splitext(image_name_ext)[0]}-utf8-local.html"])
-                if temp_clean and not pdf_conv_conf:
-                    logger.info(f"[ocr] {local['log']['info']['temp_cleaning']}")
-                    TempCleaner.cleaner(["result"], [f"{os.path.splitext(image_name_ext)[0]}-gb2312.html"])
-                else:
-                    logger.info(f"[ocr] {local['log']['info']['temp_cleaning_skipped']}")
-            else:
-                res = local["error"]["render_fail"].format(img_file=image_name_ext)
-        logger.info(local['log']['info']['ocr_completed'])
-        return res
-    except AttributeError:
-        logger.error(local['log']['error']['no_model_or_img'])
-        return local["error"]["no_model_or_img"]
+            res = ocr_handler.render_old(image_path=image_path, pdf_conv_conf=pdf_conv_conf, temp_clean=temp_clean)
+        # 处理返回值 / Processing the return value
+        if res[1] == 0:
+            logger.info(local['log']['info']['ocr_completed'])
+            return res[0]
+        else:
+            logger.error(local['log']['error']['ocr_failed'].format(error=res[0], code=res[1]))
+            return local["error"]["ocr_failed"].format(error=res[0], code=res[1])
     except Exception as e:
-        logger.error(local['log']['error']['ocr_failed'].format(error=e))
-        return local["error"]["ocr_failed"].format(error=e)
+        logger.error(local['log']['error']['ocr_failed'].format(error=e, code=16))
+        return local["error"]["ocr_failed"].format(error=e, code=16)
 
 
 ##########################
@@ -402,35 +393,21 @@ def pdf_ocr(mode, pdf, target_dpi, pdf_convert, pdf_merge, temp_clean):
 ##########################
 
 # 渲染器 / Renderer
-def renderer(imgs_path, pdf_convert_confirm, clean_temp):
+def renderer(imgs_path, renderer_pdf_conv, renderer_clean_temp):
+    renderer_handler = ocr_handler()
     # 获取图片文件列表 / Get a list of image files
     image_files = glob.glob(os.path.join(imgs_path, '*.jpg')) + glob.glob(os.path.join(imgs_path, '*.png'))
     logger.debug(local['log']['debug']['got_image_list'].format(list=image_files))
     # 逐个发送图片给 renderer 的 render 函数 / Sending images one by one to the 'render' function of renderer
     for image_path in image_files:
         logger.info(local['log']['info']['renderer_started'].format(image=image_path))
-        success = Renderer.render(model=model, tokenizer=tokenizer, img_path=image_path,
-                                  conv_to_pdf=pdf_convert_confirm, wait=config["pdf_render_wait"],
-                                  time=config["pdf_render_wait_time"])
-        if success == 1:
-            logger.info(local['log']['info']['renderer_success'].format(image=image_path))
-            if clean_temp and pdf_convert_confirm:
-                logger.info(local['log']['info']['renderer_temp_cleaning'])
-                TempCleaner.cleaner(["result"],
-                                    [f"{os.path.splitext(os.path.basename(image_path))[0]}-gb2312.html",
-                                     f"{os.path.splitext(os.path.basename(image_path))[0]}-utf8.html",
-                                     f"{os.path.splitext(os.path.basename(image_path))[0]}-utf8-local.html"])
-            if clean_temp and not pdf_convert_confirm:
-                logger.info(local['log']['info']['renderer_temp_cleaning'])
-                TempCleaner.cleaner(["result"], [f"{os.path.splitext(os.path.basename(image_path))[0]}-gb2312.html"])
-            else:
-                logger.info(local['log']['info']['renderer_temp_cleaning_skipped'])
-        elif success == 2:
-            logger.error(local['log']['error']['renderer_no_model_or_img'])
-            raise gr.Error(duration=0, message=local["error"]["no_model_or_img"])
-        elif success == 3:
-            logger.error(local['log']['error']['renderer_failed'])
-            raise gr.Error(duration=0, message=local["error"]["render_fail"].format(img_file=image_path))
+        render_res = renderer_handler.render_old(image_path = image_path,
+                                    pdf_conv_conf = renderer_pdf_conv,
+                                    temp_clean = renderer_clean_temp)
+        if render_res[1] == 0:
+            gr.Info(local["info"]["render_success"].format(img_file=os.path.basename(image_path)), duration=3)
+        else:
+            raise gr.Error(local["error"]["renderer_failed"].format(error=render_res[0]), duration=0)
 
 
 ##########################
@@ -451,30 +428,12 @@ with gr.Blocks(theme=theme) as demo:
     # ---------------------------------- #
     # OCR 选项卡 / OCR tab
     with gr.Tab(local["tab"]["ocr"]):
-        # 特殊模式设置 / Special mode settings
-        with gr.Row():
-            # Fine-grained 设置 / Fine-grained settings
-            with gr.Column():
-                gr.Markdown(local["label"]["fine_grained_settings"])
-                with gr.Row():
-                    fine_grained_box_x1 = gr.Number(label=local["label"]["fine_grained_box_x1"], value=0)
-                    fine_grained_box_y1 = gr.Number(label=local["label"]["fine_grained_box_y1"], value=0)
-                    fine_grained_box_x2 = gr.Number(label=local["label"]["fine_grained_box_x2"], value=0)
-                    fine_grained_box_y2 = gr.Number(label=local["label"]["fine_grained_box_y2"], value=0)
-                fine_grained_color = gr.Dropdown(choices=["red", "green", "blue"],
-                                                 label=local["label"]["fine_grained_color"], value="red")
-            # 渲染设置 / Rendering settings
-            with gr.Column():
-                gr.Markdown(local["label"]["render_settings"])
-                img_name = gr.Textbox(label=local["label"]["img_name"], value="ocr")
-                with gr.Row(equal_height=True):
-                    pdf_convert_confirm = gr.Checkbox(label=local["label"]["save_as_pdf"])
-                    clean_temp_render = gr.Checkbox(label=local["label"]["clean_temp"])
         # OCR 相关 / OCR Settings
-        gr.Markdown(local["label"]["ocr_settings"])
         with gr.Row():
-            # 上传图片 / Upload Image
-            upload_img = gr.Image(type="filepath", label=local["label"]["upload_img"])
+            with gr.Column():
+                # 上传图片 / Upload Image
+                img_name = gr.Markdown(local["label"]["img_name_placeholder"])
+                upload_img = gr.Image(type="filepath", label=local["label"]["upload_img"])
             # 其他组件 / Other Components
             with gr.Column():
                 # 模式 / Mode
@@ -490,7 +449,6 @@ with gr.Blocks(theme=theme) as demo:
                 # OCR 按钮 / Buttons and Results
                 do_ocr = gr.Button(local["btn"]["do_ocr"], variant="primary")
                 result = gr.Textbox(label=local["label"]["result"])
-    # ---------------------------------- #
     # 渲染器选项卡 / Renderer tab
     with gr.Tab(local["tab"]["renderer"]):
         # 输入 / Input folder path
@@ -529,6 +487,50 @@ with gr.Blocks(theme=theme) as demo:
                 with gr.Row(equal_height=True):
                     pdf_ocr_btn = gr.Button(local["btn"]["pdf_ocr"], variant="primary", scale=2)
                     clean_temp = gr.Checkbox(label=local["label"]["clean_temp"], value=True, interactive=True)
+    # GGUF 选项卡 /  GGUF tab
+    with gr.Tab("GGUF"):
+        enc_path = gr.Text(r"C:\AI\GOT-OCR-2-GUI\gguf\Encoder.onnx", visible=False)
+        gguf_list = os.listdir(os.path.join("gguf", "decoders"))
+        dropdown_choices = [(f, os.path.join("gguf", "decoders", f)) for f in gguf_list]
+        execution_providers = get_available_providers()
+        with gr.Row():
+            gguf_load_model = gr.Button(local["btn"]["gguf_load_model"], variant="primary")
+            gguf_unload_model = gr.Button(local["btn"]["gguf_unload_model"], variant="secondary")
+        gguf_model_status = gr.Markdown(local["info"]["model_not_loaded"], show_label=False)
+        with gr.Row():
+            gguf_models = gr.Dropdown(label=local["label"]["gguf_models"], choices=dropdown_choices, value=dropdown_choices[0][1] if dropdown_choices != [] else None, interactive=True)
+            execution_providers = gr.Dropdown(label=local["label"]["execution_providers"], choices=execution_providers, value=execution_providers[0], interactive=True, multiselect=True, max_choices=1)
+        with gr.Row():
+            upload_img_gguf = gr.Image(type="filepath", label=local["label"]["upload_img"])
+            encoder_path = gr.Textbox(value=os.path.join("gguf", "Encoder.onnx"), visible=False)
+            with gr.Column():
+                ocr_gguf_btn = gr.Button(local["btn"]["ocr_gguf"], variant="primary")
+                gguf_result = gr.Textbox(label=local["label"]["gguf_result"], interactive=False)
+    # 设置选项卡 / Settings tab
+    with gr.Tab(local["tab"]["settings"]):
+        # 特殊模式设置 / Special mode settings
+        with gr.Row():
+            # Fine-grained 设置 / Fine-grained settings
+            with gr.Column():
+                gr.Markdown(local["label"]["fine_grained_settings"])
+                with gr.Row():
+                    fine_grained_box_x1 = gr.Number(label=local["label"]["fine_grained_box_x1"], value=0)
+                    fine_grained_box_y1 = gr.Number(label=local["label"]["fine_grained_box_y1"], value=0)
+                    fine_grained_box_x2 = gr.Number(label=local["label"]["fine_grained_box_x2"], value=0)
+                    fine_grained_box_y2 = gr.Number(label=local["label"]["fine_grained_box_y2"], value=0)
+                fine_grained_color = gr.Dropdown(choices=["red", "green", "blue"],
+                                                 label=local["label"]["fine_grained_color"], value="red")
+            # 渲染设置 / Rendering settings
+            with gr.Column():
+                gr.Markdown(local["label"]["render_settings"])
+                with gr.Row(equal_height=True):
+                    pdf_convert_confirm = gr.Checkbox(label=local["label"]["save_as_pdf"])
+                    clean_temp_render = gr.Checkbox(label=local["label"]["clean_temp"])
+                gr.Markdown(local["label"]["new_render_settings"])
+                gr.Markdown(local["info"]["developing"])
+                use_new_render_mode = gr.Checkbox(label=local["label"]["use_new_render_mode"])
+                save_format = gr.Dropdown(choices=["DOCX", "Markdown", "Tex"], label=local["label"]["save_format"],
+                                          multiselect=True)
     # 指南选项卡 / Instructions tab
     with gr.Tab(local["tab"]["instructions"]):
         with open(os.path.join('Locales', 'gui', 'instructions', f'{lang}.md'), 'r', encoding='utf-8') as file:
@@ -536,7 +538,7 @@ with gr.Blocks(theme=theme) as demo:
         gr.Markdown(instructions)
     # ---------------------------------- #
     # 事件 / events
-    # ---------------------------------- #
+
     # OCR / OCR
     do_ocr.click(
         fn=ocr,
@@ -544,70 +546,90 @@ with gr.Blocks(theme=theme) as demo:
                 fine_grained_box_y2, ocr_mode, fine_grained_color, pdf_convert_confirm, clean_temp_render],
         outputs=result
     )
-    # ---------------------------------- #
+
     # 渲染 / Render
     batch_render_btn.click(
         fn=renderer,
         inputs=[input_folder_path, batch_pdf_convert_confirm, clean_temp_renderer],
         outputs=None
     )
-    # ---------------------------------- #
+
     # 更新图片名称 / Updating image name
     upload_img.change(
         fn=update_img_name,
         inputs=upload_img,
         outputs=img_name
     )
-    # ---------------------------------- #
+
     # 更新 PDF OCR 保存 PDF 选项 / Updating save as PDF option for PDF OCR
     pdf_ocr_mode.change(
         fn=update_pdf_conv_conf_visibility,
         inputs=pdf_ocr_mode,
         outputs=pdf_pdf_convert_confirm
     )
-    # ----------------------------------- #
+
     # 更新 PDF OCR DPI 输入框 / Updating target DPI input box for PDF OCR
     pdf_ocr_mode.change(
         fn=update_pdf_dpi_visibility,
         inputs=pdf_ocr_mode,
         outputs=dpi
     )
-    # ----------------------------------- #
+
     # 更新 PDF OCR 合并 PDF 选项 / Updating merge PDF option for PDF OCR
     pdf_pdf_convert_confirm.change(
         fn=update_pdf_merge_conf_visibility,
         inputs=pdf_pdf_convert_confirm,
         outputs=pdf_pdf_merge_confirm
     )
-    # ----------------------------------- #
+
+    # 加载GGUF模型 / Loading GGUF model
+    gguf_load_model.click(
+        fn=gguf_model_load,
+        inputs=[enc_path, gguf_models, execution_providers],
+        outputs=gguf_model_status
+    )
+
+    # 卸载GGUF模型 / Unloading GGUF model
+    gguf_unload_model.click(
+        fn=gguf_model_unload,
+        inputs=None,
+        outputs=gguf_model_status
+    )
+
     # 执行PDF OCR / Performing PDF OCR
     pdf_ocr_btn.click(
         fn=pdf_ocr,
         inputs=[pdf_ocr_mode, pdf_file, dpi, pdf_pdf_convert_confirm, pdf_pdf_merge_confirm, clean_temp],
         outputs=None
     )
-    # ----------------------------------- #
+
     # 更新 PDF 名称 / Updating PDF name
     pdf_file.change(
         fn=update_pdf_name,
         inputs=pdf_file,
         outputs=pdf_file_name
     )
-    # ----------------------------------- #
+
     # 加载模型 / Loading model
     load_model_btn.click(
         fn=load_model,
         inputs=None,
         outputs=model_status
     )
-    # ----------------------------------- #
+
     # 卸载模型 / Unloading model
     unload_model_btn.click(
         fn=unload_model,
         inputs=None,
         outputs=model_status
     )
-    # ----------------------------------- #
+
+    # 执行GGUF OCR / Performing GGUF OCR
+    ocr_gguf_btn.click(
+        fn=do_gguf_ocr,
+        inputs=upload_img_gguf,
+        outputs=gguf_result
+    )
 
 ##########################
 

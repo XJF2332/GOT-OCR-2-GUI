@@ -1,6 +1,5 @@
 {
     "HTML2PDF": {
-        "critical": {},
         "debug": {
             "enc_detect": "[conv_html_enc] Encoding detected: {encoding}",
             "writing": "[output_pdf] Writing: {file}"
@@ -29,11 +28,39 @@
             "reading_ori": "[conv_html_enc] Reading: {file}",
             "replacing": "[replace_content] Replacing: {file}",
             "writing": "[replace_content] Writing: {file}"
+        }
+    },
+    "OCRHandler": {
+        "debug": {
+            "current_ocr_box": "[ocr_fg] Current OCR box: {box}",
+            "current_ocr_color": "[ocr_fg] Current OCR box color: {color}",
+            "got_img_name": "[render_old] Image name: {img_name}",
+            "params": "[ocr] Current params: {params}",
+            "params_crop": "[ocr_crop] Current params: {params}",
+            "params_fg": "[ocr_fg] Current params: {params}",
+            "params_render_old": "[render_old] Current params: {params}"
         },
-        "warning": {}
+        "error": {
+            "crop_ocr_fail": "[ocr_crop] multi-crop OCR failed, unexpected error: {error}",
+            "invalid_mode": "[ocr] Invalid OCR mode: {mode}",
+            "invalid_mode_crop": "[ocr_crop] Invalid OCR mode: {mode}",
+            "invalid_mode_fg": "[ocr_fg] Invalid OCR mode: {mode}",
+            "no_image_crop": "[ocr_crop] No image uploaded",
+            "no_model_crop": "[ocr_crop] No model loaded",
+            "no_model_img": "[ocr] No image uploaded or no model loaded",
+            "no_model_img_fg": "[ocr_fg] No image uploaded or no model loaded",
+            "no_model_img_render_old": "[render_old] No image uploaded or no model loaded",
+            "ocr_fail": "[ocr] OCR failed, unexpected error: {error}",
+            "render_fail": "[render_old] Failed to render {img}, error code: {code}",
+            "render_fail_unexpected": "[render_old] Failed to render {img}, unexpected error: {error}"
+        },
+        "info": {
+            "render_completed": "[render_old] Render completed",
+            "temp_cleaning": "[render_old] Cleaning temp files",
+            "temp_cleaning_skipped": "[render_old] Temp file cleaning skipped"
+        }
     },
     "PDFHandler": {
-        "critical": {},
         "debug": {
             "build_pattern": "[get_png_seq] Match Pattern: pattern}",
             "converting_page": "[split_pdf] Converting page {page}",
@@ -48,6 +75,7 @@
         "error": {
             "conv_fail": "[split_pdf] Conversion failed, unexpected error: {error}",
             "empty_seq": "[pdf_renderer] Image sequence is empty",
+            "error_renderer": "[pdf_renderer] An error occurred while rendering, error code: {code}",
             "no_model_or_pdf": "[pdf_renderer] It looks like that you did not load model or upload PDF",
             "seq_get_fail": "[get_png_seq] Failed to get image sequence, unexpected error: {error}"
         },
@@ -59,11 +87,9 @@
             "render_success": "[pdf_renderer] Rendered successfully",
             "rendering": "[pdf_renderer] Rendering: {file}",
             "rendering_img": "[pdf_renderer] Rendering image: {img}"
-        },
-        "warning": {}
+        }
     },
     "PDFMerger": {
-        "critical": {},
         "debug": {
             "filename_pattern": "[get_pdf_list] Filename pattern: {pattern}",
             "insert_page": "[merge_pdfs] Inserting page: {page}",
@@ -78,11 +104,9 @@
             "merging": "[merge_pdfs] Merging PDF files",
             "pdf_list": "[get_pdf_list] PDF File list: {lst}",
             "save_merged": "[merge_pdfs] Merged PDF saved to: {path}"
-        },
-        "warning": {}
+        }
     },
     "Renderer": {
-        "critical": {},
         "debug": {
             "conv_enc": "[render] Converting encoding to UTF-8: {path}",
             "img_name": "[render] Image name: {name}",
@@ -99,8 +123,7 @@
         "info": {
             "conv2pdf": "[render] Converting to PDF: {path}",
             "rendering": "[render] Rendering: {path}"
-        },
-        "warning": {}
+        }
     },
     "TempCleaner": {
         "debug": {
@@ -109,6 +132,11 @@
         },
         "info": {
             "cleaning": "[cleaner] Cleaning temp files"
+        }
+    },
+    "got.cpp": {
+        "error": {
+            "embed_type": "[ocr_run] image_embeds must be a numpy.ndarray"
         }
     }
 }

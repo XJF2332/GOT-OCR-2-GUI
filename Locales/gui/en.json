@@ -1,20 +1,28 @@
 {
     "btn": {
         "do_ocr": "Perform OCR",
+        "gguf_load_model": "Load GGUF model",
+        "gguf_unload_model": "Unload GGUF model",
         "load_model": "Load model",
+        "ocr_gguf": "OCR (GGUF)",
         "pdf_ocr": "Perform OCR (PDF)",
         "render": "Render",
         "unload_model": "Unload model"
     },
     "error": {
+        "gguf_model_load_failed": "Failed to load GGUF model",
+        "gguf_model_unload_failed": "Failed to unload GGUF model",
         "no_model_or_img": "No model loaded or no image uploaded",
         "no_pdf": "No PDF file uploaded",
-        "ocr_failed": "OCR failed, unexpected error: {error}",
+        "ocr_failed": "OCR failed, error: {error}, error code: {code}",
         "ocr_mode_none": "No OCR mode selected",
         "pdf_filename_format_error": "Filename format should be like this: <string>_0.pdf",
         "pdf_merge_fail": "Failed to merge {pdf_file}",
         "pdf_render_fail": "Failed to render {pdf_file}",
-        "pdf_split_fail": "Failed to split {pdf_file}"
+        "pdf_split_fail": "Failed to split {pdf_file}",
+        "render_fail": "Failed to render {img_file}, error code: {code}",
+        "render_failed": "Render failed, unexpected error: {error}",
+        "renderer_failed": "Render failed: {error}"
     },
     "info": {
         "developing": "Developing...",
@@ -35,15 +43,20 @@
     },
     "label": {
         "clean_temp": "Clean temporary files",
+        "execution_providers": "ONNX mode",
         "fine_grained_box_x1": "Box coordinate x1",
         "fine_grained_box_x2": "Box coordinate x2",
         "fine_grained_box_y1": "Box coordinate y1",
         "fine_grained_box_y2": "Box coordinate y2",
         "fine_grained_color": "Box color",
         "fine_grained_settings": "Fine-grained settings",
+        "gguf_models": "GGUF model",
+        "gguf_result": "OCR result",
         "img_name": "Image name",
+        "img_name_placeholder": "Image name will be shown here",
         "input_folder_path": "Input folder path",
         "merge_pdf": "Merge PDF",
+        "new_render_settings": "Render mode settings (new)",
         "ocr_mode": "OCR mode",
         "ocr_settings": "OCR settings",
         "pdf_file": "PDF file",
@@ -51,8 +64,10 @@
         "render_settings": "Render mode settings",
         "result": "Result",
         "save_as_pdf": "Save as PDF",
+        "save_format": "Save format",
         "target_dpi": "Target DPI",
-        "upload_img": "Upload image"
+        "upload_img": "Upload image",
+        "use_new_render_mode": "Use new render mode"
     },
     "log": {
         "critical": {},
@@ -64,6 +79,7 @@
             "filename_split_res": "[extract_pdf_pattern] Filename split to: {res}",
             "got_image_list": "[renderer] Got image list: {list}",
             "got_img_name": "[ocr] Got image name: {img_name}",
+            "got_pdf_name": "[pdf_ocr] Got PDF name: {name}",
             "got_temp_file_pattern": "[pdf_ocr] Got temporary file pattern: {pattern}",
             "merge_pdf_checkbox_disabled": "[update_pdf_merge_conf_visibility] Merge PDF checkbox deactivated (PDF tab)",
             "merge_pdf_checkbox_enabled": "[update_pdf_merge_conf_visibility] Merge PDF checkbox activated (PDF tab)",
@@ -74,17 +90,23 @@
             "save_pdf_checkbox_enabled": "[update_pdf_conv_conf_visibility] Save as PDF checkbox activated (PDF tab)"
         },
         "error": {
+            "gguf_model_load_failed": "[gguf_model_load] Failed to load GGUF model",
+            "gguf_model_unload_failed": "[gguf_model_unload] Failed to unload GGUF model",
             "no_model_or_img": "[ocr] No model loaded or no image uploaded",
             "no_pdf_uploaded": "[pdf_ocr] No PDF uploaded",
-            "ocr_failed": "[ocr] OCR failed, unexpected error: {error}",
+            "ocr_failed": "[ocr] OCR failed, error: {error}, error code: {code}",
             "pdf_filename_format_error": "[extract_pdf_pattern] Filename format should be like: <string>_0.pdf",
             "pdf_merge_failed": "[pdf_ocr] Failed to merge PDF: {name}",
             "pdf_render_failed": "[pdf_ocr] Failed to render PDF: {name}",
             "pdf_split_fail": "[pdf_ocr] Failed to split PDF",
-            "renderer_failed": "[renderer] Rendering failed: {image}",
+            "render_failed": "[OCRHandler.render_old] Render failed: {image}",
             "renderer_no_model_or_img": "[renderer] No model loaded or no image uploaded"
         },
         "info": {
+            "crop_ocr_start": "[OCRHandler.ocr_crop] OCR started (Multi-Crop OCR)",
+            "fg_ocr_start": "[OCRHandler.ocr_fg] OCR started (Fine-Grained OCR)",
+            "gguf_model_loaded": "[gguf_model_load] GGUF model loaded{model}",
+            "gguf_model_unloaded": "[gguf_model_unload] GGUF model unloaded",
             "got_pdf_name": "[pdf_ocr] Got PDF name: {name}",
             "image_name_cleared": "[update_img_name] Image name was cleared because the uploaded image were cleared",
             "img_name_updated": "[update_img_name] Image name updated: {name}",
@@ -134,6 +156,7 @@
     "tab": {
         "instructions": "Instructions",
         "ocr": "OCR",
-        "renderer": "Renderer"
+        "renderer": "Renderer",
+        "settings": "Settings"
     }
 }

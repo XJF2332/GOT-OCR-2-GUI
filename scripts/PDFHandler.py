@@ -13,7 +13,6 @@ PDFHandler_logger = scriptsLogger.getChild("PDFHandler")
 def get_base_name(path):
     return os.path.basename(path)
 
-#################################
 
 def remove_extension(base_name):
     return os.path.splitext(base_name)[0]
@@ -118,7 +117,7 @@ def pdf_renderer(model: object, tokenizer: object, pdf_path: str, dpi: int, pdf_
         wait (bool): 是否等待浏览器渲染 / Whether to wait the browser to render
         time (int): 等待时间
     Returns:
-        bool: 操作是否成功 / Whether the process is successful
+        执行状态 / Status
     """
     # 创建目录 / Create folder
     if not os.path.exists("pdf"):

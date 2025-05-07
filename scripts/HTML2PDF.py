@@ -16,17 +16,19 @@ HTML2PDF_logger = scriptsLogger.getChild("HTML2PDF")
 
 #################################
 
-def conv_html_enc(original_path: str, utf8_path: str) -> None:
+def conv_html_enc(original_path: str, utf8_path: str) -> int:
     """
     将HTML文件转换为UTF-8编码
     Convert encoding of HTML files to UTF-8
+    如果输入已经是UTF-8了，则会复制一份
+    If input is already UTF-8, it will create a copy
 
     Args:
         original_path: 输入 HTML 文件路径 / Input HTML file path
         utf8_path: 转换后的 HTML 文件路径 / Converted HTML file path
 
     Returns:
-        None
+        错误码 / Error codes
     """
     # 检测编码 / Detect encoding
     try:
@@ -37,14 +39,14 @@ def conv_html_enc(original_path: str, utf8_path: str) -> None:
         HTML2PDF_logger.debug(local["HTML2PDF"]["debug"]["enc_detect"].format(encoding=encoding))
     except Exception as e:
         HTML2PDF_logger.error(local["HTML2PDF"]["error"]["enc_detect_fail"].format(e=e))
-        exit(6)
+        return 11
     try:
         # 编码为 utf-8 / Encoding is utf-8
         if encoding['encoding'] == 'utf-8':
             shutil.copy(original_path, utf8_path)
             HTML2PDF_logger.info(local["HTML2PDF"]["info"]["no_cnv_required"])
-            return
-        # 转换编码 / Convert encoding
+            return 0
+        # 编码不是 utf-8 / Encoding is not utf-8
         else:
             HTML2PDF_logger.info(local["HTML2PDF"]["info"]["converting"].format(file=original_path))
             with open(original_path, 'r', encoding=encoding['encoding']) as f:
@@ -52,13 +54,15 @@ def conv_html_enc(original_path: str, utf8_path: str) -> None:
             with open(utf8_path, 'w', encoding='utf-8') as f:
                 f.write(content)
             HTML2PDF_logger.info(local["HTML2PDF"]["info"]["cnv_completed"].format(file=utf8_path))
+            return 0
     except Exception as e:
         HTML2PDF_logger.error(local["HTML2PDF"]["error"]["unexpected_error"].format(e=e))
+        return 12
 
 
 #################################
 
-def replace_content(utf8_path: str, utf8_local_path: str):
+def replace_content(utf8_path: str, utf8_local_path: str) -> int:
     """
     替换 HTML 中的在线脚本为本地文件
     Replace online script in HTML files into local file
@@ -68,7 +72,7 @@ def replace_content(utf8_path: str, utf8_local_path: str):
         utf8_local_path: 替换后的HTML文件路径 / Replaced HTML path
 
     Returns:
-        None
+        错误码 / Error code
     """
     try:
         HTML2PDF_logger.info(local["HTML2PDF"]["info"]["replacing"].format(file=utf8_path))
@@ -85,14 +89,15 @@ def replace_content(utf8_path: str, utf8_local_path: str):
         HTML2PDF_logger.debug(local["HTML2PDF"]["info"]["writing"].format(file=utf8_local_path))
         with open(utf8_local_path, 'w', encoding='utf-8') as file:
             file.write(new_html_content)
+        return 0
     except Exception as e:
-        # 打印错误信息
         HTML2PDF_logger.error(local["HTML2PDF"]["error"]["unexpected_error_rep"].format(e=e))
+        return 13
 
 
 #################################
 
-def output_pdf(html_path: str, pdf_path: str, wait_time: int, wait: bool = False):
+def output_pdf(html_path: str, pdf_path: str, wait_time: int, wait: bool = False) -> int:
     """
     将 HTML 文件转换为 PDF 文件
     Convert HTML to PDF
@@ -104,9 +109,7 @@ def output_pdf(html_path: str, pdf_path: str, wait_time: int, wait: bool = False
         wait: 是否等待 / Whether to wait the browser
 
     Returns:
-        1: 未找到 WebDriver / WebDriver not found
-        2: 转换成功 / Succeeded
-        3: 转换失败 / Failed
+        运行状态 / Status
     """
     try:
         HTML2PDF_logger.info(local["HTML2PDF"]["info"]["conv2pdf"].format(file=html_path))
@@ -115,7 +118,7 @@ def output_pdf(html_path: str, pdf_path: str, wait_time: int, wait: bool = False
         edge_driver_path = os.path.join("edge_driver", "msedgedriver.exe")
         if not os.path.exists(edge_driver_path):
             HTML2PDF_logger.error(local["HTML2PDF"]["error"]["no_driver"].format(path=edge_driver_path))
-            return 1
+            return 14
         # 设置本地HTML文件的路径 / Local HTML file path
         html_file_path = 'file://' + os.path.abspath(html_path)
         # 设置输出的PDF文件路径 / Output PDF file path
@@ -155,18 +158,23 @@ def output_pdf(html_path: str, pdf_path: str, wait_time: int, wait: bool = False
         # 关闭 WebDriver / Close WebDriver
         HTML2PDF_logger.info(local["HTML2PDF"]["info"]["closing"])
         driver.quit()
-        return 2
+        return 0
     except Exception as e:
         HTML2PDF_logger.error(local["HTML2PDF"]["error"]["unexpected_error_pdf"].format(e=e))
-        return 3
+        return 15
 
 
 #################################
 
-def aio(ori_html_path: str, html_utf8_path: str, html_utf8_local_path: str, pdf_path: str, wait: bool, wait_time: int):
+def aio(ori_html_path: str,
+        html_utf8_path: str,
+        html_utf8_local_path: str,
+        pdf_path: str,
+        wait: bool,
+        wait_time: int) -> int | None:
     """
-    上面的函数三合一
-    All-In-One
+    转换编码 + 替换内容 + 输出 PDF
+    Convert encoding + replace content + output PDF
 
     Args:
         ori_html_path: 输入 HTML 文件路径 / Input HTML file path
@@ -177,18 +185,26 @@ def aio(ori_html_path: str, html_utf8_path: str, html_utf8_local_path: str, pdf_
         wait_time: 等待时间 / Waiting time
 
     Returns:
-        None
+        错误码 / Error codes
     """
     try:
         HTML2PDF_logger.info(local["HTML2PDF"]["info"]["aio_conv"].format(file=ori_html_path))
-        conv_html_enc(ori_html_path, html_utf8_path)
-        replace_content(html_utf8_path, html_utf8_local_path)
-        success = output_pdf(html_utf8_local_path, pdf_path, wait_time, wait)
-        if success == 1:
-            HTML2PDF_logger.error(local["HTML2PDF"]["error"]["aio_no_driver"])
-        elif success == 2:
+
+        conv_flag = conv_html_enc(ori_html_path, html_utf8_path)
+        if conv_flag != 0:
+            return conv_flag
+        
+        repl_flag = replace_content(html_utf8_path, html_utf8_local_path)
+        if repl_flag != 0:
+            return repl_flag
+        
+        output_flag = output_pdf(html_utf8_local_path, pdf_path, wait_time, wait)
+        if output_flag != 0:
+            return output_flag
+        else:
             HTML2PDF_logger.info(local["HTML2PDF"]["info"]["aio_success"].format(file=pdf_path))
-        elif success == 3:
-            HTML2PDF_logger.error(local["HTML2PDF"]["info"]["aio_fail"].format(file=ori_html_path))
+            return 0
+
     except Exception as e:
         HTML2PDF_logger.error(local["HTML2PDF"]["info"]["unexpected_error_aio"].format(e=e))
+        return 16
