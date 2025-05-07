@@ -21,3 +21,5 @@ RUN.bat
 /scripts/__pycache__/
 /Logs/
 /models_hf
+*.gguf
+*.onnx
