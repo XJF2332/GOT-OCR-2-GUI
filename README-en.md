@@ -5,7 +5,9 @@
 ![img.png](img.png)
 
 Logs are localized, but there are too many keys, it's hard for me to check if there are any missing keys. If you
-Encountered KeyErrors, please report an Issue.
+Encountered KeyErrors, please report an Issu
+
+Support for CLI has been stopped, I may update it if I'd like to, I don't have much time developing it.
 
 ## About this project
 
