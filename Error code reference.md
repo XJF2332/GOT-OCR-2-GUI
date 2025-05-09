@@ -7,6 +7,7 @@
 | 4                | 替换 HTML 内容时未找到 utf8_path / utf8_path not found while replacing contents of the HTML |
 | 5                | HTML 内容替换失败 / Failed to replace HTML content                                        |
 | 9                | 未找到 WebDriver / WebDriver not found                                                 |
+| 10               | 转换 HTML 编码时未找到源文件                                                                   |
 | 11               | HTML编码检测失败 / Failed to detect HTML encoding                                         |
 | 12               | 未知错误 / Unknown error                                                                |
 | 13               | 未知错误 / Unknown Error                                                                |

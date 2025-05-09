@@ -2,7 +2,8 @@
     "HTML2PDF": {
         "debug": {
             "enc_detect": "[conv_html_enc] Encoding detected: {encoding}",
-            "writing": "[output_pdf] Writing: {file}"
+            "writing": "[output_pdf] Writing: {file}",
+            "temp_file_deleted": "[aio] Temp files has been deleted"
         },
         "error": {
             "aio_fail": "[aio] Conversion failed: {file}",

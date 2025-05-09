@@ -1,18 +1,28 @@
 import os
+import shutil
+
+import send2trash
 from selenium import webdriver
 from selenium.webdriver.edge.service import Service
 from selenium.webdriver.edge.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import base64
-import time
 import charset_normalizer
-import re
-import shutil
 from scripts import local
 from scripts import scriptsLogger
+from scripts import ErrorCode
 
 #################################
 
 HTML2PDF_logger = scriptsLogger.getChild("HTML2PDF")
+
+CONFIG = {
+    "DRIVER_PATH": os.path.join("edge_driver", "msedgedriver.exe"),
+    "MATHJAX_URL": r"https://cdn.jsdelivr.net/npm/mathpix-markdown-it@1.3.6/es5/bundle.js",
+    "LOCAL_MATHJAX": "markdown-it.js"
+}
 
 #################################
 
@@ -30,6 +40,10 @@ def conv_html_enc(original_path: str, utf8_path: str) -> int:
     Returns:
         错误码 / Error codes
     """
+    if not os.path.exists(original_path):
+        HTML2PDF_logger.error(local["HTML2PDF"]["error"]["file_not_found"].format(file=original_path))
+        return ErrorCode.FILE_NOT_FOUND.value
+
     # 检测编码 / Detect encoding
     try:
         HTML2PDF_logger.info(local["HTML2PDF"]["info"]["reading_ori"].format(file=original_path))
@@ -77,15 +91,11 @@ def replace_content(utf8_path: str, utf8_local_path: str) -> int:
     try:
         HTML2PDF_logger.info(local["HTML2PDF"]["info"]["replacing"].format(file=utf8_path))
 
-        # 替换内容
-        pattern = r'https://cdn.jsdelivr.net/npm/mathpix-markdown-it@1.3.6/es5/bundle.js'
-        replacement = 'markdown-it.js'
-
         HTML2PDF_logger.debug(local["HTML2PDF"]["info"]["reading"].format(file=utf8_path))
         with open(utf8_path, 'r', encoding='utf-8') as file:
             content = file.read()
         # 替换
-        new_html_content = re.sub(pattern, replacement, content)
+        new_html_content = content.replace(CONFIG["MATHJAX_URL"], CONFIG["LOCAL_MATHJAX"])
         HTML2PDF_logger.debug(local["HTML2PDF"]["info"]["writing"].format(file=utf8_local_path))
         with open(utf8_local_path, 'w', encoding='utf-8') as file:
             file.write(new_html_content)
@@ -141,7 +151,9 @@ def output_pdf(html_path: str, pdf_path: str, wait_time: int, wait: bool = False
 
         # 确保页面已加载 / Ensure that page has been loaded
         if wait:
-            time.sleep(wait_time)
+            WebDriverWait(driver, wait_time).until(
+                EC.presence_of_element_located((By.TAG_NAME, 'body'))
+            )
 
         # 生成 PDF 文件 / Generate PDF file
         HTML2PDF_logger.info(local["HTML2PDF"]["info"]["generating"].format(file=pdf_file_path))
@@ -189,22 +201,31 @@ def aio(ori_html_path: str,
     """
     try:
         HTML2PDF_logger.info(local["HTML2PDF"]["info"]["aio_conv"].format(file=ori_html_path))
+        def cleanup_temp_files():
+            for path in [html_utf8_path, html_utf8_local_path]:
+                if os.path.exists(path):
+                    send2trash.send2trash(path)
+                    HTML2PDF_logger.debug(local["HTML2PDF"]["debug"]["temp_file_deleted"].format(file=path))
 
         conv_flag = conv_html_enc(ori_html_path, html_utf8_path)
-        if conv_flag != 0:
+        if conv_flag != ErrorCode.SUCCESS.value:
+            cleanup_temp_files()
             return conv_flag
-        
+
         repl_flag = replace_content(html_utf8_path, html_utf8_local_path)
-        if repl_flag != 0:
+        if repl_flag != ErrorCode.SUCCESS.value:
+            cleanup_temp_files()
             return repl_flag
-        
+
         output_flag = output_pdf(html_utf8_local_path, pdf_path, wait_time, wait)
-        if output_flag != 0:
+        if output_flag != ErrorCode.SUCCESS.value:
+            cleanup_temp_files()
             return output_flag
         else:
+            cleanup_temp_files()
             HTML2PDF_logger.info(local["HTML2PDF"]["info"]["aio_success"].format(file=pdf_path))
-            return 0
+            return ErrorCode.SUCCESS.value
 
     except Exception as e:
         HTML2PDF_logger.error(local["HTML2PDF"]["info"]["unexpected_error_aio"].format(e=e))
-        return 16
+        return ErrorCode.UNEXPECTED_AIO.value

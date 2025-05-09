@@ -2,7 +2,8 @@
     "HTML2PDF": {
         "debug": {
             "enc_detect": "[conv_html_enc] 编码检测结果：{encoding}",
-            "writing": "[output_pdf] 正在写入：{file}"
+            "writing": "[output_pdf] 正在写入：{file}",
+            "temp_file_deleted": "[aio] 临时文件已清理"
         },
         "error": {
             "aio_fail": "[aio] 转换失败：{file}",

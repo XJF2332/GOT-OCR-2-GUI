@@ -3,6 +3,7 @@ from datetime import datetime
 import os
 import json
 from time import sleep
+from enum import Enum
 
 ##########################
 
@@ -70,3 +71,16 @@ try:
         local = json.load(file)
 except FileNotFoundError:
     print(f"语言文件未找到 / Language file not found: {lang}")
+
+##########################
+
+
+class ErrorCode(Enum):
+    SUCCESS = 0
+    FILE_NOT_FOUND = 10
+    ENC_DETECT_FAIL = 11
+    ENC_CONVERT_FAIL = 12
+    REPLACEMENT_FAIL = 13
+    DRIVER_NOT_FOUND = 14
+    PDF_GENERATE_FAIL = 15
+    UNEXPECTED_AIO = 16
