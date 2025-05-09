@@ -8,14 +8,17 @@ from datetime import datetime
 from time import sleep
 
 import gradio as gr
+import torch
 from onnxruntime import get_available_providers
 from transformers import AutoModel, AutoTokenizer
 
 import scripts.PDFHandler as PDFHandler
 import scripts.PDFMerger as PDFMerger
 import scripts.TempCleaner as TempCleaner
+import scripts.NewRenderer as NewRenderer
 import scripts.got_cpp.got_ocr as got_cpp
 from scripts.OCRHandler import OCRHandler
+from scripts import ErrorCode
 
 ##########################
 
@@ -128,8 +131,9 @@ def load_model():
 # 卸载模型函数 / Unloading model function
 def unload_model():
     global ocr_handler
-    ocr_handler.safetensors_model = None
-    ocr_handler.safetensors_tokenizer = None
+    del ocr_handler.safetensors_model
+    del ocr_handler.safetensors_tokenizer
+    torch.cuda.empty_cache()
     logger.info(local['log']['info']['model_unloaded'])
     return local["info"]["model_not_loaded"]
 
@@ -264,7 +268,7 @@ def do_gguf_ocr(image_path):
 ##########################
 
 # 进行 OCR 识别 / Performing OCR recognition
-def ocr(image_path, fg_box_x1, fg_box_y1, fg_box_x2, fg_box_y2, mode, fg_color, pdf_conv_conf, temp_clean):
+def ocr(image_path: str, fg_box_x1, fg_box_y1, fg_box_x2, fg_box_y2, mode, fg_color, pdf_conv_conf, temp_clean: bool, use_new: bool, save_format: str):
     # 默认值 / Default value
     res = local["error"]["ocr_mode_none"]
 
@@ -285,8 +289,11 @@ def ocr(image_path, fg_box_x1, fg_box_y1, fg_box_x2, fg_box_y2, mode, fg_color, 
             res = ocr_handler.ocr_fg(image_path, fg_box_x1, fg_box_y1, fg_box_x2, fg_box_y2, mode, fg_color)
         elif mode in ocr_crop_modes:
             res = ocr_handler.ocr_crop(image_path, mode)
-        elif mode == "render":
+        elif mode == "render" and not use_new:
             res = ocr_handler.render_old(image_path=image_path, pdf_conv_conf=pdf_conv_conf, temp_clean=temp_clean)
+        elif mode == "render" and use_new:
+            tex_res = ocr_handler.ocr(image_path, mode="format")
+            res = NewRenderer.render(tex_res[0], output_format=save_format)
         # 处理返回值 / Processing the return value
         if res[1] == 0:
             logger.info(local['log']['info']['ocr_completed'])
@@ -295,8 +302,8 @@ def ocr(image_path, fg_box_x1, fg_box_y1, fg_box_x2, fg_box_y2, mode, fg_color, 
             logger.error(local['log']['error']['ocr_failed'].format(error=res[0], code=res[1]))
             return local["error"]["ocr_failed"].format(error=res[0], code=res[1])
     except Exception as e:
-        logger.error(local['log']['error']['ocr_failed'].format(error=e, code=16))
-        return local["error"]["ocr_failed"].format(error=e, code=16)
+        logger.error(local['log']['error']['ocr_failed'].format(error=e, code=ErrorCode.UNKNOWN.value))
+        return local["error"]["ocr_failed"].format(error=e, code=ErrorCode.UNKNOWN.value)
 
 
 ##########################
@@ -527,10 +534,8 @@ with gr.Blocks(theme=theme) as demo:
                     pdf_convert_confirm = gr.Checkbox(label=local["label"]["save_as_pdf"])
                     clean_temp_render = gr.Checkbox(label=local["label"]["clean_temp"])
                 gr.Markdown(local["label"]["new_render_settings"])
-                gr.Markdown(local["info"]["developing"])
-                use_new_render_mode = gr.Checkbox(label=local["label"]["use_new_render_mode"])
-                save_format = gr.Dropdown(choices=["DOCX", "Markdown", "Tex"], label=local["label"]["save_format"],
-                                          multiselect=True)
+                use_new_render_mode = gr.Checkbox(label=local["label"]["use_new_render_mode"], value=True)
+                save_format = gr.Dropdown(choices=["docx", "markdown", "tex", "pdf"], label=local["label"]["save_format"])
     # 指南选项卡 / Instructions tab
     with gr.Tab(local["tab"]["instructions"]):
         with open(os.path.join('Locales', 'gui', 'instructions', f'{lang}.md'), 'r', encoding='utf-8') as file:
@@ -543,7 +548,8 @@ with gr.Blocks(theme=theme) as demo:
     do_ocr.click(
         fn=ocr,
         inputs=[upload_img, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
-                fine_grained_box_y2, ocr_mode, fine_grained_color, pdf_convert_confirm, clean_temp_render],
+                fine_grained_box_y2, ocr_mode, fine_grained_color, pdf_convert_confirm, clean_temp_render,
+                use_new_render_mode, save_format],
         outputs=result
     )
 

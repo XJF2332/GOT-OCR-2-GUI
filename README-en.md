@@ -27,6 +27,7 @@ Click a star, please
 - [x] Support GGUF models, hoping to accelerate inference (Thank [issue #19](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/19) for helping)
 - [ ] Improve support for GGUF models
 - [ ] New render mode: optimize performance and support for more formats
+- [ ] Remove / hide old renderer
 
 ## How to use
 

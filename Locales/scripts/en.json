@@ -31,6 +31,20 @@
             "writing": "[replace_content] Writing: {file}"
         }
     },
+    "NewRenderer": {
+        "error": {
+            "invalid_out_format": "[render] Invalid output format: {format}",
+            "file_exists": "[render] File {path} already exists",
+            "pdflatex_error": "[render] LaTeX converting failed",
+            "pandoc_error": "[render] Pandoc converting failed"
+        },
+        "info": {
+            "pdf_converted": "[render] PDF saved to result\\output.pdf",
+            "markdown_converted": "[render] Markdown saved to result\\output.md",
+            "docx_converted": "[render] Docx saved to result\\output.docx",
+            "tex_converted": "[render] Tex saved to result\\output.tex"
+        }
+    },
     "OCRHandler": {
         "debug": {
             "current_ocr_box": "[ocr_fg] Current OCR box: {box}",

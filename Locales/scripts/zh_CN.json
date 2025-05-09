@@ -31,6 +31,20 @@
             "writing": "[replace_content] 正在写入：{file}"
         }
     },
+    "NewRenderer": {
+        "error": {
+            "invalid_out_format": "[render] 无效的输出格式：{format}",
+            "file_exists": "[render] 文件 {path} 已存在",
+            "pdflatex_error": "[render] LaTeX 转换失败",
+            "pandoc_error": "[render] Pandoc 转换失败"
+        },
+        "info": {
+            "pdf_converted": "[render] PDF 文件已生成到result\\output.pdf",
+            "markdown_converted": "[render] Markdown 文件已生成到result\\output.md",
+            "docx_converted": "[render] Docx 文件已生成到result\\output.docx",
+            "tex_converted": "[render] Tex 文件已生成到result\\output.tex"
+        }
+    },
     "OCRHandler": {
         "debug": {
             "current_ocr_box": "[ocr_fg] 当前 OCR 框：{box}",

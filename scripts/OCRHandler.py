@@ -1,6 +1,7 @@
 from scripts import local, scriptsLogger
 from scripts import Renderer
 from scripts import TempCleaner
+from scripts import ErrorCode
 from time import sleep
 import os
 import json
@@ -51,7 +52,7 @@ class OCRHandler:
         tokenizer = self.safetensors_tokenizer if tokenizer is None else tokenizer
         if image_path is None or model is None or tokenizer is None:
             OCRHandler_logger.error(local['OCRHandler']['error']['no_model_img'])
-            return local['OCRHandler']['error']['no_model_img'], 19
+            return local['OCRHandler']['error']['no_model_img'], ErrorCode.NO_MODEL_IMG.value
         OCRHandler_logger.debug(local['OCRHandler']['debug']['params'].format(params=str(locals())))
 
         try:
@@ -64,10 +65,10 @@ class OCRHandler:
             else:
                 OCRHandler_logger.error(local['OCRHandler']['error']['invalid_mode'].format(mode=mode))
                 res = local['OCRHandler']['error']['invalid_mode'].format(mode=mode)
-                return res, 20
+                return res, ErrorCode.INVALID_OCR_MODE.value
         except Exception as e:
             OCRHandler_logger.error(local['OCRHandler']['error']['ocr_fail'].format(error=str(e)))
-            return local['OCRHandler']['error']['ocr_fail'].format(error=str(e)), 16
+            return local['OCRHandler']['error']['ocr_fail'].format(error=str(e)), ErrorCode.UNKNOWN.value
 
 
     def render_old(self,
@@ -101,7 +102,7 @@ class OCRHandler:
         tokenizer = self.safetensors_tokenizer if tokenizer is None else tokenizer
         if model is None or tokenizer is None or image_path is None:
             OCRHandler_logger.error(local['OCRHandler']['error']['no_model_img_render_old'])
-            return local['OCRHandler']['error']['no_model_img_render_old'], 19
+            return local['OCRHandler']['error']['no_model_img_render_old'], ErrorCode.NO_MODEL_IMG.value
 
         OCRHandler_logger.debug(local['OCRHandler']['debug']['params_render_old'].format(params=str(locals())))
 
@@ -132,10 +133,10 @@ class OCRHandler:
             else:
                 OCRHandler_logger.error(local['OCRHandler']['error']['render_fail'].format(img=image_basename, code=render_status))
                 res = local["OCRHandler"]["error"]["render_fail"].format(img=image_basename, code=render_status)
-                return res, 17
+                return res, ErrorCode.SEE_ANOTHER.value
         except Exception as e:
             OCRHandler_logger.error(local['OCRHandler']['error']['render_fail_unexpected'].format(img=image_basename, error=str(e)))
-            return local["OCRHandler"]["error"]["render_fail_unexpected"].format(img=image_basename, error=str(e)), 16
+            return local["OCRHandler"]["error"]["render_fail_unexpected"].format(img=image_basename, error=str(e)), ErrorCode.UNKNOWN.value
 
     def ocr_fg(self,
                image_path:str = None,
@@ -172,7 +173,7 @@ class OCRHandler:
         tokenizer = self.safetensors_tokenizer if tokenizer is None else tokenizer
         if model is None or tokenizer is None or image_path is None:
             OCRHandler_logger.error(local['OCRHandler']['error']['no_model_img_fg'])
-            return local['OCRHandler']['error']['no_model_img_fg'], 19
+            return local['OCRHandler']['error']['no_model_img_fg'], ErrorCode.NO_MODEL_IMG.value
 
         OCRHandler_logger.debug(local['OCRHandler']['debug']['params_fg'].format(params=str(locals())))
 
@@ -199,7 +200,7 @@ class OCRHandler:
         else:
             OCRHandler_logger.error(local['OCRHandler']['error']['invalid_mode_fg'].format(mode=mode))
             res = local["OCRHandler"]["error"]["invalid_mode_fg"].format(mode=mode)
-            return res, 18
+            return res, ErrorCode.INVALID_OCR_MODE.value
 
     def ocr_crop(self,
                  image_path:str = None,
@@ -229,7 +230,7 @@ class OCRHandler:
         if model is None or tokenizer is None or image_path is None:
             OCRHandler_logger.error(local["OCRHandler"]["error"]["no_model_crop"])
             res = local["OCRHandler"]["error"]["no_model_crop"]
-            return res, 19
+            return res, ErrorCode.NO_MODEL_IMG.value
 
         OCRHandler_logger.debug(local['OCRHandler']['debug']['params_crop'].format(params=str(locals())))
 
@@ -243,7 +244,7 @@ class OCRHandler:
             else:
                 OCRHandler_logger.error(local["OCRHandler"]["error"]["invalid_mode_crop"].format(mode=mode))
                 res = local["OCRHandler"]["error"]["invalid_mode_crop"].format(mode=mode)
-                return res, 18
+                return res, ErrorCode.INVALID_OCR_MODE.value
         except Exception as e:
             OCRHandler_logger.error(local['OCRHandler']['error']['crop_ocr_fail'].format(error=str(e)))
-            return local["OCRHandler"]["error"]["crop_ocr_fail"].format(error=str(e)), 16
+            return local["OCRHandler"]["error"]["crop_ocr_fail"].format(error=str(e)), ErrorCode.UNKNOWN.value

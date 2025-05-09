@@ -25,3 +25,4 @@ RUN.bat
 *.gguf
 *.onnx
 /.vscode
+*.docx

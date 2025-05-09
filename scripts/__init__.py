@@ -77,6 +77,8 @@ except FileNotFoundError:
 
 class ErrorCode(Enum):
     SUCCESS = 0
+    UNKNOWN = 1
+    NO_MODEL_IMG = 2
     FILE_NOT_FOUND = 10
     ENC_DETECT_FAIL = 11
     ENC_CONVERT_FAIL = 12
@@ -84,3 +86,9 @@ class ErrorCode(Enum):
     DRIVER_NOT_FOUND = 14
     PDF_GENERATE_FAIL = 15
     UNEXPECTED_AIO = 16
+    SEE_ANOTHER = 17
+    INVALID_OCR_MODE = 20
+    INVALID_OUTPUT_FORMAT = 21
+    FILE_EXISTS = 22
+    PDFLATEX_ERROR = 23
+    PANDOC_ERROR = 24
