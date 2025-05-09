@@ -88,7 +88,7 @@ def get_png_seq(directory: str, prefix: str):
         def extract_int(filename):
             # 去掉扩展名 .png 和前缀 / Remove .png and the prefix
             number_part = os.path.basename(filename).replace(f"{prefix}_", "").replace(".png", "")
-            PDFHandler_logger.debug(local["PDFHandler"]["debug"]["number"].forma(num=number_part))
+            PDFHandler_logger.debug(local["PDFHandler"]["debug"]["number"].format(num=number_part))
             return int(number_part)
 
         # 按整数大小排序文件列表
