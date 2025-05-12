@@ -268,7 +268,8 @@ def do_gguf_ocr(image_path):
 ##########################
 
 # 进行 OCR 识别 / Performing OCR recognition
-def ocr(image_path: str, fg_box_x1, fg_box_y1, fg_box_x2, fg_box_y2, mode, fg_color, pdf_conv_conf, temp_clean: bool, use_new: bool, save_format: str):
+def ocr(image_path: str, fg_box_x1, fg_box_y1, fg_box_x2, fg_box_y2, mode, fg_color,
+        pdf_conv_conf, temp_clean: bool, use_new: bool, save_format: str):
     # 默认值 / Default value
     res = local["error"]["ocr_mode_none"]
 
@@ -290,7 +291,7 @@ def ocr(image_path: str, fg_box_x1, fg_box_y1, fg_box_x2, fg_box_y2, mode, fg_co
         elif mode in ocr_crop_modes:
             res = ocr_handler.ocr_crop(image_path, mode)
         elif mode == "render" and not use_new:
-            res = ocr_handler.render_old(image_path=image_path, pdf_conv_conf=pdf_conv_conf, temp_clean=temp_clean)
+            res = ocr_handler.render_old(image_path=image_path)
         elif mode == "render" and use_new:
             tex_res = ocr_handler.ocr(image_path, mode="format")
             res = NewRenderer.render(tex_res[0], output_format=save_format)
@@ -321,28 +322,25 @@ def pdf_ocr(mode, pdf, target_dpi, pdf_convert, pdf_merge, temp_clean):
     if mode == "split-to-image":
         logger.debug(local['log']['debug']['pdf_mode_split'])
         logger.info(local['log']['info']['pdf_splitting_started'])
-        success = PDFHandler.split_pdf(pdf_path=pdf, img_path="imgs", target_dpi=target_dpi)
-        if success:
+        stat = PDFHandler.split_pdf(pdf_path=pdf, img_path="imgs", target_dpi=target_dpi)
+        if stat == 0:
             logger.info(local['log']['info']['pdf_split_success'])
-            gr.Info(message=local["info"]["pdf_split_success"].format(pdf_file=pdf_name))
+            gr.Info(message=local["info"]["pdf_split_success"])
         else:
             logger.error(local["log"]["error"]["pdf_split_fail"])
-            raise gr.Error(duration=0, message=local["error"]["pdf_split_fail"].format(pdf_file=pdf_name))
+            raise gr.Error(duration=0, message=local["error"]["pdf_split_fail"])
     # ---------------------------------- #
     # 渲染模式 / Render mode
     elif mode == "render":
+        # 先记录 / Log first
         logger.debug(local['log']['debug']['pdf_mode_render'])
         logger.info(local["log"]["info"]["pdf_render_started"].format(pdf=pdf_name))
         gr.Info(message=local["info"]["pdf_render_start"].format(pdf_file=pdf_name))
-        success = PDFHandler.pdf_renderer(model=model,
-                                          tokenizer=tokenizer,
-                                          pdf_path=pdf,
-                                          dpi=target_dpi,
-                                          pdf_conv=pdf_convert,
-                                          wait=config["pdf_render_wait"],
-                                          time=config["pdf_render_wait_time"])
+        # 开始渲染 / Rendering started
+        stat = PDFHandler.pdf_renderer(model=model, tokenizer=tokenizer,
+                                          pdf_path=pdf, dpi=target_dpi)
         # 渲染成功判定 / Rendering success determination
-        if success:
+        if stat == 0:
             logger.info(local["log"]["info"]["pdf_render_success"].format(pdf=pdf_name))
             gr.Info(message=local["info"]["pdf_render_success"].format(pdf_file=pdf_name))
             # 自动合并 / Auto merge
@@ -352,9 +350,9 @@ def pdf_ocr(mode, pdf, target_dpi, pdf_convert, pdf_merge, temp_clean):
             if pdf_merge:  # 决定是否要合并 / Deciding whether to merge or not
                 logger.info(local["log"]["info"]["pdf_merge_started"].format(pdf=pdf_name))
                 gr.Info(message=local["info"]["pdf_merge_start"].format(pdf_file=pdf_name))
-                success = PDFMerger.merge_pdfs(prefix=extract_pdf_pattern(pattern_pdf))
+                stat = PDFMerger.merge_pdfs(prefix=extract_pdf_pattern(pattern_pdf))
                 # 合并成功判定 / Merging success determination
-                if success:
+                if stat:
                     logger.info(local["log"]["info"]["pdf_merge_success"].format(pdf=pdf_name))
                     gr.Info(message=local["info"]["pdf_merge_success"].format(pdf_file=pdf_name))
                     # 合并成功，清理临时文件 / Merged successfully, cleaning up temporary files
@@ -369,18 +367,23 @@ def pdf_ocr(mode, pdf, target_dpi, pdf_convert, pdf_merge, temp_clean):
             else:  # 不合并 / Not merging
                 logger.info(local['log']['info']['merge_skipped'].format(name=pdf_name))
                 gr.Info(message=local["info_pdf_merge_skip"].format(pdf_file=pdf_name))
-        else:  # 渲染失败 / Failed to render
+        # 渲染失败 / Rendering failed
+        elif stat == ErrorCode.EMPTY_SEQ.value:
+            logger.error(local['log']['error']['empty_seq'])
+            raise gr.Error(duration=0, message=local["error"]["empty_Seq"])
+        else:
             logger.error(local['log']['error']['pdf_render_failed'].format(name=pdf_name))
-            raise gr.Error(duration=0, message=local["error"]["pdf_render_fail"].format(pdf_file=pdf_name))
+            raise gr.Error(duration=0,
+                           message=local["error"]["pdf_render_failed"].format(name=pdf_name))
     # ---------------------------------- #
     # 合并模式 / Merging mode
     elif mode == "merge":
         logger.debug(local['log']['debug']['pdf_mode_merge'])
         gr.Info(message=local["info"]["pdf_merge_start"].format(pdf_file=pdf_name))
         prefix = extract_pdf_pattern(pdf_name)
-        success = PDFMerger.merge_pdfs(prefix=prefix)
+        stat = PDFMerger.merge_pdfs(prefix=prefix)
         # 合并成功判定 / Merging success determination
-        if success:
+        if stat:
             logger.info(local["log"]["info"]["pdf_merge_success"].format(pdf=pdf_name))
             gr.Info(message=local["info"]["pdf_merge_success"].format(pdf_file=pdf_name))
             if temp_clean:

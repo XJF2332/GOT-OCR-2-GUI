@@ -10,6 +10,7 @@
         "unload_model": "卸载模型"
     },
     "error": {
+        "empty_seq": "图像序列为空，无法渲染",
         "gguf_model_load_failed": "加载 GGUF 模型失败",
         "gguf_model_unload_failed": "卸载 GGUF 模型失败",
         "no_model_or_img": "未加载模型或未上传图片",
@@ -18,7 +19,7 @@
         "ocr_mode_none": "未选择 OCR 模式",
         "pdf_filename_format_error": "文件名不满足格式 <string>_0.pdf",
         "pdf_merge_fail": "{pdf_file} 合并失败",
-        "pdf_render_fail": "{pdf_file} 渲染失败",
+        "pdf_render_failed": "{pdf_file} 渲染失败",
         "pdf_split_fail": "{pdf_file} 分割失败",
         "render_fail": "{img_file} 渲染失败，错误码：{code}",
         "render_failed": "渲染失败，意料之外的错误：{error}",
@@ -90,6 +91,7 @@
             "save_pdf_checkbox_enabled": "[update_pdf_conv_conf_visibility] 保存 PDF 勾选框已启用（ PDF 标签页）"
         },
         "error": {
+            "empty_seq": "[pdf_ocr] 图像序列为空，无法渲染",
             "gguf_model_load_failed": "[gguf_model_load] 加载 GGUF 模型失败",
             "gguf_model_unload_failed": "[gguf_model_unload] 卸载 GGUF 模型失败",
             "no_model_or_img": "[ocr] 没有加载模型或上传图片",

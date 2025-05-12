@@ -77,11 +77,13 @@ except FileNotFoundError:
 
 class ErrorCode(Enum):
     SUCCESS = 0
-    UNKNOWN = 1
-    NO_MODEL_IMG = 2
-    FILE_NOT_FOUND = 10
-    ENC_DETECT_FAIL = 11
-    ENC_CONVERT_FAIL = 12
+    UNKNOWN = 1 # 未知错误
+    NO_MODEL_IMG = 2 # 未加载模型或未上传图像
+    PDF_SPLIT_FAIL = 3 # PDF 分割失败
+    EMPTY_SEQ = 4 # PDF 渲染时遇到了空图像序列
+    FILE_NOT_FOUND = 10 # 文件未找到
+    ENC_DETECT_FAIL = 11 # 编码检测失败
+    ENC_CONVERT_FAIL = 12 # 编码转换失败
     REPLACEMENT_FAIL = 13
     DRIVER_NOT_FOUND = 14
     PDF_GENERATE_FAIL = 15

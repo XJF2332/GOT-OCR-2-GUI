@@ -71,6 +71,7 @@
         },
         "info": {
             "render_completed": "[render_old] 渲染完成",
+            "render_started": "[render_old] 渲染开始",
             "temp_cleaning": "[render_old] 正在清理临时文件",
             "temp_cleaning_skipped": "[render_old] 跳过清理临时文件"
         }

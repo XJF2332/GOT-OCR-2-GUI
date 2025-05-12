@@ -30,24 +30,26 @@
 
 - Suitable for more complex images
 
-### `Render` Mode
+### Render Mode
 
 - Exist files will be overwritten!!!Check the file path before clicking the button!!!
 - Render OCR content and save it as an HTML file
 - Will be saved as UTF8 encoding and GB2312 encoding files
-- You can convert HTML to PDF
+- ~~You can convert HTML to PDF~~ Deprecated
 
-### **How to render**
+### Render Mode (New)
 
-1. Input image name in the text box, this will become the base name of the output files
-2. You will find that three textboxes below changed, which means the name has been applied
-3. Click the "Save as PDF" button to save the HTML file as a PDF file
+Modified the rendering algorithm, and it is different from the official implementation. The new algorithm is based on `pandoc` and `tex`, while the old one is based on `selenium`.
+
+Because the browser, Edge updates, and WebDriver needs to be updated with each update, it is complex and difficult to maintain. So I deprecated it, only the official implementation that saves as HTML is available.
+
+Select "Use New Render Mode" in the Settings tab and choose the format you want to output.
 
 ## **Renderer Tab**
 
 - Enter the folder where you want to batch render images.
 - The renderer will detect `.jpg` and `.png` files in the folder.
-- You can choose whether to convert HTML files to PDF (by default, it will convert).
+- ~~You can choose whether to convert HTML files to PDF (by default, it will convert).~~ Also deprecated.
 - Click the batch render button, and you will find the rendered files in the `result` folder.
 
 ## **PDF Tab**
@@ -66,10 +68,10 @@
   images
 - The batch rendering in the renderer does not distinguish which images are from the PDF and which are not, but the
   `render` mode here can
-- When you choose the `render` mode, you will see an additional checkbox, if you check `Save as PDF`, there will be an
-  additional `Merge PDF`
-- If you do not check `Merge PDF`, each page will be rendered into a PDF file, with the file name following the naming
-  rule of `{PDF Name}_{Page Number (starting from 0)}.pdf`
+- ~~When you choose the `render` mode, you will see an additional checkbox, if you check `Save as PDF`, there will be an
+  additional `Merge PDF`~~ Also deprecated.
+-~~ If you do not check `Merge PDF`, each page will be rendered into a PDF file, with the file name following the naming
+  rule of `{PDF Name}_{Page Number (starting from 0)}.pdf`~~  Also deprecated.
 - In any case, the rendering results are in the `result` folder
 
 ### `merge` Mode
@@ -77,7 +79,19 @@
 - Upload the first page of the PDF sequence ({PDF Name}_0.pdf)
 - Then the program will merge all pages into a single PDF
 
+## **GGUF Tab**
+
+Developing
+
+- Only supported on Windows
+- GGUF models and official Safetensors models are independent, you need to load the GGUF model to work. To save memory, it is recommended to unload the Safetensors model first.
+- The operation method and the OCR tab are similar, but the mode selecting is not supported here for now.
+
+## **Settings Tab**
+
+- You can set the `fine-grained` mode's box coordinates and box colors here
+- Render Mode settings have been deprecated and will not have any effect. To modify, please use Render Mode Settings (New)
+
 ## **Instructions Tab**
 
 - You are now looking at the Instructions tab (≧∀≦)ゞ
-

@@ -71,32 +71,32 @@ class OCRHandler:
             return local['OCRHandler']['error']['ocr_fail'].format(error=str(e)), ErrorCode.UNKNOWN.value
 
 
-    def render_old(self,
-                   image_path:str = None,
-                   pdf_conv_conf:bool = False,
-                   temp_clean:bool = True,
-                   model:object = None,
+    def render_old(self, image_path:str = None, pdf_conv_conf:bool = False,
+                   temp_clean:bool = True, model:object = None,
                    tokenizer:object = None) -> tuple[str,int]:
         """
         渲染模式（旧版）
-        渲染一张图片，可保存为PDF，使用selenium
+        渲染一张图片，不可转换成 PDF
         如果未提供模型，则默认使用类的模型
         Render mode (old)
-        Render one image, able to save as PDF, using selenium
+        Render one image, can not convert to PDF
+        If no model provided, model in this class will be used instead
 
-        Args:
-            image_path: 输入图像路径 / Input image path
-            pdf_conv_conf: 是否保存为 PDF / Whether to save as PDF
-            temp_clean: 是否清理临时文件 / Whether to clean temp files
-            model: 模型（safetensors） / Model (safetensors)
-            tokenizer: Tokenizer (safetensors)
+        
+        :param image_path: 输入图像路径 / Input image path
+        :param pdf_conv_conf: [DEPR] 是否保存为 PDF / Whether to save as PDF
+        :param temp_clean: [DEPR] 是否清理临时文件 / Whether to clean temp files
+        :param model: 模型（safetensors） / Model (safetensors)
+        :param tokenizer: Tokenizer (safetensors)
 
         Returns:
-            一个元组，第一项是结果，第二项是错误码
-            如果成功，则第二项为 0
-            A tuple, the first one is the result, the second one is the error code
-            If succeeded, the second one will be 0
+            一个元组，第一项是结果，第二项是错误码；
+            如果成功，则第二项为 0。
+            A tuple, the first one is the result, the second one is the error code;
+            If succeeded, the second one will be 0.
         """
+        OCRHandler_logger.info(local["OCRHandler"]["info"]["render_started"])
+
         # 检查模型和图片是否有效
         model = self.safetensors_model if model is None else model
         tokenizer = self.safetensors_tokenizer if tokenizer is None else tokenizer
@@ -104,49 +104,42 @@ class OCRHandler:
             OCRHandler_logger.error(local['OCRHandler']['error']['no_model_img_render_old'])
             return local['OCRHandler']['error']['no_model_img_render_old'], ErrorCode.NO_MODEL_IMG.value
 
-        OCRHandler_logger.debug(local['OCRHandler']['debug']['params_render_old'].format(params=str(locals())))
-
         image_basename = os.path.basename(image_path)
+
+        # 渲染
         try:
-            OCRHandler_logger.debug(local['OCRHandler']['debug']['got_img_name'].format(img_name=image_basename))
-            render_status = Renderer.render(model=model,
-                                            tokenizer=tokenizer,
-                                            img_path=image_path,
-                                            conv_to_pdf=pdf_conv_conf,
-                                            wait=config["pdf_render_wait"],
-                                            time=config["pdf_render_wait_time"])
+            render_status = Renderer.render(model=model, tokenizer=tokenizer, img_path=image_path)
             if render_status == 0:
                 OCRHandler_logger.info(local['OCRHandler']['info']['render_completed'])
-                if temp_clean and pdf_conv_conf:
-                    OCRHandler_logger.info(local['OCRHandler']['info']['temp_cleaning'])
-                    TempCleaner.cleaner(["result"],
-                                        [f"{os.path.splitext(image_basename)[0]}-gb2312.html",
-                                         f"{os.path.splitext(image_basename)[0]}-utf8.html",
-                                         f"{os.path.splitext(image_basename)[0]}-utf8-local.html"])
-                if temp_clean and not pdf_conv_conf:
-                    OCRHandler_logger.info(local['OCRHandler']['info']['temp_cleaning'])
-                    TempCleaner.cleaner(["result"], [f"{os.path.splitext(image_basename)[0]}-gb2312.html"])
-                else:
-                    OCRHandler_logger.info(local['OCRHandler']['info']['temp_cleaning_skipped'])
-                res = local["OCRHandler"]["info"]["render_completed"].format(img_file=image_basename)
+                # if temp_clean and pdf_conv_conf:
+                #     OCRHandler_logger.info(local['OCRHandler']['info']['temp_cleaning'])
+                #     TempCleaner.cleaner(["result"],
+                #                         [f"{os.path.splitext(image_basename)[0]}-gb2312.html",
+                #                          f"{os.path.splitext(image_basename)[0]}-utf8.html",
+                #                          f"{os.path.splitext(image_basename)[0]}-utf8-local.html"])
+                # if temp_clean and not pdf_conv_conf:
+                #     OCRHandler_logger.info(local['OCRHandler']['info']['temp_cleaning'])
+                #     TempCleaner.cleaner(["result"], [f"{os.path.splitext(image_basename)[0]}-gb2312.html"])
+                # else:
+                #     OCRHandler_logger.info(local['OCRHandler']['info']['temp_cleaning_skipped'])
+                res = local["OCRHandler"]["info"]["render_completed"]
                 return res, 0
             else:
-                OCRHandler_logger.error(local['OCRHandler']['error']['render_fail'].format(img=image_basename, code=render_status))
-                res = local["OCRHandler"]["error"]["render_fail"].format(img=image_basename, code=render_status)
-                return res, ErrorCode.SEE_ANOTHER.value
+                OCRHandler_logger.error(local['OCRHandler']['error']['render_fail'].format(
+                    img=image_basename, code=render_status))
+                res = local["OCRHandler"]["error"]["render_fail"].format(
+                    img=image_basename, code=render_status)
+                return res, render_status
         except Exception as e:
-            OCRHandler_logger.error(local['OCRHandler']['error']['render_fail_unexpected'].format(img=image_basename, error=str(e)))
-            return local["OCRHandler"]["error"]["render_fail_unexpected"].format(img=image_basename, error=str(e)), ErrorCode.UNKNOWN.value
+            OCRHandler_logger.error(
+                local['OCRHandler']['error']['render_fail_unexpected'].format(
+                img=image_basename, error=str(e)))
+            return local["OCRHandler"]["error"]["render_fail_unexpected"].format(
+                img=image_basename, error=str(e)), ErrorCode.UNKNOWN.value
 
-    def ocr_fg(self,
-               image_path:str = None,
-               fg_box_x1:int = 0,
-               fg_box_y1:int = 0,
-               fg_box_x2:int = 0,
-               fg_box_y2:int = 0,
-               mode:str = None,
-               fg_color:str = "red",
-               model:object = None,
+    def ocr_fg(self, image_path:str = None, fg_box_x1:int = 0, fg_box_y1:int = 0,
+               fg_box_x2:int = 0, fg_box_y2:int = 0, mode:str = None,
+               fg_color:str = "red", model:object = None,
                tokenizer:object = None) -> tuple[str, int]:
         """
         指定区域的 OCR 识别

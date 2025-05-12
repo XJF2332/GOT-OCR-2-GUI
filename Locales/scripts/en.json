@@ -71,6 +71,7 @@
         },
         "info": {
             "render_completed": "[render_old] Render completed",
+            "render_started": "[render_old] Render started",
             "temp_cleaning": "[render_old] Cleaning temp files",
             "temp_cleaning_skipped": "[render_old] Temp file cleaning skipped"
         }

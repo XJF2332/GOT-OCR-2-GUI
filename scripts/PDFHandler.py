@@ -2,7 +2,7 @@ import fitz
 import os
 import glob
 import scripts.Renderer as Renderer
-from scripts import scriptsLogger, local
+from scripts import scriptsLogger, local, ErrorCode
 
 #################################
 
@@ -19,17 +19,16 @@ def remove_extension(base_name):
 
 #################################
 
-def split_pdf(pdf_path: str, img_path: str, target_dpi: int) -> bool:
+def split_pdf(pdf_path: str, img_path: str, target_dpi: int) -> int:
     """
     将 PDF 文件的每一页都拆成独立的图片文件
     Split every page in the input PDF file into images
 
-    Args:
-        pdf_path (str): PDF 文件路径 / PDF to be split
-        img_path (str): 保存 PNG 图像文件的目录路径 / Path to save images
-        target_dpi (int): 分割 PDF 时使用的 DPI / DPI used while splitting PDFs
-    Returns:
-        bool: 操作是否成功 / Succeeded or not
+    :param pdf_path (str): PDF 文件路径 / PDF to be split
+    :param img_path (str): 保存 PNG 图像文件的目录路径 / Path to save images
+    :param target_dpi (int): 分割 PDF 时使用的 DPI / DPI used while splitting PDFs
+
+    :return 状态码 / Status
     """
     try:
         if not os.path.exists(img_path):
@@ -39,7 +38,6 @@ def split_pdf(pdf_path: str, img_path: str, target_dpi: int) -> bool:
         doc = fitz.open(pdf_path)
 
         pdf_path_base = remove_extension(get_base_name(pdf_path))
-        PDFHandler_logger.debug(local["PDFHandler"]["debug"]["got_pdf_name"])
 
         for page_number in range(len(doc)):
             zoom = target_dpi / 72.0
@@ -57,10 +55,10 @@ def split_pdf(pdf_path: str, img_path: str, target_dpi: int) -> bool:
 
         PDFHandler_logger.info(local["PDFHandler"]["info"]["conv_complete"])
         doc.close()
-        return True
+        return 0
     except Exception as e:
         PDFHandler_logger.error(local["PDFHandler"]["info"]["conv_fail"].format(error=str(e)))
-        return False
+        return ErrorCode.PDF_SPLIT_FAIL.value
 
 #################################
 
@@ -100,22 +98,21 @@ def get_png_seq(directory: str, prefix: str):
 
 #################################
 
-def pdf_renderer(model: object, tokenizer: object, pdf_path: str, dpi: int, pdf_conv: bool, wait: bool,
-                 time: int):
+def pdf_renderer(model: object, tokenizer: object, pdf_path: str, dpi: int,
+                 pdf_conv: bool = False, wait: bool = False, time: int = 0) -> int:
     """
     将 PDF 文件转换为图片，并调用渲染器进行渲染
     wait 这个参数说是等待浏览器渲染，但我测试没有发现浏览器没有渲染就被转 PDF 的现象，所以不等大概率也是没问题的
     Split PDF into images and render them using the renderer
     the param "wait" was said to wait your browser to fully render the HTML, but I did not find not-rendered PDF, so it's possibly safe not to wait
 
-    Args:
-        model (object): 模型对象 / Your loaded model
-        tokenizer (object): 分词器对象 / Your loaded tokenizer
-        pdf_path (str): PDF 文件路径 / PDF file path
-        dpi (int): 分割 PDF 时使用的 DPI / DPI used when splitting PDF
-        pdf_conv (bool): 是否将渲染结果转换为 PDF / Whether to convert render results into PDF
-        wait (bool): 是否等待浏览器渲染 / Whether to wait the browser to render
-        time (int): 等待时间
+    :param model (object): 模型对象 / Your loaded model
+    :param tokenizer (object): 分词器对象 / Your loaded tokenizer
+    :param pdf_path (str): PDF 文件路径 / PDF file path
+    :param dpi (int): 分割 PDF 时使用的 DPI / DPI used when splitting PDF
+    :param pdf_conv (bool): [DEPR] 是否将渲染结果转换为 PDF / Whether to convert render results into PDF
+    :param wait (bool): [DEPR] 是否等待浏览器渲染 / Whether to wait the browser to render
+    :param time (int): [DEPR] 等待时间
     Returns:
         执行状态 / Status
     """
@@ -126,7 +123,7 @@ def pdf_renderer(model: object, tokenizer: object, pdf_path: str, dpi: int, pdf_
         os.makedirs("imgs")
 
     try:
-        re=False
+        res=1
         PDFHandler_logger.info(local["PDFHandler"]["info"]["rendering"].format(file=pdf_path))
         # 将 PDF 文件转换为图片 / Split PDFs into images
         split_pdf(pdf_path=pdf_path, img_path="imgs", target_dpi=dpi)
@@ -138,21 +135,19 @@ def pdf_renderer(model: object, tokenizer: object, pdf_path: str, dpi: int, pdf_
         PDFHandler_logger.debug(local["PDFHandler"]["debug"]["image_seq"].format(seq=img_list))
         if len(img_list) == 0:
             PDFHandler_logger.error(local["PDFHandler"]["error"]["empty_seq"])
-            return False
+            return ErrorCode.EMPTY_SEQ.value
         # 调用渲染器 / Use renderer
         for img in img_list:
             PDFHandler_logger.info(local["PDFHandler"]["info"]["rendering_img"].format(img=img))
-            success = Renderer.render(model=model, tokenizer=tokenizer, img_path=img, wait=wait, time=time, conv_to_pdf=pdf_conv)
-            if success == 1:
+            stat = Renderer.render(model=model, tokenizer=tokenizer, img_path=img)
+            if stat == 0:
                 PDFHandler_logger.info(local["PDFHandler"]["info"]["render_success"])
-                re = True
-            elif success == 2:
-                PDFHandler_logger.error(local["PDFHandler"]["error"]["no_model_or_pdf"])
-                re = False
-            elif success == 3:
+                res = 0
+            else:
                 PDFHandler_logger.error(local["PDFHandler"]["error"]["render_fail"])
-                re = False
-        return re
+                res = stat
+        return res
     except Exception as e:
-        PDFHandler_logger.error(local["PDFHandler"]["error"]["render_fail_unexp"].format(error=str(e)))
-        return False
+        PDFHandler_logger.error(
+            local["PDFHandler"]["error"]["render_fail_unexp"].format(error=str(e)))
+        return ErrorCode.UNKNOWN.value
