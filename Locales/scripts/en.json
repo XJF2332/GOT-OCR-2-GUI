@@ -35,8 +35,8 @@
         "error": {
             "invalid_out_format": "[render] Invalid output format: {format}",
             "file_exists": "[render] File {path} already exists",
-            "pdflatex_error": "[render] LaTeX converting failed",
-            "pandoc_error": "[render] Pandoc converting failed"
+            "pdflatex_error": "[render] LaTeX converting failed: {error}",
+            "pandoc_error": "[render] Pandoc converting failed: {error}"
         },
         "info": {
             "pdf_converted": "[render] PDF saved to result\\output.pdf",

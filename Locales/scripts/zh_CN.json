@@ -35,8 +35,8 @@
         "error": {
             "invalid_out_format": "[render] 无效的输出格式：{format}",
             "file_exists": "[render] 文件 {path} 已存在",
-            "pdflatex_error": "[render] LaTeX 转换失败",
-            "pandoc_error": "[render] Pandoc 转换失败"
+            "pdflatex_error": "[render] LaTeX 转换失败：{error}",
+            "pandoc_error": "[render] Pandoc 转换失败：{error}"
         },
         "info": {
             "pdf_converted": "[render] PDF 文件已生成到result\\output.pdf",

@@ -23,7 +23,3 @@ def complete_tex(input_content: str) -> str:
     )
 
     return full_tex
-
-if __name__ == '__main__':
-    # 示例用法
-    complete_tex('input.tex', 'output.tex')

@@ -294,7 +294,8 @@ def ocr(image_path: str, fg_box_x1, fg_box_y1, fg_box_x2, fg_box_y2, mode, fg_co
             res = ocr_handler.render_old(image_path=image_path)
         elif mode == "render" and use_new:
             tex_res = ocr_handler.ocr(image_path, mode="format")
-            res = NewRenderer.render(tex_res[0], output_format=save_format)
+            res = NewRenderer.render(tex_res[0], output_format=save_format,
+                                     output_name=os.path.splitext(os.path.basename(image_path))[0])
         # 处理返回值 / Processing the return value
         if res[1] == 0:
             logger.info(local['log']['info']['ocr_completed'])
