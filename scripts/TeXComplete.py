@@ -10,6 +10,14 @@ def complete_tex(input_content: str) -> str:
     # 仅转换title和author命令，保留其他LaTeX结构
     modified_content = fix_tex_formatting(input_content)
 
+    # 检测并补全abstract环境
+    begin_abstract = re.findall(r'\\begin{abstract}', modified_content)
+    end_abstract = re.findall(r'\\end{abstract}', modified_content)
+    if len(begin_abstract) > len(end_abstract):
+        # 计算需要补充的闭合标签数量
+        num_missing = len(begin_abstract) - len(end_abstract)
+        modified_content += '\n\\end{abstract}' * num_missing
+
     # 构建完整tex文档
     full_tex = (
         r'\documentclass{ctexart}' + '\n'
