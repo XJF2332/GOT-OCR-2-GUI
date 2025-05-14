@@ -7,14 +7,14 @@ import send2trash
 available_outputs = ["pdf", "markdown", "docx", "tex"]
 NewRendererLogger = scriptsLogger.getChild("NewRenderer")
 
-def render(raw_tex: str, output_format: str, output_name: str = "output") -> tuple:
+def render(raw_tex: str, output_format: str, output_name: str = "output") -> tuple[str, int]:
     """
     把tex文本转换成其他格式，保存到result文件夹
 
     :param raw_tex: 原始的tex文本
     :param output_format: 输出格式，支持"tex"、"pdf"、"markdown"、"docx"，只能选择一种
     :param output_name: 输出文件名
-    :return: 运行状态，成功则返回0
+    :return: 一个元组，第一个元素是转换结果，第二个元素是错误码
     """
     temp_files = []
     # 无效的输出格式

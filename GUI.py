@@ -110,6 +110,8 @@ ocr_handler = OCRHandler()
 ocr_modes = ["ocr", "format"]
 ocr_fg_modes = ["fine-grained-ocr", "fine-grained-format", "fine-grained-color-ocr", "fine-grained-color-format"]
 ocr_crop_modes = ["multi-crop-ocr", "multi-crop-format"]
+if not os.path.exists("result"):
+    os.makedirs("result")
 
 ##########################
 
@@ -403,22 +405,88 @@ def pdf_ocr(mode, pdf, target_dpi, pdf_convert, pdf_merge, temp_clean):
 
 ##########################
 
-# 渲染器 / Renderer
-def renderer(imgs_path, renderer_pdf_conv, renderer_clean_temp):
-    renderer_handler = ocr_handler()
-    # 获取图片文件列表 / Get a list of image files
-    image_files = glob.glob(os.path.join(imgs_path, '*.jpg')) + glob.glob(os.path.join(imgs_path, '*.png'))
-    logger.debug(local['log']['debug']['got_image_list'].format(list=image_files))
-    # 逐个发送图片给 renderer 的 render 函数 / Sending images one by one to the 'render' function of renderer
-    for image_path in image_files:
-        logger.info(local['log']['info']['renderer_started'].format(image=image_path))
-        render_res = renderer_handler.render_old(image_path = image_path,
-                                    pdf_conv_conf = renderer_pdf_conv,
-                                    temp_clean = renderer_clean_temp)
-        if render_res[1] == 0:
-            gr.Info(local["info"]["render_success"].format(img_file=os.path.basename(image_path)), duration=3)
-        else:
-            raise gr.Error(local["error"]["renderer_failed"].format(error=render_res[0]), duration=0)
+# 批处理
+def batch_job(folder_path: str, use_new: bool = True,
+              mode: str = "ocr", output_format: str = "tex"):
+    """
+    批处理
+
+    :param folder_path (str): 文件夹路径，将会从这里面搜索要处理的图片（jpg和png）
+    :param use_new (bool): 是否使用新渲染模式
+    :param mode (str): 模式，可选值有ocr、format、multi-crop-ocr、multi-crop-format、render
+    :param output_format (str): 输出格式，可选值和新渲染模式一样
+    """
+    image_files = glob.glob(os.path.join(folder_path, '*.jpg')) + glob.glob(
+        os.path.join(folder_path, '*.png'))
+    logger.debug(f"[batch_job] 图像列表：{image_files}")
+    logger.info(f"[batch_job] 批处理任务开始")
+    gr.Info(local["info"]["batch_job_started"])
+    # 非渲染模式做到一起
+    if mode != "render":
+        for image_path in image_files:
+            image_name = os.path.basename(image_path)
+            # 根据模式选择函数
+            if mode == "ocr" or mode =="format":
+                res = ocr_handler.ocr(image_path, mode)
+            else:
+                res = ocr_handler.ocr_crop(image_path, mode)
+            # 结果处理
+            if res[1] == 0:
+                logger.info(f"[batch_job] 正在写入 {image_name} 的 OCR 结果")
+                with open(os.path.join("result", f"{image_name}.txt"), "w", encoding="utf-8") as f:
+                    f.write(res[0])
+            else:
+                logger.error(f"[batch_job] 批处理失败，\n错误：{res[0]}，\n错误码：{res[1]}")
+                raise gr.Error(duration=0,
+                               message=local["error"]["error_with_error_code"].format(
+                                   error = res[0], code = res[1]))
+    else:
+        for image_path in image_files:
+            image_name = os.path.basename(image_path)
+            # 使用新渲染模式
+            if use_new:
+                format_res = ocr_handler.ocr(image_path, mode="format")
+                # 格式化OCR成功
+                if format_res[1] == 0:
+                    # 再用新渲染模式
+                    new_renderer_res = NewRenderer.render(
+                        raw_tex = format_res[0],
+                        output_format=output_format,
+                        output_name=os.path.splitext(image_name)[0]
+                    )
+                    # 新渲染成功
+                    if new_renderer_res[1] == 0:
+                        logger.info(f"[batch_job] {image_name} 渲染成功")
+                    # 新渲染失败
+                    else:
+                        logger.error(
+f"[batch_job] {image_name} 渲染失败，\n错误：{new_renderer_res[0]}，\n错误码：{new_renderer_res[1]}")
+                        raise gr.Error(
+                            duration=0,
+                            message=local["error"]["error_with_error_code"].format(
+                                error = new_renderer_res[0], code = new_renderer_res[1]
+                            )
+                        )
+                # 格式化OCR失败
+                else:
+                    logger.error(
+                        f"[batch_job] 批处理失败，\n错误：{format_res[0]}，\n错误码：{format_res[1]}")
+                    raise gr.Error(duration=0,
+                                   message=local["error"]["error_with_error_code"].format(
+                                       error = format_res[0], code = format_res[1]))
+            # 旧版渲染
+            else:
+                res = ocr_handler.render_old(image_path)
+                if res[1] == 0:
+                    logger.info(f"[batch_job] 对 {image_name} 的渲染成功")
+                else:
+                    logger.error(f"[batch_job] 批处理失败，\n错误：{res[0]}，\n错误码：{res[1]}")
+                    raise gr.Error(duration=0,
+                                message=local["error"]["error_with_error_code"].format(
+                                    error = res[0], code = res[1]))
+    gr.Info(local["info"]["batch_job_finished"])
+    logger.info(f"[batch_job] 批处理任务完成")
+
 
 
 ##########################
@@ -449,28 +517,36 @@ with gr.Blocks(theme=theme) as demo:
             with gr.Column():
                 # 模式 / Mode
                 ocr_mode = gr.Dropdown(
-                    choices=[(local["mode"]["ocr"], "ocr"), (local["mode"]["format"], "format"),
-                             (local["mode"]["fine-grained-ocr"], "fine-grained-ocr"),
-                             (local["mode"]["fine-grained-format"], "fine-grained-format"),
-                             (local["mode"]["fine-grained-color-ocr"], "fine-grained-color-ocr"),
-                             (local["mode"]["fine-grained-color-format"], "fine-grained-color-format"),
-                             (local["mode"]["multi-crop-ocr"], "multi-crop-ocr"),
-                             (local["mode"]["multi-crop-format"], "multi-crop-format"), (local["mode"]["render"], "render")],
+                    choices=[
+                        (local["mode"]["ocr"], "ocr"),
+                        (local["mode"]["format"], "format"),
+                        (local["mode"]["fine-grained-ocr"], "fine-grained-ocr"),
+                        (local["mode"]["fine-grained-format"], "fine-grained-format"),
+                        (local["mode"]["fine-grained-color-ocr"], "fine-grained-color-ocr"),
+                        (local["mode"]["fine-grained-color-format"], "fine-grained-color-format"),
+                        (local["mode"]["multi-crop-ocr"], "multi-crop-ocr"),
+                        (local["mode"]["multi-crop-format"], "multi-crop-format"),
+                        (local["mode"]["render"], "render")
+                    ],
                     label=local["label"]["ocr_mode"], value="ocr")
                 # OCR 按钮 / Buttons and Results
                 do_ocr = gr.Button(local["btn"]["do_ocr"], variant="primary")
                 result = gr.Textbox(label=local["label"]["result"])
-    # 渲染器选项卡 / Renderer tab
+    # 批处理选项卡 / Batch job tab
     with gr.Tab(local["tab"]["renderer"]):
-        # 输入 / Input folder path
-        input_folder_path = gr.Textbox(label=local["label"]["input_folder_path"], value="imgs", interactive=True)
-        with gr.Row(equal_height=True):
-            # PDF 转换设置 / PDF convert settings
-            batch_pdf_convert_confirm = gr.Checkbox(label=local["label"]["save_as_pdf"], value=True, interactive=True)
-            # 清理临时文件 / temp clean
-            clean_temp_renderer = gr.Checkbox(label=local["label"]["clean_temp"], value=True, interactive=True)
-            # 按钮 / Render button
-            batch_render_btn = gr.Button(local["btn"]["render"], variant="primary", scale=2)
+        with gr.Row():
+            batch_mode = gr.Dropdown(
+                choices = [
+                    (local["mode"]["ocr"], "ocr"),
+                    (local["mode"]["format"], "format"),
+                    (local["mode"]["multi-crop-ocr"], "multi-crop-ocr"),
+                    (local["mode"]["multi-crop-format"], "multi-crop-format"),
+                    (local["mode"]["render"], "render")
+                ],
+                label=local["label"]["batch_mode"], value="ocr", interactive=True
+            )
+            input_folder_path = gr.Textbox(label=local["label"]["input_folder_path"], value="imgs", interactive=True)
+        batch_render_btn = gr.Button(local["btn"]["render"], variant="primary")
     # PDF 选项卡 / PDF tab
     with gr.Tab("PDF"):
         with gr.Row():
@@ -533,13 +609,14 @@ with gr.Blocks(theme=theme) as demo:
                                                  label=local["label"]["fine_grained_color"], value="red")
             # 渲染设置 / Rendering settings
             with gr.Column():
-                gr.Markdown(local["label"]["render_settings"])
+                gr.Markdown("[DEPR] " + local["label"]["render_settings"])
                 with gr.Row(equal_height=True):
                     pdf_convert_confirm = gr.Checkbox(label=local["label"]["save_as_pdf"])
                     clean_temp_render = gr.Checkbox(label=local["label"]["clean_temp"])
+                # 新渲染设置 / New rendering settings
                 gr.Markdown(local["label"]["new_render_settings"])
                 use_new_render_mode = gr.Checkbox(label=local["label"]["use_new_render_mode"], value=True)
-                save_format = gr.Dropdown(choices=["docx", "markdown", "tex", "pdf"], label=local["label"]["save_format"])
+                new_render_save_format = gr.Dropdown(choices=["docx", "markdown", "tex", "pdf"], label=local["label"]["save_format"])
     # 指南选项卡 / Instructions tab
     with gr.Tab(local["tab"]["instructions"]):
         with open(os.path.join('Locales', 'gui', 'instructions', f'{lang}.md'), 'r', encoding='utf-8') as file:
@@ -553,14 +630,14 @@ with gr.Blocks(theme=theme) as demo:
         fn=ocr,
         inputs=[upload_img, fine_grained_box_x1, fine_grained_box_y1, fine_grained_box_x2,
                 fine_grained_box_y2, ocr_mode, fine_grained_color, pdf_convert_confirm, clean_temp_render,
-                use_new_render_mode, save_format],
+                use_new_render_mode, new_render_save_format],
         outputs=result
     )
 
     # 渲染 / Render
     batch_render_btn.click(
-        fn=renderer,
-        inputs=[input_folder_path, batch_pdf_convert_confirm, clean_temp_renderer],
+        fn=batch_job,
+        inputs=[input_folder_path, use_new_render_mode, batch_mode, new_render_save_format],
         outputs=None
     )
 

@@ -10,6 +10,7 @@
         "unload_model": "卸载模型"
     },
     "error": {
+        "error_with_error_code": "错误：{error}，错误码：{code}",
         "empty_seq": "图像序列为空，无法渲染",
         "gguf_model_load_failed": "加载 GGUF 模型失败",
         "gguf_model_unload_failed": "卸载 GGUF 模型失败",
@@ -26,6 +27,8 @@
         "renderer_failed": "渲染失败：{error}"
     },
     "info": {
+        "batch_job_finished": "批量处理任务已完成",
+        "batch_job_started": "批量处理任务已开始",
         "developing": "正在施工",
         "image_cleared": "图片已被清除",
         "model_already_loaded": "模型已加载",
@@ -39,10 +42,11 @@
         "pdf_render_success": "{pdf_file} 渲染成功",
         "pdf_save_success": "{pdf_file} 成功保存到了 {pdf_path}",
         "pdf_split_success": "{pdf_file} 分割成功",
-        "render_start": "开始渲染 {img_file}",
+        "render_started": "开始渲染 {img_file}",
         "render_success": "{img_file} 渲染成功"
     },
     "label": {
+        "batch_mode": "批量处理模式",
         "clean_temp": "清理临时文件",
         "execution_providers": "ONNX 运行模式",
         "fine_grained_box_x1": "框坐标 x1",
@@ -105,6 +109,8 @@
             "renderer_no_model_or_img": "[renderer] 没有加载模型或上传图片"
         },
         "info": {
+            "batch_job_started": "[batch_job] 批量处理任务已开始",
+            "batch_writing_res": "[batch_job] 正在写入结果：{image_name}",
             "crop_ocr_start": "[OCRHandler.ocr_crop] 开始对图片执行 multi-crop OCR",
             "fg_ocr_start": "[OCRHandler.ocr_fg] 开始对图片执行 fine-grained OCR",
             "gguf_model_loaded": "[gguf_model_load] GGUF 模型已加载：{model}",
@@ -158,7 +164,7 @@
     "tab": {
         "instructions": "说明",
         "ocr": "OCR",
-        "renderer": "渲染器",
+        "renderer": "批处理",
         "settings": "设置"
     }
 }

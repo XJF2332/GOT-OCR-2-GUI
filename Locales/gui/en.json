@@ -10,6 +10,7 @@
         "unload_model": "Unload model"
     },
     "error": {
+        "error_with_error_code": "Error: {error}, error code: {code}",
         "empty_seq": "Got an empty image sequence, can not render.",
         "gguf_model_load_failed": "Failed to load GGUF model",
         "gguf_model_unload_failed": "Failed to unload GGUF model",
@@ -26,6 +27,8 @@
         "renderer_failed": "Render failed: {error}"
     },
     "info": {
+        "batch_job_finished": "[batch_job] Batch job finished",
+        "batch_job_started": "[batch_job] Batch job started",
         "developing": "Developing...",
         "image_cleared": "Image cleared",
         "model_already_loaded": "Model loaded",
@@ -39,10 +42,11 @@
         "pdf_render_success": "Successfully rendered {pdf_file}",
         "pdf_save_success": "{pdf_file} saved to {pdf_path}",
         "pdf_split_success": "Successfully split {pdf_file}",
-        "render_start": "Started to render {img_file}",
+        "render_started": "Started to render {img_file}",
         "render_success": "Successfully rendered {img_file}"
     },
     "label": {
+        "batch_mode": "Batch mode",
         "clean_temp": "Clean temporary files",
         "execution_providers": "ONNX mode",
         "fine_grained_box_x1": "Box coordinate x1",
@@ -105,6 +109,8 @@
             "renderer_no_model_or_img": "[renderer] No model loaded or no image uploaded"
         },
         "info": {
+            "batch_job_started": "[batch_job] Batch job started",
+            "batch_writing_res": "[batch_job] Writing result of {image_name}",
             "crop_ocr_start": "[OCRHandler.ocr_crop] OCR started (Multi-Crop OCR)",
             "fg_ocr_start": "[OCRHandler.ocr_fg] OCR started (Fine-Grained OCR)",
             "gguf_model_loaded": "[gguf_model_load] GGUF model loaded{model}",
@@ -158,7 +164,7 @@
     "tab": {
         "instructions": "Instructions",
         "ocr": "OCR",
-        "renderer": "Renderer",
+        "renderer": "Batch Job",
         "settings": "Settings"
     }
 }
