@@ -2,12 +2,10 @@
 
 ## [中文版看这里](README.md)
 
+🛑Support has been stopped, I may update it if I'd like to.
+
 ![img.png](img.png)
 
-Logs are localized, but there are too many keys, it's hard for me to check if there are any missing keys. If you
-Encountered KeyErrors, please report an Issu
-
-Support for CLI has been stopped, I may update it if I'd like to, I don't have much time developing it.
 
 ## About this project
 
@@ -26,7 +24,7 @@ Click a star, please
 - [ ] Optimize PDF error handling
 - [x] Support GGUF models, hoping to accelerate inference (Thank [issue #19](https://github.com/XJF2332/GOT-OCR-2-GUI/issues/19) for helping)
 - [ ] Improve support for GGUF models
-- [ ] New render mode: optimize performance and support for more formats
+- [x] New render mode: optimize performance and support for more formats
 - [ ] Remove / hide old renderer
 
 ## How to use
