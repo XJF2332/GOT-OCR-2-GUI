@@ -31,22 +31,13 @@ def render(model: object, tokenizer: object, img_path: str, wait: bool = False,
     try:
         # 定义输出HTML路径 / Path of output HTML
         img_name = os.path.basename(img_path)
-        Renderer_logger.debug(local["Renderer"]["debug"]["img_name"].format(name=img_name))
+        Renderer_logger.debug(f"[render] 图像名称：{img_name}")
         img_name_no_ext = os.path.splitext(img_name)[0]
         pdf_path = os.path.join("result", f"{img_name_no_ext}.html")
-        # utf8_path = os.path.join("result", f"{img_name_no_ext}-utf8.html")
-        # utf8_local_path = os.path.join("result", f"{img_name_no_ext}-utf8-local.html")
-        # Renderer_logger.debug(local["Renderer"]["debug"]["output_path"].format(path1=gb2312_path,path2=utf8_path,path3=utf8_local_path))
 
         # 渲染 / Render
         Renderer_logger.info(local["Renderer"]["info"]["rendering"].format(path=img_path))
         model.chat(tokenizer, img_path, ocr_type='format', render=True, save_render_file=pdf_path)
-
-        # 转换为 UTF-8 编码 / Convert to UTF-8
-        # Renderer_logger.debug(local["Renderer"]["debug"]["conv_enc"].format(path=gb2312_path))
-        # conv_res = convertor.conv_html_enc(gb2312_path, utf8_path)
-        # if conv_res != 0:
-        #     return conv_res
 
         # 替换 / Replace
         search_string = '(C)'
@@ -75,16 +66,6 @@ def render(model: object, tokenizer: object, img_path: str, wait: bool = False,
             Renderer_logger.error(local["Renderer"]["error"]["repl_fail"].format(error=str(e)))
             return ErrorCode.REPLACEMENT_FAIL.value
 
-        # 转换为PDF / Convert to PDF
-        # if conv_to_pdf:
-        #     Renderer_logger.info(local["Renderer"]["info"]["conv2pdf"].format(path=utf8_path))
-        #     repl_res = convertor.replace_content(utf8_path, utf8_local_path)
-        #     if repl_res != 0:
-        #         return repl_res
-        #     pdf_path = os.path.join("result", f"{img_name_no_ext}.pdf")
-        #     output_res = convertor.output_pdf(utf8_local_path, pdf_path, wait=wait, wait_time=time)
-        #     if output_res != 0:
-        #         return output_res
         return 0
     except AttributeError:
         Renderer_logger.error(local["Renderer"]["error"]["no_model_or_img"])
