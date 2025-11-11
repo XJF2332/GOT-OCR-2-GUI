@@ -1,7 +1,7 @@
 import os
 import re
 import send2trash
-from scripts import local, scriptsLogger
+from scripts import scriptsLogger, ErrorCode
 
 ##################################
 
@@ -22,13 +22,14 @@ def find_files(directory: str, regex_pattern: str):
     Returns:
         匹配的文件列表 / List of matched files
     """
+    TempCleaner_logger.debug(f"[find_files] RegEx pattern: {regex_pattern}")
     pattern = re.compile(regex_pattern)
     matching_files = []
     for root, dirs, files in os.walk(directory):
         for file in files:
             if pattern.search(file):
                 matching_files.append(os.path.join(root, file))
-                TempCleaner_logger.debug(f"[find_files] 找到临时文件：{os.path.join(root, file)}")
+                TempCleaner_logger.debug(f"[find_files] Found temp file: {os.path.join(root, file)}")
     return matching_files
 
 
@@ -47,13 +48,13 @@ def cleaner(directory: list[str], regex_pattern: list[str]):
         1-错误 / 1-Failed
     """
     try:
-        TempCleaner_logger.info("[cleaner] 正在清理临时文件")
+        TempCleaner_logger.info("[cleaner] Cleaning temp files")
         for dir in directory:
             for pattern in regex_pattern:
                 for file in find_files(dir, pattern):
                     send2trash.send2trash(file)
-                    TempCleaner_logger.debug(f"[cleaner] 删除临时文件：{file}")
-        return 0
+                    TempCleaner_logger.debug(f"[cleaner] Deleted: {file}")
+        return ErrorCode.SUCCESS
     except Exception as e:
         TempCleaner_logger.error(e)
-        return 1
+        return ErrorCode.UNKNOWN.value
